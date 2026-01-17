@@ -1,50 +1,53 @@
 <template>
-  <p>
-    👋 <span>{{ typer.typer.value }}</span>
-  </p>
+  <p>👋 <span>{{ currentText }}</span></p>
 </template>
 
-<script setup lang="ts">
-import { onMounted } from "vue";
-import { ref } from "vue";
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
 
-function sleep(delay: number) {
-  return new Promise((resolve) => setTimeout(resolve, delay));
-}
-
-const words = [
+// 配置内容
+const messages = [
   "Hi There.",
   "I'm CILXRY!",
   "From Shanghai, China",
-  "Welcome to my site!",
-];
+  "Welcome to my site!"
+]
 
-const useTyper = (words: string | any[]) => {
-  return {
-    typer: ref(""),
-    typeWords: async function () {
-      await sleep(600);
-      let i = 0;
-      const typeWord = async () => {
-        for (let j = 0; j <= words[i].length; j++) {
-          this.typer.value = words[i].slice(0, j);
-          await sleep(75);
-        }
-        await sleep(1500);
-        for (let j = words[i].length; j >= 0; j--) {
-          this.typer.value = words[i].slice(0, j);
-          await sleep(15);
-        }
-        await sleep(750);
-      };
-      while (true) {
-        await typeWord();
-        i++;
-        if (i === words.length) i = 0;
-      }
-    },
-  };
-};
-const typer = useTyper(words);
-onMounted(() => typer.typeWords());
+const currentText = ref('')
+let currentIndex = 0
+let isErasing = false
+let timer = null
+
+onMounted(() => {
+  startTyping()
+})
+
+onUnmounted(() => {
+  if (timer) clearTimeout(timer)
+})
+
+function startTyping() {
+  const text = messages[currentIndex]
+
+  if (isErasing) {
+    // 删除模式：逐字减少
+    currentText.value = text.slice(0, currentText.value.length - 1)
+    if (currentText.value === '') {
+      isErasing = false
+      currentIndex = (currentIndex + 1) % messages.length
+      timer = setTimeout(startTyping, 500) // 切换后稍作停顿
+    } else {
+      timer = setTimeout(startTyping, 40) // 删除速度
+    }
+  } else {
+    // 打字模式：逐字增加
+    currentText.value = text.slice(0, currentText.value.length + 1)
+    if (currentText.value === text) {
+      isErasing = true
+      timer = setTimeout(startTyping, 1800) // 打完后停顿
+    } else {
+      timer = setTimeout(startTyping, 90) // 打字速度
+    }
+  }
+}
 </script>
