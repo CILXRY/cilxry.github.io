@@ -25,7 +25,6 @@ export const items = [
     header: "为什么做了这个网站",
     header_eng: "So why?",
     content:
-      "小孩不懂事，做着玩的。<br>\
-      这个服务器也是不懂事的时候建起来的，知道吧？",
+      "小孩不懂事，做着玩的。<br>",
   },
 ];
