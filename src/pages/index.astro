@@ -1,19 +1,20 @@
 ---
 import Typer from "../components/type.vue";
 import Footer from "../components/footer.astro";
+import Paragraph from '../components/aParagraph.astro'
 
 // 这里是 Astro 的 frontmatter（可以放变量，现在先空着）
 // 我望见她就此昙花一现
-import { render } from "astro:content";
-const contactMe = await import("../content/contactMeHere.md");
-const { Content } = await render(contactMe);
 ---
 
 <!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
     <title>CILXRY 的小站</title>
     <style>
       @keyframes fade-in {
@@ -44,40 +45,13 @@ const { Content } = await render(contactMe);
         >
           CILXRY
         </h1>
-        <p class="text-lg text-gray-600 max-w-md">
+        <!-- <p class="text-lg text-gray-600 max-w-md">
           这是我的开始。 || Here's a intro for me.
-        </p>
+        </p> -->
         <Typer client:load />
       </header>
 
-      <!-- 关于我 -->
-      <section class="mb-12">
-        <h2 class="text-2xl font-semibold m-0">关于我</h2>
-        <h6 class="text-sm font-bold m-0 mb-2 underline underline-coolGray">
-          about me
-        </h6>
-
-        <p class="text-gray-700 leading-relaxed mb-3">
-          Hi There. 👋<br /><br />我是 CILXRY（也叫小十柒、ZYX）。<br />
-        </p>
-      </section>
-
-      <section class="mb-12">
-        <h2 class="text-2xl font-semibold m-0">先写点东西放在这</h2>
-        <h6 class="text-sm font-bold m-0 mb-2 underline underline-coolGray">
-          Just Write Here to idk what it for.
-        </h6>
-        <p>
-          目前是 **一名 17 岁的中职校学生**。<br />会什么？<br
-          />啥也不会，也就略懂一点编程和服务器知识……好吧，其实懂得不多。<br
-          />但别说，**会吃饭会睡觉，我就能打败 1% 的生物了**（迫真）。
-        </p>
-        <h3>📝 为什么写博客？</h3><p>
-          小孩不懂事，写着玩的。<br
-          />这个服务器也是不懂事的时候建起来的，知道吧？
-        </p>
-        <Content />
-      </section>
+      <Paragraph />
 
       <!-- 兴趣/技能 -->
       <section class="mb-12">
