@@ -1,13 +1,9 @@
 ---
-const header = "这是一段标题";
-const header_eng = "This is a para header";
-const content = "我是文字<br>我是文字。";
-
 import { items } from "../content/introTexts";
 ---
 
 {
-  items.map(({ header, header_eng, content }, index) => (
+  items.map(({ header, header_eng, content }) => (
     <section class="mb-12">
       <h2 class="text-2xl font-semibold m-0 mb-0">{header}</h2>
       <h6 class="text-sm font-bold m-0 mb-2 underline underline-coolGray">
