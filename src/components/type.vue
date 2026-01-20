@@ -1,5 +1,5 @@
 <template>
-  <p>👋 <span>{{ currentText }}</span></p>
+  <p class="mb-0">👋 <span>{{ currentText }}</span></p>
 </template>
 
 <script setup>

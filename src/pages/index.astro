@@ -1,10 +1,15 @@
 ---
 import Typer from "../components/type.vue";
-import Footer from "../components/footer.astro";
-import Paragraph from '../components/aParagraph.astro'
+import Footer from "../layouts/footer.astro";
+import Paragraph from "../components/aParagraph.astro";
+import Header from "../layouts/navbar.astro";
+import Sleepy from "../components/sleepy.vue";
+import Interested from "../layouts/interested.astro";
 
 // 这里是 Astro 的 frontmatter（可以放变量，现在先空着）
 // 我望见她就此昙花一现
+import { items } from "../content/introTexts";
+import MacOSLikeWindow from "../layouts/macOS_like_window.astro";
 ---
 
 <!doctype html>
@@ -41,41 +46,32 @@ import Paragraph from '../components/aParagraph.astro'
       }
     </style>
   </head>
-  <body class="bg-[#dddddd] text-[#2c3e50] font-sans antialiased">
+  <body
+    class="bg-[#dddddd] text-gray-600 font-sans antialiased dark:bg-gray-900 dark:text-gray-400"
+  >
+    <Header />
     <main
-      class="max-w-3xl mx-auto px-6 py-16 md:py-24 animate-fade-in duration-500"
+      class="max-w-7xl mx-auto px-6 py-16 md:py-24 animate-fade-in duration-500 text-left"
     >
-      <header class="text-right">
-        <!-- <a href="http://repo.cilxry.cc">CILXRY的仓库</a> -->
-      </header>
-      <header class="text-left mb-12">
-        <h1
-          class="text-4xl md:text-2xl font-bold tracking-tight mb-4 font-mono"
-        >
-          CILXRY
-        </h1>
+      <header class="mb-6">
         <!-- <p class="text-lg text-gray-600 max-w-md">
           这是我的开始。 || Here's a intro for me.
         </p> -->
         <Typer client:load />
       </header>
 
-      <Paragraph />
+      <!-- <Paragraph /> -->
 
-      <!-- 兴趣/技能 -->
-      <section class="mb-12">
-        <h2 class="text-2xl font-semibold mb-4">最近在玩</h2>
-        <div class="flex flex-wrap gap-2">
-          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm"
-            >HTML/CSS</span
-          >
-          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">Astro</span>
-          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">UnoCSS</span>
-          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm"
-            >JavaScript</span
-          >
-        </div>
-      </section>
+      <!-- 将数组逐个传递给组件 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        {items.map((item, _index) => <MacOSLikeWindow variable={item} />)}
+      </div>
+
+      <!-- <MacOSLikeWindow variable={{ header: "Sleepy 状态面板" }}>
+        <Sleepy client:load />
+      </MacOSLikeWindow> -->
+
+      <!-- <Interested /> -->
 
       <Footer />
     </main>
