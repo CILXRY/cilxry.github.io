@@ -1,5 +1,7 @@
 ---
-const websiteTitle = "";
+const websiteTitle = "CILXRY 的小站";
+import Header from "../layouts/navbar.astro";
+import Footer from "../layouts/footer.astro";
 ---
 
 <!doctype html>
@@ -7,10 +9,14 @@ const websiteTitle = "";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CILXRY 的小站</title>
+    <title>{websiteTitle}</title>
   </head>
-  <body>
+  <body
+    class="font-sans antialiased max-w-full px-10 py-2 bg-[#dddddd] text-gray-600 dark:bg-gray-900 dark:text-gray-400 animate-fade-in duration-500 text-left"
+  >
+    <Header />
     <slot />
+    <Footer />
   </body>
 </html>
 <style>
