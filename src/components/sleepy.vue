@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 
 // 配置：替换成你的 Sleepy 后端地址
-const SLEEPY_API_BASE = "http://192.168.54.182:9010"; // 开发时
+const SLEEPY_API_BASE = "http://192.168.54.182:8080"; // 开发时
 // const SLEEPY_API_BASE = 'https://status.yourdomain.com' // 生产时
 
 // 响应式数据

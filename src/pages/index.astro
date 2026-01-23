@@ -1,79 +1,32 @@
 ---
-import Typer from "../components/type.vue";
-import Footer from "../layouts/footer.astro";
-import Paragraph from "../components/aParagraph.astro";
-import Header from "../layouts/navbar.astro";
-import Sleepy from "../components/sleepy.vue";
-import Interested from "../layouts/interested.astro";
-
-// 这里是 Astro 的 frontmatter（可以放变量，现在先空着）
 // 我望见她就此昙花一现
-import { items } from "../content/introTexts";
+// Astro Components and Layouts Here
+import BasePageLayout from "../layouts/BasePageLayout.astro";
 import MacOSLikeWindow from "../layouts/macOS_like_window.astro";
+
+// Vue Components Here
+import Typer from "../components/type.vue";
+import Sleepy from "../components/sleepy.vue";
+
+// Contents Here
+import { items } from "../content/introTexts";
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1"
-    />
-    <title>CILXRY 的小站</title>
-    <meta name="msvalidate.01" content="ABED576CF44ECC0430ED77ADDC73A0E9" />
-    <!-- Clarity tracking code for https://cilxry.github.io/ -->
-<script>
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "v34cec08ui");
-</script>
-    <style>
-      @keyframes fade-in {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .animate-fade-in {
-        animation: fade-in 0.6s ease-out forwards;
-      }
-    </style>
-  </head>
-  <body
-    class="bg-[#dddddd] text-gray-600 font-sans antialiased dark:bg-gray-900 dark:text-gray-400"
-  >
-    <Header />
-    <main
-      class="max-w-7xl mx-auto px-6 py-16 md:py-24 animate-fade-in duration-500 text-left"
+<BasePageLayout>
+  <main class="max-w-7xl mx-auto px-6 pb-16 md:py-24">
+    <Typer client:load />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-6">
+      {items.map((item, _index) => <MacOSLikeWindow variable={item} />)}
+    </div>
+
+    <!-- <MacOSLikeWindow
+      variable={{
+        header: "Sleepy 状态面板",
+        content: "这里应该是让我放Sleepy的地方，但是他还在重构",
+      }}
     >
-      <header class="mb-6">
-        <!-- <p class="text-lg text-gray-600 max-w-md">
-          这是我的开始。 || Here's a intro for me.
-        </p> -->
-        <Typer client:load />
-      </header>
-
-      <!-- <Paragraph /> -->
-
-      <!-- 将数组逐个传递给组件 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-        {items.map((item, _index) => <MacOSLikeWindow variable={item} />)}
-      </div>
-
-      <!-- <MacOSLikeWindow variable={{ header: "Sleepy 状态面板" }}>
-        <Sleepy client:load />
-      </MacOSLikeWindow> -->
-
-      <!-- <Interested /> -->
-
-      <Footer />
-    </main>
-  </body>
-</html>
+      <Sleepy />
+    </MacOSLikeWindow> -->
+  </main>
+</BasePageLayout>
