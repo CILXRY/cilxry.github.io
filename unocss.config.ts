@@ -1,5 +1,9 @@
 import { defineConfig } from 'unocss'
 
 export default defineConfig({
-  // ...UnoCSS options
+  theme: {
+    fontFamily: {
+      baseFont: '"AiDianFengYaHei", sans-serif',
+    }
+  }
 })
