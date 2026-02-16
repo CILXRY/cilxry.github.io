@@ -1,30 +1,35 @@
-<button id="theme-toggle" class="p-2 rounded">
-  切换主题
-</button>
+---
+import Sun from "@lucide/astro/icons/sun";
+import Moon from "@lucide/astro/icons/moon";
+import SunMoon from "@lucide/astro/icons/sun-moon";
+---
 
-<script>
-  const toggle = document.getElementById('theme-toggle');
+<button id="theme-toggle" class="p-2 rounded bg-transparent"> <SunMoon class="accent-cyan" /></button>
+
+
+<script lang="ts">
+  const toggle = document.getElementById("theme-toggle");
   const html = document.documentElement;
 
   // 读取本地存储或系统偏好
-  const savedTheme = localStorage.getItem('theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const savedTheme = localStorage.getItem("theme");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-  let currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+  let currentTheme = savedTheme || (prefersDark ? "dark" : "light");
 
-  const applyTheme = (theme: string) => {
-    if (theme === 'dark') {
-      html.classList.add('dark');
+  const applyTheme = (/** @type {string} */ theme) => {
+    if (theme === "dark") {
+      html.classList.add("dark");
     } else {
-      html.classList.remove('dark');
+      html.classList.remove("dark");
     }
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
   };
 
   applyTheme(currentTheme);
 
-  toggle?.addEventListener('click', () => {
-    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  toggle?.addEventListener("click", () => {
+    currentTheme = currentTheme === "dark" ? "light" : "dark";
     applyTheme(currentTheme);
   });
 </script>

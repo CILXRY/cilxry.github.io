@@ -1,0 +1,42 @@
+---
+import BasePageLayout from "../layouts/basePageLayout.astro";
+const timeline = [
+  {
+    type: "article",
+    slug: "hello-world",
+    title: "Hello World",
+    excerpt:
+      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque.",
+    date: "2024-06-01",
+    ai_summary: " 作者分享了搭建个人博客的心路历程。",
+  },
+  {
+    type: "article",
+    slug: "hello-world",
+    title: "Hello World",
+    excerpt:
+      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex.",
+    date: "2024-06-01",
+    ai_summary: " 作者分享了搭建个人博客的心路历程。",
+  },
+  {
+    type: "article",
+    slug: "hello-world",
+    title: "Hello World",
+    excerpt:
+      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex.",
+    date: "2024-06-01",
+    ai_summary: " 作者分享了搭建个人博客的心路历程。",
+  },
+];
+import EchoCard from "../components/cards/echo_card.astro";
+// import EchoCardStyleSheet from "../style/card.css";
+import { assignGradients } from "../lib/echoCardColorUtils";
+
+const gradients = assignGradients(timeline.length);
+
+---
+
+<BasePageLayout>
+  {timeline.map((item, _index) => <EchoCard cardData={item} gradient={gradients[_index]}/>)}
+</BasePageLayout>

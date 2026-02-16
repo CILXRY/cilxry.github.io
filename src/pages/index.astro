@@ -2,25 +2,24 @@
 // 我望见她就此昙花一现
 // Astro Components and Layouts Here
 import BasePageLayout from "../layouts/BasePageLayout.astro";
-import MacOSLikeWindow from "../layouts/macOS_like_window.astro";
+import MacOSLikeWindow from "../components/cards/macos_style_card.astro";
 
 // Vue Components Here
 import Typer from "../components/type.vue";
-import Sleepy from "../components/sleepy.vue";
+// import Sleepy from "../components/sleepy.vue";
 
 // Contents Here
-import { items } from "../content/introTexts";
+import { items } from "../content/introTexts.ts";
 ---
 
 <BasePageLayout>
-  <main class="max-w-7xl mx-auto px-6 pb-16 md:py-24">
-    <Typer client:load />
+  <Typer client:load />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-6">
-      {items.map((item, _index) => <MacOSLikeWindow variable={item} />)}
-    </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-6">
+    {items.map((item, _index) => <MacOSLikeWindow cardData={item} />)}
+  </div>
 
-    <!-- <MacOSLikeWindow
+  <!-- <MacOSLikeWindow
       variable={{
         header: "Sleepy 状态面板",
         content: "这里应该是让我放Sleepy的地方，但是他还在重构",
@@ -28,5 +27,4 @@ import { items } from "../content/introTexts";
     >
       <Sleepy />
     </MacOSLikeWindow> -->
-  </main>
 </BasePageLayout>

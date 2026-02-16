@@ -4,17 +4,23 @@
   "version": "0.0.1",
   "packageManager": "pnpm@10.28.2",
   "scripts": {
-    "dev": "astro dev --host 0.0.0.0",
+    "dev": "astro dev --host 0.0.0.0 --port 4000",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "new": "node ./scripts/post.ts"
   },
   "dependencies": {
     "@astrojs/vue": "^5.1.4",
+    "@lucide/astro": "^0.564.0",
     "astro": "^5.16.9",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "process": "^0.11.10",
     "vue": "^3.5.26"
   },
   "devDependencies": {
+    "@types/node": "^25.2.3",
     "unocss": "^66.5.12"
   }
 }
