@@ -1,8 +1,8 @@
 ---
-import BasePageLayout from "../layouts/basePageLayout.astro";
+import BasePageLayout from "../layouts/BasePageLayout.astro";
 import EchoCard from "../components/cards/blog_post_card.astro";
 // import EchoCardStyleSheet from "../style/card.css";
-import { assignGradients } from "../lib/echoCardColorUtils";
+import { assignGradients } from "../utils/echoCardColorUtils.ts";
 
 // 1. 获取所有已发布（非草稿）的博客
 import { getCollection } from "astro:content";

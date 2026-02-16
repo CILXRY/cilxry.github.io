@@ -17,8 +17,12 @@ const date = new Date().toISOString().split("T");
 
 // Frontmatter Content
 const content = `---
-title: "${title}"
+title: ${title}
 date: ${date}
+pubDate: ${date}
+tags: [""]
+categories:
+description: 这是一个没有描述的文章
 ---
 
 `;
