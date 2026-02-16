@@ -1,26 +1,28 @@
-# build output
+# Astro Build Output and
+# Astro automatic Generated types
+.astro/
 dist/
 
-# generated types
-.astro/
-
-# dependencies
+# NodeJS dependencies
 node_modules/
 
-# logs
+# Log Files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# environment variables
+# Environment Variables
 .env
 .env.production
 
-# macOS-specific files
+# macOS-Specific files
 .DS_Store
 
-# jetbrains setting folder
-.idea/
+# Visual Studio Code Specific files
+# .vscode
+.vscode/extensions.json
+.vscode/settings.json
 
+# A markdown note
 command.md
