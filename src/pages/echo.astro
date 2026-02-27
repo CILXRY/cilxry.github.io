@@ -1,5 +1,5 @@
 ---
-import BasePageLayout from "../layouts/basePageLayout.astro";
+import BasePageLayout from "../layouts/BasePageLayout.astro";
 const timeline = [
   {
     type: "article",
@@ -31,7 +31,7 @@ const timeline = [
 ];
 import EchoCard from "../components/cards/echo_card.astro";
 // import EchoCardStyleSheet from "../style/card.css";
-import { assignGradients } from "../lib/echoCardColorUtils";
+import { assignGradients } from   "../utils/exampleUtils/echoCardColorUtils.ts";
 
 const gradients = assignGradients(timeline.length);
 

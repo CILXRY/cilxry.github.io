@@ -1,10 +1,9 @@
 ---
-// 1. 获取当前请求的文章
+// 获取当前请求的文章
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-import BasePageLayout from "../../layouts/basePageLayout.astro";
+import BasePageLayout from "../../layouts/BaseLayout/BasePageLayout.astro";
 
-// 2. 在 getStaticPaths 中获取所有文章
+// 在 getStaticPaths 中获取所有文章
 export async function getStaticPaths() {
   const allPosts = await getCollection("blog");
   return allPosts.map((post) => ({
@@ -12,18 +11,20 @@ export async function getStaticPaths() {
   }));
 }
 
-// 3. 获取当前 slug 对应的文章
+// 获取当前 slug 对应的文章
 const { slug } = Astro.params;
 const allPosts = await getCollection("blog"); // 重复一次，用于渲染
 const post = allPosts.find((p) => p.slug === slug);
 
-// 4. 如果找不到或草稿，重定向
+// 如果找不到或草稿，重定向
 if (!post || post.data.draft) {
   return Astro.redirect("/404");
 }
 
-// 5. 渲染 Markdown 内容
+// 渲染 Markdown 内容
 const { Content } = await post.render();
+
+import "../../third-party/github-markdown-css/github-markdown-dark-dimmed.css"
 ---
 
 <BasePageLayout>
@@ -34,7 +35,7 @@ const { Content } = await post.render();
         {post.data.pubDate.toLocaleDateString("zh-CN")}
       </time>
     </header>
-    <div class="post-body">
+    <div class="markdown-body">
       <Content />
     </div>
   </article>

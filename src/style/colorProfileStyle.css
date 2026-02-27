@@ -1,0 +1,51 @@
+:root {
+  /* 主色和主色 oklch */
+  --primary: #adaaf8;
+  --primary-l: 77%;
+  --primary-c: 0.11;
+  --primary-h: 285;
+
+  /* 主色基础值 color-primary */
+  --cp: oklch(var(--primary-l) var(--primary-c) var(--primary-h));
+
+  /*  主色变体 color-primary-i  */
+  /*  通过调整 L 改变亮度修改颜色 数值越小颜色越浅 这些是使用例子:
+      cp-50 适用于 hover 背景
+      cp-400 是原始主色
+      cp-500 适用于按钮默认
+      cp-600 适用于 hover 前景
+      cp-700 适用于 active/focus
+      cp-800 适用于深色文字或图标
+      cp-900 是最深
+  */
+  --cp-50: oklch(96.5% var(--primary-c) var(--primary-h));
+  --cp-100: oklch(93% var(--primary-c) var(--primary-h));
+  --cp-200: oklch(85% var(--primary-c) var(--primary-h));
+  --cp-300: oklch(78% var(--primary-c) var(--primary-h));
+  --cp-400: oklch(71% var(--primary-c) var(--primary-h));
+  --cp-500: oklch(64% var(--primary-c) var(--primary-h));
+  --cp-600: oklch(53.2% var(--primary-c) var(--primary-h));
+  --cp-700: oklch(42.4% var(--primary-c) var(--primary-h));
+  --cp-800: oklch(31.6% var(--primary-c) var(--primary-h));
+  --cp-900: oklch(20.8% var(--primary-c) var(--primary-h));
+  --cp-950: oklch(15.4% var(--primary-c) var(--primary-h));
+  --cp-dark-bg: oklch(9.7% var(--primary-c) var(--primary-h));
+  --cp-light-bg: oklch(88% 0.05 var(--primary-h));
+
+  /* 互补色 */
+  --color-secondary: oklch(
+    calc(var(--primary-h)+100) var(--primary-s) var(--primary-l)
+  );
+
+  /* 中性灰色 */
+  --gray-50: #fafcff;
+  --gray-100: #f0f1fc;
+  --gray-200: #e0e2f8;
+  --gray-300: #cdd0f0;
+  --gray-400: #a8abdf;
+  --gray-500: #8a8dc9;
+  --gray-600: #6b6fb2;
+  --gray-700: #52558a;
+  --gray-800: #3d3f66;
+  --gray-900: #2a2c47;
+}

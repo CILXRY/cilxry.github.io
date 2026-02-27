@@ -1,8 +1,10 @@
 <footer class="flex text-bluegray text-xs mt-10 w-full">
-  <div class="mr-a">This may a full fronted Project.</div>
+  <div class="mr-a">
+    <p>This may a full fronted Project.</p><p>Your UA is:</p><p id="ua"></p>
+  </div>
   <div class="m-a">
     <p>&copy; 2026 CILXRY</p>
-    <a href="https://beian.miit.gov.cn" target="_blank">京ICP备12345678号</a>
+    <a href="https://beian.miit.gov.cn" target="_blank">沪ICP备12345678号</a>
   </div>
   <div class="ml-a text-right m-3">
     <p>
@@ -20,3 +22,8 @@
   </div>
   <p></p>
 </footer>
+
+<script>
+  const uaStr = document.getElementById("ua");
+  if (uaStr) uaStr.textContent = navigator.userAgent;
+</script>
