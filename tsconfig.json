@@ -1,13 +1,16 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "include": [
-    ".astro/types.d.ts",
-    "**/*"
-  ],
-  "exclude": [
-    "dist"
-  ],
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
   "compilerOptions": {
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "checkJs": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node16",
+    "module": "node16",
+    "types": ["node"],
+    "lib": ["ES2020", "DOM"]
   }
 }

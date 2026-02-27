@@ -1,0 +1,97 @@
+---
+// src/layouts/BaseLayout.astro
+const { title } = Astro.props;
+---
+
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <!-- 启用 View Transitions -->
+    <style>
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation: none;
+        mix-blend-mode: normal;
+      }
+      /* 可选：自定义过渡效果 */
+      @keyframes slide-from-right {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+      @keyframes slide-to-left {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-100%);
+        }
+      }
+      ::view-transition-old(root) {
+        animation: 300ms ease-in slide-to-left;
+      }
+      ::view-transition-new(root) {
+        animation: 300ms ease-out slide-from-right;
+      }
+    </style>
+  </head>
+  <body>
+    <slot />
+
+    <!-- 客户端导航脚本 -->
+    <script>
+      // 拦截所有内部链接点击
+      document.addEventListener("click", (e) => {
+        // 类型检查确保 target 是 Element
+        if (!(e.target instanceof Element)) return;
+
+        const link = e.target.closest("a");
+        if (!link || link.target || link.href.includes("://")) return;
+
+        const url = new URL(link.href);
+        if (url.origin !== location.origin) return;
+
+        e.preventDefault();
+
+        // 启动 View Transition
+        document.startViewTransition(async () => {
+          // 使用 fetch 获取新页面 HTML
+          const response = await fetch(url.pathname);
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, "text/html");
+
+          // 替换主内容区域（假设你的内容在 #main 内）
+          const mainContent = document.querySelector("#main");
+          const newMainContent = doc.querySelector("#main");
+          if (mainContent && newMainContent) {
+            mainContent.innerHTML = newMainContent.innerHTML;
+          }
+
+          // 更新 URL
+          history.pushState({}, "", url.pathname);
+        });
+      });
+
+      // 处理浏览器前进/后退
+      window.addEventListener("popstate", async () => {
+        document.startViewTransition(async () => {
+          const response = await fetch(location.pathname);
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, "text/html");
+
+          const mainContent = document.querySelector("#main");
+          const newMainContent = doc.querySelector("#main");
+          if (mainContent && newMainContent) {
+            mainContent.innerHTML = newMainContent.innerHTML;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

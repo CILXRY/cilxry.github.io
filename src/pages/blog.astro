@@ -1,0 +1,27 @@
+---
+import BasePageLayout from "../layouts/BaseLayout/BasePageLayout.astro";
+import EchoCard from "../components/styledCards/blog_post_card.astro";
+// import EchoCardStyleSheet from "../style/card.css";
+import { assignGradients } from "../utils/exampleUtils/echoCardColorUtils.ts";
+
+// 1. 获取所有已发布（非草稿）的博客
+import { getCollection } from "astro:content";
+const posts = await getCollection("blog", ({ data }) => !data.draft);
+// 2. 按发布时间倒序排列（最新在前）
+const sortedPosts = posts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const gradients = assignGradients(posts.length);
+---
+
+<BasePageLayout>
+  {
+    sortedPosts.map((post, _index) => (
+      <EchoCard
+        cardData={post.data}
+        gradient={gradients[_index]}
+        link={`/blog/${post.slug}/`}
+      />
+    ))
+  }
+</BasePageLayout>
