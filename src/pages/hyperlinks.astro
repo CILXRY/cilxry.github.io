@@ -1,0 +1,21 @@
+---
+import BasePageLayout from "../layouts/BasePageLayout.astro";
+import HyperlinkCard from "../components/hyperlinks/hyperlinkCard.astro";
+import AddHyperlink from "../components/hyperlinks/addHyperlink.astro";
+---
+
+<BasePageLayout>
+  <h2>友情链接</h2>
+  <h3>HyperLinks</h3>
+
+  <div font-mono>Here's the standard hyperlinks list:</div>
+  <div grid grid-cols-1 md:grid-cols-2 wd:grid-col-4 my-2>
+    <HyperlinkCard
+      name="CILXRY 的小站"
+      content="许愿 如所愿 皆所愿"
+      reachURL={new URL("https://github.cilxry.cc")}
+      imageURL="/src/pages/CILXRY.jpg"
+    />
+  </div>
+  <AddHyperlink />
+</BasePageLayout>
