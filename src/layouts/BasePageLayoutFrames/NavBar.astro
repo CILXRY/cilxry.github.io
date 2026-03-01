@@ -1,0 +1,67 @@
+---
+// Theme Control
+import ThemeController from "..//../components//theme_switch.astro";
+
+// Nav Items
+import { navLogo, navItems } from "../../config/navbar_items.ts";
+
+// Translation
+import { t } from "../../i18n/index.ts";
+import type { I18nKeys } from "../../i18n/i18nKeys.ts";
+---
+
+<nav
+  class="px-3 md:px-6 max-w-7xl flex z-1 justify-between text-gray flex-items-center flex-content-center mx-a navbar b-rd-2xl"
+>
+  <a
+    class="text-2xl font-bold tracking-tight font-mono text-inherit decoration-none nav-logo"
+    href={navLogo.path}
+  >
+    {navLogo.key}
+  </a>
+
+  {
+    navItems.map((item) => (
+      <a
+        href={item.path}
+        data-i18n={item.key}
+        class="hidden md:block text-inherit decoration-none"
+      >
+        {t(item.key as I18nKeys)}
+      </a>
+    ))
+  }
+  <ThemeController />
+
+  <nav class="flex space-x-6 font-medium flex-items-center"></nav>
+</nav>
+
+<style scoped>
+  :root {
+    --fg: #333;
+    --fg-light: #666;
+    --bg: #fff;
+    --border: #eee;
+    --hover: #007acc;
+    --radius: 4px;
+    --transition: all 0.2s ease;
+  }
+  .navbar {
+    color: var(--fg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border) padding 0.8rem 1.5rem;
+    height: 60px;
+  }
+  .navlogo {
+    font-weight: 600;
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: var(--transition);
+  }
+  .navlogo:hover {
+    opacity: 0.8;
+  }
+</style>

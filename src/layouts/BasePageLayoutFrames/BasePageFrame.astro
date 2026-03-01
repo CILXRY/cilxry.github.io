@@ -1,0 +1,76 @@
+---
+// 如果温柔是罪。
+// Base Color Style
+import "../../style/colorProfileStyle.css";
+
+// Props Here
+interface Props {
+  websiteTitle?: string;
+  websiteLanguage?: string;
+}
+const { websiteTitle = "CILXRY 的小站 ", websiteLanguage = "zh-CN" } =
+  Astro.props;
+
+// Astro Components and Layouts Here
+import NavBar from "./NavBar.astro";
+import Footer from "./Footer.astro";
+
+// import { ClientRouter } from "astro:transitions";
+---
+
+<!doctype html>
+<html lang={websiteLanguage}>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, max-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>{websiteTitle}</title>
+    <meta name="description" content="这是CILXRY的个人网站" />
+    <meta name="author" content="CILXRY" />
+    <meta property="og:title" content={websiteTitle} />
+    <meta property="og:description" content=`这是 CILXRY 的个人网站` />
+    <!-- <meta property="og:image" content="https://cilxry.cc/banner.webp"> -->
+    <!-- <meta property="og:url" content="https://cilxry.cc"> -->
+    <meta name="theme-color" content="#cccccc" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="shortcut icon" href="favicon.svg" />
+
+    <slot name="InsHeader" />
+    <!-- <ClientRouter /> -->
+  </head>
+  <body
+    class="font-sans antialiased max-w-full px-6 md:px-2 py-0 my-0 bg-[var(--cp-light-bg)] text-gray-600 dark:bg-[var(--cp-dark-bg)] dark:text-gray-400 animate-fade-in duration-500 text-left"
+  >
+    <NavBar />
+    <main class="max-w-7xl mx-auto px-2 md:px-6 pb-16 md:py-24"><slot /></main>
+    <Footer />
+  </body>
+</html>
+<style>
+  @font-face {
+    font-family: "AiDianFengYaHei";
+    src: url("/fonts/AiDianFengYaHei.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+  * {
+    font-family: "AiDianFengYaHei";
+    font-size: 14px;
+  }
+</style>
