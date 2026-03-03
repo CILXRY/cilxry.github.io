@@ -1,8 +1,8 @@
 ---
-import BasePageLayout from "../layouts/BaseLayout/BasePageLayout.astro";
-import EchoCard from "../components/styledCards/blog_post_card.astro";
+import BasePageLayout from "../layouts/BasePageLayout.astro";
+import EchoCard from "../components/StyledCards/blog_post_card.astro";
 // import EchoCardStyleSheet from "../style/card.css";
-import { assignGradients } from "../utils/exampleUtils/echoCardColorUtils.ts";
+import { assignGradients } from "../utils/ExampleUtils/echoCardColorUtils.ts";
 
 // 1. 获取所有已发布（非草稿）的博客
 import { getCollection } from "astro:content";
@@ -20,7 +20,7 @@ const gradients = assignGradients(posts.length);
       <EchoCard
         cardData={post.data}
         gradient={gradients[_index]}
-        link={`/blog/${post.slug}/`}
+        link={`/blogs/${post.slug}/`}
       />
     ))
   }

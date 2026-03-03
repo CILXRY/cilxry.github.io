@@ -1,6 +1,6 @@
-import { enUS } from "./L_en-US.ts";
-import { zhCN } from "./L_zh-CN.ts";
-import type { I18nKeys } from "./i18nKeys.ts";
+import { enUS } from "./Language-en_US.ts";
+import { zhCN } from "./Language-zh_CN.ts";
+import type { I18nKeys } from "./InternationalKeys.ts";
 
 const translations = {
   "zh-CN": zhCN,

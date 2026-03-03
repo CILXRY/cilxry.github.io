@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 // 导入库
 import fs from "fs";
 import path from "path";

@@ -23,6 +23,3 @@ pnpm-debug.log*
 # .vscode
 .vscode/extensions.json
 .vscode/settings.json
-
-# A markdown note
-command.md

@@ -1,0 +1,29 @@
+---
+import FrameCardMacOS from "@/components/StyledCards/FrameCard-macOS.astro";
+import FooterInfo from "./Footer-Info.astro";
+---
+
+<footer max-w-7xl mx-a my-10 font-mono>
+  <FrameCardMacOS>
+    <div class="md:flex text-bluegray text-xs">
+      <FooterInfo />
+      <div class="md:ml-a md:text-right transition-duration-150">
+        <p>
+          欢迎通过邮箱联系我 👉 <a href="mailto:cilxry@outlook.com" link>Here</a
+          >
+        </p>
+        <p>
+          Stacks: <a href="https://astro.build/" link>Astro</a> and <a
+            href="https://unocss.nodejs.cn/"
+            link>UnoCSS</a
+          >.
+        </p>
+      </div>
+    </div>
+  </FrameCardMacOS>
+</footer>
+
+<script>
+  const uaStr = document.getElementById("ua");
+  if (uaStr) uaStr.textContent = navigator.userAgent;
+</script>

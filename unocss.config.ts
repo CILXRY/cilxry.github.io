@@ -1,5 +1,5 @@
 import { defineConfig, presetUno } from "unocss";
-import presetAttributify from "@unocss/preset-attributify";
+import { presetAttributify } from "@unocss/preset-attributify";
 
 export default defineConfig({
   presets: [
@@ -8,7 +8,10 @@ export default defineConfig({
   ],
   theme: {
     fontFamily: {
-      baseFont: '"AiDianFengYaHei", sans-serif',
+      typicalFont: '"AiDianFengYaHei", sans-serif',
     },
+  },
+  shortcuts: {
+    link: "text-inherit hover:bg-[--cp-300] hover:text-[--cp-800] transition-all decoration-[--cp-300]",
   },
 });

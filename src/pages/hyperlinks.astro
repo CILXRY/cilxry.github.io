@@ -1,21 +1,32 @@
 ---
 import BasePageLayout from "../layouts/BasePageLayout.astro";
-import HyperlinkCard from "../components/hyperlinks/hyperlinkCard.astro";
-import AddHyperlink from "../components/hyperlinks/addHyperlink.astro";
+import HyperlinkCard from "@cp/HyperLinks/HyperlinkCard.astro";
+import AddHyperlink from "@cp/HyperLinks/AddHyperlink.astro";
+import { hyperlinks } from "@/config/Hyperlinks-Items.ts";
 ---
 
 <BasePageLayout>
-  <h2>友情链接</h2>
-  <h3>HyperLinks</h3>
-
+  <h1 m-0>友情链接</h1>
+  <h3 my-1>HyperLinks</h3>
   <div font-mono>Here's the standard hyperlinks list:</div>
-  <div grid grid-cols-1 md:grid-cols-2 wd:grid-col-4 my-2>
-    <HyperlinkCard
-      name="CILXRY 的小站"
-      content="许愿 如所愿 皆所愿"
-      reachURL={new URL("https://github.cilxry.cc")}
-      imageURL="/src/pages/CILXRY.jpg"
-    />
+  <div grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 my-2>
+    {
+      hyperlinks.map(
+        (items: {
+          name: string;
+          content: string;
+          reachUrl: string;
+          imageUrl: string;
+        }) => (
+          <HyperlinkCard
+            name={items.name}
+            content={items.content}
+            reachUrl={new URL(items.reachUrl)}
+            imageUrl={items.imageUrl}
+          />
+        ),
+      )
+    }
   </div>
   <AddHyperlink />
 </BasePageLayout>
