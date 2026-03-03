@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "new": "node ./scripts/post.ts"
+    "new": "node ./scripts/createNewFile.ts",
+    "exi": "node ./scripts/importExistFile.ts"
   },
   "dependencies": {
     "@astrojs/vue": "^5.1.4",

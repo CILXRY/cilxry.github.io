@@ -1,9 +1,9 @@
-// Imports
+// 导入库
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Generate Frontmatter Variables
+// 生成 Frontmatter 需要的内容
 const title = process.argv.slice(2).join(" ");
 if (!title) {
   console.error('你没有提供标题哦，使用 <pnpm new "标题"> 的格式重试。');
@@ -15,7 +15,7 @@ const slug = title
   .replace(/^-+|-+$/g, "");
 const date = new Date().toISOString().split("T");
 
-// Frontmatter Content
+// Frontmatter 内容
 const content = `---
 title: ${title}
 date: ${date}
@@ -27,7 +27,7 @@ description: 这是一个没有描述的文章
 
 `;
 
-// Save File
+// 保存文件
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const filePath = path.join(
