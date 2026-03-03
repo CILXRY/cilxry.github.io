@@ -1,4 +1,4 @@
-import { I18nKeys } from "./i18nKeys.ts";
+import { I18nKeys } from "./InternationalKeys.ts";
 
 export const enUS: Record<I18nKeys, string> = {
   [I18nKeys.home]: "Home",

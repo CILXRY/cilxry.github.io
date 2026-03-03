@@ -1,26 +1,26 @@
-<footer class="flex text-bluegray text-xs mt-10 w-full">
-  <div class="mr-a">
-    <p>This may a full fronted Project.</p><p>Your UA is:</p><p id="ua"></p>
-  </div>
-  <div class="m-a">
-    <p>&copy; 2026 CILXRY</p>
-    <a href="https://beian.miit.gov.cn" target="_blank">沪ICP备12345678号</a>
-  </div>
-  <div class="ml-a text-right m-3">
-    <p>
-      欢迎通过邮箱联系我 👉 <a
-        href="mailto:cilxry@outlook.com"
-        class="text-inherit">cilxry@outlook.com</a
-      >
-    </p>
-    <p>
-      The Website was made with <a
-        href="https://astro.build/"
-        class="text-inherit">Astro</a
-      > and <a href="https://unocss.nodejs.cn/" class="text-inherit">UnoCSS</a>.
-    </p>
-  </div>
-  <p></p>
+---
+import FrameCardMacOS from "@/components/StyledCards/FrameCard-macOS.astro";
+import FooterInfo from "./Footer-Info.astro";
+---
+
+<footer max-w-7xl mx-a my-10 font-mono>
+  <FrameCardMacOS>
+    <div class="md:flex text-bluegray text-xs">
+      <FooterInfo />
+      <div class="md:ml-a md:text-right transition-duration-150">
+        <p>
+          欢迎通过邮箱联系我 👉 <a href="mailto:cilxry@outlook.com" link>Here</a
+          >
+        </p>
+        <p>
+          Stacks: <a href="https://astro.build/" link>Astro</a> and <a
+            href="https://unocss.nodejs.cn/"
+            link>UnoCSS</a
+          >.
+        </p>
+      </div>
+    </div>
+  </FrameCardMacOS>
 </footer>
 
 <script>

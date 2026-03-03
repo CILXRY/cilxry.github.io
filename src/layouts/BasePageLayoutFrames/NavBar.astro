@@ -1,13 +1,13 @@
 ---
 // Theme Control
-import ThemeController from "..//../components//theme_switch.astro";
+import ThemeController from "@/components/ThemeSwitch/theme_switch.astro";
 
 // Nav Items
-import { navLogo, navItems } from "../../config/navbar_items.ts";
+import { navLogo, navItems } from "@/config/NavBar-Items.ts";
 
 // Translation
-import { t } from "../../i18n/index.ts";
-import type { I18nKeys } from "../../i18n/i18nKeys.ts";
+import { t } from "@/i18n/index.ts";
+import type { I18nKeys } from "../../i18n/InternationalKeys.ts";
 ---
 
 <nav
@@ -48,7 +48,7 @@ import type { I18nKeys } from "../../i18n/i18nKeys.ts";
   }
   .navbar {
     color: var(--fg);
-    position: sticky;
+    /* position: sticky; */
     top: 0;
     z-index: 100;
     border-bottom: 1px solid var(--border) padding 0.8rem 1.5rem;

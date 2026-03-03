@@ -14,6 +14,4 @@ export function applyThemeColor(oklch: number) {
 
   document.documentElement.style.setProperty("--primary", color);
   document.documentElement.style.setProperty("--primary-h", oklch.toString());
-
-  localStorage.setItem("theme-hue", color.toString());
 }
