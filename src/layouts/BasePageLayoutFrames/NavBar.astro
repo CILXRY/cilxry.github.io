@@ -28,7 +28,7 @@ import type { I18nKeys } from "../../i18n/InternationalKeys.ts";
           class="text-inherit decoration-none"
           text="hover:[--cp-300]"
         >
-          <div>{t(item.key as I18nKeys)}</div>
+          <span>{t(item.key as I18nKeys)}</span>
         </a>
       ))
     }
@@ -50,7 +50,6 @@ import type { I18nKeys } from "../../i18n/InternationalKeys.ts";
   }
   .navbar {
     color: var(--fg);
-    /* position: sticky; */
     top: 0;
     z-index: 100;
     border-bottom: 1px solid var(--border) padding 0.8rem 1.5rem;
