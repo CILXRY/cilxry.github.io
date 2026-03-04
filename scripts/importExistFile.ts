@@ -2,6 +2,14 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { generateFrontmatterFromFile, calculateReadingStats } from "./frontmatter.ts";
+
+// ==================== 配置区域 ====================
+const CONFIG = {
+  // 是否使用时间格式（包含时分秒），默认 false（仅日期）
+  useDateTime: false,
+};
+// ================================================
 
 // Get the source file path from command line arguments
 const sourceFilePath = process.argv[2];
@@ -12,7 +20,7 @@ if (!sourceFilePath) {
 
 // Check if the source file exists
 if (!fs.existsSync(sourceFilePath)) {
-  console.error(`文件不存在: ${sourceFilePath}`);
+  console.error(`文件不存在：${sourceFilePath}`);
   process.exit(1);
 }
 
@@ -37,29 +45,14 @@ const stats = fs.statSync(sourceFilePath);
 const birthtime = stats.birthtime.getTime() > 0 ? stats.birthtime : stats.mtime;
 const mtime = stats.mtime;
 
-// Format date as YYYY-MM-DD (like in post.ts)
-const formatDate = (date: Date) => date.toISOString().split("T")[0];
-
-// === 新增：计算字数和阅读时长 ===
-const cleanContent = content.trim();
-// 中文、英文、数字都算作字符，按中文习惯：字数 = 所有非空白字符数
-const wordCount = (cleanContent.match(/[^\s]/g) || []).length;
-// 阅读速度：中文约 300 字/分钟，英文约 200 词/分钟，此处统一按 300 字/分钟估算
-const readingTime = Math.ceil(wordCount / 300);
-
-// Generate frontmatter using date (create time) and pubDate (modify time)
-const frontmatter = `---
-title: "${baseName}"
-date: ${formatDate(birthtime)}
-pubDate: ${formatDate(mtime)}
-tags: [""]
-categories:
-description: 这是一个没有描述的文章
-wordCount: ${wordCount}
-readingTime: ${readingTime}
----
-
-`;
+// Generate frontmatter using the unified function
+const frontmatter = generateFrontmatterFromFile(
+  sourceFilePath,
+  baseName,
+  birthtime,
+  mtime,
+  CONFIG.useDateTime,
+);
 
 // Combine frontmatter and original content
 const newContent = frontmatter + content.trimStart();
@@ -86,4 +79,4 @@ fs.writeFileSync(destFilePath, newContent);
 fs.utimesSync(destFilePath, birthtime, mtime);
 
 console.log(`文件已添加到博客目录：${slug}.md`);
-console.log(`字数: ${wordCount}，预计阅读时长: ${readingTime} 分钟`);
+console.log(`字数：${calculateReadingStats(content).wordCount}，预计阅读时长：${calculateReadingStats(content).readingTime} 分钟`);

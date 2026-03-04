@@ -3,8 +3,8 @@ import { presetAttributify } from "@unocss/preset-attributify";
 
 export default defineConfig({
   presets: [
-    presetUno(), // 保留默认UnoCSS预设
-    presetAttributify(), // 启用属性化模式
+    presetUno(), // 保留默认 UnoCSS 预设
+    presetAttributify() as any, // 启用属性化模式
   ],
   theme: {
     fontFamily: {

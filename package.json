@@ -9,13 +9,15 @@
     "preview": "astro preview",
     "astro": "astro",
     "new": "node ./scripts/createNewFile.ts",
-    "exi": "node ./scripts/importExistFile.ts"
+    "exi": "node ./scripts/importExistFile.ts",
+    "update-frontmatter": "node ./scripts/updateFrontmatter.ts"
   },
   "dependencies": {
     "@astrojs/vue": "^5.1.4",
     "@lucide/astro": "^0.564.0",
     "astro": "^5.16.9",
     "culori": "^4.0.2",
+    "node-fetch": "^3.3.2",
     "vue": "^3.5.26"
   },
   "devDependencies": {

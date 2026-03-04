@@ -1,12 +1,12 @@
 ---
-import BasePageLayout from "../layouts/BasePageLayout.astro";
+import BasePageLayout from "@basePageLayout";
 import EchoCard from "../components/StyledCards/blog_post_card.astro";
 // import EchoCardStyleSheet from "../style/card.css";
 import { assignGradients } from "../utils/ExampleUtils/echoCardColorUtils.ts";
 
 // 1. 获取所有已发布（非草稿）的博客
 import { getCollection } from "astro:content";
-const posts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = await getCollection("blogs", ({ data }) => !data.draft);
 // 2. 按发布时间倒序排列（最新在前）
 const sortedPosts = posts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),

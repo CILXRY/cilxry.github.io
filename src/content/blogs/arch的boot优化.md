@@ -1,10 +1,12 @@
 ---
-title: Arch的Boot优化
+title: "Arch的Boot优化"
 date: 2/9/2026, 10:09:40 PM
 pubDate: 2/9/2026, 10:09:40 PM
 tags: [""]
-categories:
+categories: 
 description: 这是一个没有描述的文章
+wordCount: 1207
+readingTime: 5
 ---
 
 ---
