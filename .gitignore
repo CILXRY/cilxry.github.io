@@ -7,17 +7,16 @@ dist/
 node_modules/
 
 # Log Files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+*.log
 
 # Environment Variables
 .env
 .env.production
 
-# macOS-Specific files
+# System Specific files
 .DS_Store
+Thumbs.db
+db.json
 
 # Visual Studio Code Specific files
 # .vscode

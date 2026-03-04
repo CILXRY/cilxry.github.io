@@ -1,10 +1,12 @@
 ---
-title: 怎么从npm迁移到pnpm
+title: "怎么从npm迁移到pnpm"
 date: 2/4/2026, 11:47:17 AM
 pubDate: 2/4/2026, 11:47:17 AM
 tags: [""]
-categories:
+categories: 
 description: 这是一个没有描述的文章
+wordCount: 235
+readingTime: 1
 ---
 
 # 怎么从 npm 迁移到 pnpm

@@ -1,10 +1,12 @@
 ---
-title: Windows Pagefile的问题
+title: "Windows Pagefile的问题"
 date: 2/3/2026, 8:41:04 PM
 pubDate: 2/3/2026, 8:41:04 PM
 tags: [""]
-categories:
+categories: 
 description: 这是一个没有描述的文章
+wordCount: 143
+readingTime: 1
 ---
 
 # Pagefile 的问题

@@ -1,10 +1,12 @@
 ---
-title: 记迁移Ubuntu Server
+title: "记迁移Ubuntu Server"
 date: 2/9/2026, 9:29:56 PM
 pubDate: 2/9/2026, 9:29:56 PM
 tags: [""]
-categories:
-description: "迁移Ubuntu"
+categories: 
+description: 迁移Ubuntu
+wordCount: 1948
+readingTime: 7
 ---
 
 # 记迁移 Ubuntu Server

@@ -4,6 +4,14 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { generateFrontmatter, formatDate } from "./frontmatter.ts";
+
+// ==================== 配置区域 ====================
+const CONFIG = {
+  // 是否使用时间格式（包含时分秒），默认 false（仅日期）
+  useDateTime: false,
+};
+// ================================================
 
 // 生成 Frontmatter 需要的内容
 const title = process.argv.slice(2).join(" ");
@@ -15,19 +23,14 @@ const slug = title
   .toLowerCase()
   .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
   .replace(/^-+|-+$/g, "");
-const date = new Date().toISOString().split("T");
+const now = new Date();
 
-// Frontmatter 内容
-const content = `---
-title: ${title}
-date: ${date}
-pubDate: ${date}
-tags: [""]
-categories:
-description: 这是一个没有描述的文章
----
-
-`;
+// 使用统一的 frontmatter 生成函数
+const content = generateFrontmatter({
+  title,
+  date: now,
+  pubDate: now,
+}, CONFIG.useDateTime);
 
 // 保存文件
 const __filename = fileURLToPath(import.meta.url);

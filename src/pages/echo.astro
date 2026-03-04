@@ -1,5 +1,7 @@
 ---
-import BasePageLayout from "../layouts/BasePageLayout.astro";
+
+
+import BasePageLayout from "@basePageLayout";
 const timeline = [
   {
     type: "article",
@@ -29,12 +31,14 @@ const timeline = [
     ai_summary: " 作者分享了搭建个人博客的心路历程。",
   },
 ];
-import EchoCard from "../components/cards/echo_card.astro";
+import EchoCard from "@cp/StyledCards/echo_card.astro";
 // import EchoCardStyleSheet from "../style/card.css";
 import { assignGradients } from   "../utils/ExampleUtils/echoCardColorUtils.ts";
 
 const gradients = assignGradients(timeline.length);
-
+if (true) {
+  return Astro.redirect("/");
+}
 ---
 
 <BasePageLayout>

@@ -19,21 +19,23 @@ import type { I18nKeys } from "../../i18n/InternationalKeys.ts";
   >
     {navLogo.key}
   </a>
-
-  {
-    navItems.map((item) => (
-      <a
-        href={item.path}
-        data-i18n={item.key}
-        class="hidden md:block text-inherit decoration-none"
-      >
-        {t(item.key as I18nKeys)}
-      </a>
-    ))
-  }
-  <ThemeController />
-
-  <nav class="flex space-x-6 font-medium flex-items-center"></nav>
+  <div hidden sm:block flex gap-3xl max-w-4xl>
+    {
+      navItems.map((item) => (
+        <a
+          href={item.path}
+          data-i18n={item.key}
+          class="text-inherit decoration-none"
+          text="hover:[--cp-300]"
+        >
+          <div>{t(item.key as I18nKeys)}</div>
+        </a>
+      ))
+    }
+  </div>
+  <div>
+    <ThemeController />
+  </div>
 </nav>
 
 <style scoped>

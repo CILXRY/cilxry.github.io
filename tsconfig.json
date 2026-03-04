@@ -14,9 +14,9 @@
     "lib": ["ES2020", "DOM"],
     "baseUrl": ".",
     "paths": {
+      "@basePageLayout": ["src/layouts/BasePageLayout.astro"],
       "@/*": ["src/*"],
-      "@cp/*": ["src/components/*"],
-      "@layouts/*": ["src/layouts/*"]
+      "@cp/*": ["src/components/*"]
     }
   }
 }
