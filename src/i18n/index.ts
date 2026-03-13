@@ -9,7 +9,7 @@ const translations = {
 
 const defaultLanguage = "zh-CN";
 
-export function t(
+export function translate(
   key: I18nKeys,
   lang: keyof typeof translations = defaultLanguage,
 ): string {

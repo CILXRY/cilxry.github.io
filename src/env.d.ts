@@ -18,4 +18,10 @@ declare namespace astroHTML.JSX {
   interface HtmlHTMLAttributes<T> {
     children?: any;
   }
+  interface ButtonHTMLAttributes<T> {
+    children?: any;
+  }
+  interface LiHTMLAttributes<T> {
+    children?: any;
+  }
 }

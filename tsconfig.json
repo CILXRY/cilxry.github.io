@@ -15,8 +15,9 @@
     "baseUrl": ".",
     "paths": {
       "@basePageLayout": ["src/layouts/BasePageLayout.astro"],
-      "@/*": ["src/*"],
-      "@cp/*": ["src/components/*"]
+      "@cp/*": ["src/components/*"],
+      "@lc/*": ["src/layouts/LayoutComponents/*"],
+      "@/*": ["src/*"]
     }
   }
 }

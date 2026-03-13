@@ -1,0 +1,171 @@
+---
+// 布局组件演示页面
+import BasePageFrame from "@/layouts/BasePageLayoutFrames/BasePageFrame.astro";
+import ReadingProgress from "@/layouts/LayoutComponents/ReadingProgress.astro";
+import BreadcrumbNav from "@/layouts/LayoutComponents/BreadcrumbNav.astro";
+import TableOfContents from "@/layouts/LayoutComponents/TableOfContents.astro";
+import BackToTop from "@/layouts/LayoutComponents/BackToTop.astro";
+import SocialLinks from "@/layouts/LayoutComponents/SocialLinks.astro";
+import AnnouncementBar from "@/layouts/LayoutComponents/AnnouncementBar.astro";
+import SearchBox from "@/layouts/LayoutComponents/SearchBox.astro";
+
+const demoContent = `
+# 布局组件演示
+
+这是一个展示所有可用布局组件的演示页面。
+
+## 📦 已集成的组件
+
+### 1. ReadingProgress - 阅读进度条
+看页面顶部，那个彩色的进度条就是！随着你向下滚动，它会显示当前阅读进度。
+
+### 2. BreadcrumbNav - 面包屑导航
+就在标题下方，显示当前位置的导航路径。
+
+### 3. TableOfContents - 文章目录
+在桌面端右侧，会自动生成文章目录。移动端会显示悬浮按钮。
+
+### 4. BackToTop - 返回顶部
+向下滚动后，右下角会出现的按钮。
+
+### 5. SocialLinks - 社交链接
+在右上角，显示 GitHub、Email 等社交链接。
+
+### 6. AnnouncementBar - 公告栏
+页面顶部的通知横幅，可以关闭。
+
+### 7. SearchBox - 搜索框
+右上角的搜索功能（需要配置搜索索引）。
+
+## 🎨 特性展示
+
+- ✅ 响应式设计
+- ✅ 暗色模式支持
+- ✅ 平滑动画效果
+- ✅ 无障碍访问支持
+- ✅ UnoCSS 原子化样式
+
+## 🚀 使用方法
+
+查看 \`src/layouts/LayoutComponents/\` 目录下的 README.md 文件获取详细使用说明。
+`;
+---
+
+<BasePageFrame websiteTitle="布局组件演示 | CILXRY">
+  <!-- 公告栏 -->
+  <AnnouncementBar
+    message="🎉 欢迎来到布局组件演示页面！所有新功能都已集成完毕～"
+    type="success"
+    dismissible={true}
+    storageKey="demo-announcement"
+  />
+  
+  <!-- 阅读进度条 -->
+  <ReadingProgress />
+  
+  <div class="max-w-7xl mx-auto">
+    <!-- 顶部工具栏 -->
+    <div class="flex justify-between items-center mb-6 mt-8 gap-4 flex-wrap">
+      <!-- 面包屑 -->
+      <BreadcrumbNav
+        items={[
+          { label: "演示", href: "/layouts-demo" },
+          { label: "布局组件" }
+        ]}
+      />
+      
+      <!-- 搜索和社交链接 -->
+      <div class="flex items-center gap-4">
+        <SearchBox placeholder="搜索..." />
+        <SocialLinks
+          links={[
+            { name: "GitHub", url: "https://github.com/CILXRY", icon: "github" },
+            { name: "Email", url: "mailto:cilxry@outlook.com", icon: "mail" }
+          ]}
+        />
+      </div>
+    </div>
+    
+    <!-- 主内容区 -->
+    <main class="lg:pr-80 pb-16 md:py-8">
+      <article class="prose prose-gray dark:prose-invert max-w-none">
+        <h1 id="布局组件演示">布局组件演示 ✨</h1>
+        
+        <p class="text-gray-600 dark:text-gray-400">
+          这是一个展示所有可用布局组件的演示页面。向下滚动查看所有功能！
+        </p>
+        
+        <hr class="my-6 border-gray-200 dark:border-gray-700" />
+        
+        <h2 id="已集成的组件">📦 已集成的组件</h2>
+        
+        <h3 id="readingprogress-阅读进度条">1. ReadingProgress - 阅读进度条</h3>
+        <p>看页面顶部，那个彩色的进度条就是！随着你向下滚动，它会显示当前阅读进度。</p>
+        
+        <h3 id="breadcrumbnav-面包屑导航">2. BreadcrumbNav - 面包屑导航</h3>
+        <p>就在标题下方，显示当前位置的导航路径。</p>
+        
+        <h3 id="tableofcontents-文章目录">3. TableOfContents - 文章目录</h3>
+        <p>在桌面端右侧，会自动生成文章目录。移动端会显示悬浮按钮。</p>
+        
+        <h3 id="backtotop-返回顶部">4. BackToTop - 返回顶部</h3>
+        <p>向下滚动后，右下角会出现的按钮。</p>
+        
+        <h3 id="sociallinks-社交链接">5. SocialLinks - 社交链接</h3>
+        <p>在右上角，显示 GitHub、Email 等社交链接。</p>
+        
+        <h3 id="announcementbar-公告栏">6. AnnouncementBar - 公告栏</h3>
+        <p>页面顶部的通知横幅，可以关闭。</p>
+        
+        <h3 id="searchbox-搜索框">7. SearchBox - 搜索框</h3>
+        <p>右上角的搜索功能（需要配置搜索索引）。</p>
+        
+        <h2 id="特性展示">🎨 特性展示</h2>
+        <ul>
+          <li>✅ 响应式设计</li>
+          <li>✅ 暗色模式支持</li>
+          <li>✅ 平滑动画效果</li>
+          <li>✅ 无障碍访问支持</li>
+          <li>✅ UnoCSS 原子化样式</li>
+        </ul>
+        
+        <h2 id="使用方法">🚀 使用方法</h2>
+        <p>
+          查看 <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">src/layouts/LayoutComponents/</code> 目录下的 
+          <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">README.md</code> 文件获取详细使用说明。
+        </p>
+        
+        <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded">
+          <p class="text-blue-800 dark:text-blue-200 font-medium">
+            💡 提示：所有组件都已在此页面中启用，你可以直接体验它们的功能！
+          </p>
+        </div>
+      </article>
+    </main>
+    
+    <!-- 页面内目录 -->
+    <TableOfContents title="本页目录" maxDepth={3} />
+  </div>
+  
+  <!-- 返回顶部 -->
+  <BackToTop />
+</BasePageFrame>
+
+<style>
+  /* 优化代码块样式 */
+  :global(.prose pre) {
+    @apply bg-gray-50 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto;
+  }
+  
+  :global(.prose code) {
+    @apply text-sm;
+  }
+  
+  :global(.prose h2) {
+    @apply mt-12 mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100;
+  }
+  
+  :global(.prose h3) {
+    @apply mt-8 mb-4 text-xl font-semibold text-gray-800 dark:text-gray-200;
+  }
+</style>

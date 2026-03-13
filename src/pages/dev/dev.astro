@@ -1,0 +1,41 @@
+---
+import BasePageLayout from "../layouts/BasePageLayout.astro";
+import { messages } from "../content/LogFlows/test.ts";
+import { getPositiveRelativeTimeDiff } from "../utils/getRelativeTime.ts";
+---
+
+<BasePageLayout
+  ><div class="ch">
+    <h2>Log Flows</h2>
+
+    <div class="ChatHistory">
+      {
+        messages.map((msg, index) => (
+          <div flex flex-auto my="3" shadow>
+            <img
+              alt={msg.sender}
+              src={msg.headIcon}
+              h-12
+              w-12
+              m-1
+              b-rd-2
+              object-cover
+              transition-colors
+            />
+            <div mx-2 w-full mt1 pr1>
+              <header flex w-full text-sm>
+                {msg.sender}
+                <span ml-a>
+                  {index === 0
+                    ? msg.time
+                    : `${getPositiveRelativeTimeDiff(msg.time, messages[index - 1].time)}`}
+                </span>
+              </header>
+              <p m-0>{msg.content}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</BasePageLayout>

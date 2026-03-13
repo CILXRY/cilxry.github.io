@@ -1,0 +1,76 @@
+---
+/**
+ * SidebarCardExamples - 侧边栏卡片使用示例
+ * 演示如何在实际项目中使用 SidebarCard 组件
+ */
+
+import SidebarCard from './SidebarCard.astro';
+---
+
+<!-- 这是一个示例文件，展示如何创建和使用多个侧边栏卡片 -->
+<!-- 你可以将这段代码复制到 SidebarNav.astro 或其他需要的位置 -->
+
+<div class="sidebar-cards-demo">
+  <!-- 示例 1: 欢迎公告卡片 -->
+  <SidebarCard 
+    title="🎉 欢迎来到我的小站"
+    content="这里记录我的技术学习、生活点滴和心情随笔"
+    icon="notification"
+    gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+  />
+
+  <!-- 示例 2: 个人简介卡片 -->
+  <SidebarCard 
+    title="关于作者"
+    content="热爱编程的开发者，喜欢分享技术知识和生活感悟"
+    icon="user"
+    gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+    href="/about"
+    clickable={true}
+  />
+
+  <!-- 示例 3: 精选推荐卡片 -->
+  <SidebarCard 
+    title="⭐ 精选文章"
+    content="查看我精心准备的技术教程和心得分享"
+    icon="star"
+    gradient="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+    href="/featured"
+    clickable={true}
+  />
+
+  <!-- 示例 4: 心情随笔卡片 -->
+  <SidebarCard 
+    title="💝 心情记录"
+    content="记录生活中的美好瞬间和感悟"
+    icon="heart"
+    gradient="linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
+    href="/memory"
+    clickable={true}
+  />
+
+  <!-- 示例 5: 自定义图标卡片 -->
+  <SidebarCard 
+    title="📚 技术栈"
+    content="TypeScript · Astro · Vue · Node.js"
+    customIconSvg='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'
+    gradient="linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)"
+  />
+
+  <!-- 示例 6: 信息提示卡片 -->
+  <SidebarCard 
+    title="💡 小提示"
+    content="网站正在持续更新中，欢迎关注！"
+    icon="info"
+    gradient="linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)"
+  />
+</div>
+
+<style scoped>
+  .sidebar-cards-demo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+</style>

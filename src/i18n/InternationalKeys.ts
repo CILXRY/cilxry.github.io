@@ -4,4 +4,5 @@ export enum I18nKeys {
   archive = "archive",
   links = "links",
   tags = "tags",
+  moments = "moments",
 }

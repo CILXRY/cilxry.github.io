@@ -1,7 +1,7 @@
 ---
 // 如果温柔是罪。
 // Base Color Style
-import "../../style/colorProfileStyle.css";
+import "@/style/colorProfileStyle.css";
 
 // Props Here
 interface Props {
@@ -12,10 +12,9 @@ const { websiteTitle = "CILXRY 的小站 ", websiteLanguage = "zh-CN" } =
   Astro.props;
 
 // Astro Components and Layouts Here
-import NavBar from "./NavBar.astro";
-import Footer from "./Footer.astro";
-
-// import { ClientRouter } from "astro:transitions";
+import NavBar from "@lc/NavigationBar/NavBar.astro";
+import Footer from "@lc/Footer/Footer.astro";
+import SwupTransition from "@cp/Swup/SwupTransition.vue";
 ---
 
 <!doctype html>
@@ -27,48 +26,123 @@ import Footer from "./Footer.astro";
       content="width=device-width, initial-scale=1, max-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>{websiteTitle}</title>
-    <meta name="description" content="这是CILXRY的个人网站" />
+    <meta name="description" content="这是 CILXRY 的个人网站" />
     <meta name="author" content="CILXRY" />
     <meta property="og:title" content={websiteTitle} />
     <meta property="og:description" content="这是 CILXRY 的个人网站" />
     <!-- <meta property="og:image" content="https://cilxry.cc/banner.webp"> -->
     <!-- <meta property="og:url" content="https://cilxry.cc"> -->
-    <meta name="theme-color" content="#cccccc" />
+    <!-- <meta name="theme-color" content="#cccccc" /> -->
     <meta name="robots" content="noindex, nofollow" />
     <link rel="shortcut icon" href="favicon.svg" />
 
     <slot name="InsHeader" />
-    <!-- <ClientRouter /> -->
   </head>
   <body
-    class="font-sans antialiased max-w-full px-6 md:px-12 py-0 my-0 bg-[var(--cp-light-bg)] text-gray-600 dark:bg-[var(--cp-dark-bg)] dark:text-gray-400 animate-fade-in duration-500 text-left"
+    id="swup"
+    data-swup
+    class="l-bg-primary dark:d-bg-primary"
+    text="left [var(--light-text-secondary)] dark:[var(--gray-400)]"
+    font-sans
+    antialiased
+    max-w-full
+    px="6 md:12"
+    py-0
+    my-0
+    duration-500
   >
     <NavBar />
-    <main class="max-w-7xl mx-auto pb-16 md:py-24"><slot /></main>
+    <main
+      id="swup-transitions"
+      data-swup-transition-container
+      class="max-w-7xl mx-auto pb-16 md:py-24"
+    >
+      <slot />
+    </main>
     <Footer />
+
+    <!-- SWUP Vue 组件 -->
+    <SwupTransition client:only="vue" />
   </body>
 </html>
+
+<!-- SWUP 初始化脚本 -->
+<!-- <script type="module">
+  // 动态导入 SWUP
+  import('swup').then(({ default: Swup }) => {
+    const swup = new Swup({
+      containers: ['#swup-transitions'],
+      cache: true,
+      preload: true,
+      animateHistoryBrowsing: true,
+    });
+
+    console.log('✅ SWUP 已初始化');
+
+    swup.on('transitionStart', () => {
+      console.log('🚀 页面过渡开始');
+    });
+
+    swup.on('transitionEnd', () => {
+      console.log('✅ 页面过渡结束');
+    });
+
+    swup.on('pageLoaded', () => {
+      console.log('📄 页面已加载');
+    });
+  }).catch(err => {
+    console.error('❌ SWUP 加载失败:', err);
+  });
+</script> -->
+
 <style>
-  @font-face {
-    font-family: "AiDianFengYaHei";
-    src: url("/fonts/AiDianFengYaHei.woff2") format("woff2");
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+  /* ===== SWUP 页面过渡动画 ===== */
+  /*
+   * SWUP 在页面切换时会添加这些类到 <html> 标签：
+   * - is-animating: 整个动画过程中
+   * - is-leaving: 页面离开阶段
+   * - is-rendering: 新页面渲染阶段
+   * - is-mounted: 新页面已挂载
+   */
+
+  /* 基础过渡效果 - 淡入淡出 */
+  html.is-animating {
+    overflow: hidden; /* 防止动画期间滚动 */
   }
-  @keyframes fade-in {
+
+  /* 旧页面离开：淡出 */
+  html.is-leaving body#swup {
+    animation: swup-fade-out 0.4s ease-in-out forwards;
+  }
+
+  /* 新页面进入：隐藏直到挂载 */
+  html.is-rendering body#swup {
+    opacity: 0;
+  }
+
+  /* 新页面挂载后：淡入显示 */
+  html.is-mounted body#swup {
+    animation: swup-fade-in 0.4s ease-in-out forwards;
+  }
+
+  @keyframes swup-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes swup-fade-in {
     from {
       opacity: 0;
-      transform: translateY(10px);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
     }
   }
-  .animate-fade-in {
-    animation: fade-in 0.6s ease-out forwards;
-  }
+
   * {
     font-family: "AiDianFengYaHei";
     font-size: 14px;

@@ -1,0 +1,210 @@
+---
+// 页面内目录组件 - 自动提取 Markdown 标题生成导航
+import List from "@lucide/astro/icons/list";
+
+interface Props {
+  title?: string;
+  maxDepth?: number;
+}
+
+const { title = "目录" } = Astro.props;
+---
+
+<div
+  id="table-of-contents"
+  class="hidden lg:block fixed right-8 top-24 w-64 max-h-[calc(100vh-8rem)] overflow-y-auto bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-lg z-40"
+>
+  <div
+    class="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200 dark:border-gray-700"
+  >
+    <List class="w-4 h-4 text-gray-500" />
+    <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">
+      {title}
+    </h3>
+  </div>
+
+  <nav id="toc-content" class="space-y-1"></nav>
+</div>
+
+<button
+  id="toc-toggle-mobile"
+  class="lg:hidden fixed bottom-24 right-4 w-10 h-10 bg-cp-500 hover:bg-cp-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-50"
+  aria-label="切换目录"
+>
+  <List class="w-5 h-5" />
+</button>
+
+<div
+  id="toc-mobile-panel"
+  class="lg:hidden fixed inset-0 bg-black/50 z-50 hidden"
+>
+  <div
+    class="absolute right-0 top-0 h-full w-80 max-w-full bg-white dark:bg-gray-900 shadow-xl p-6 overflow-y-auto"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+        {title}
+      </h3>
+      <button
+        id="toc-mobile-close"
+        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <nav id="toc-mobile-content" class="space-y-2"></nav>
+  </div>
+</div>
+
+<script>
+  interface HeadingItem {
+    id: string;
+    text: string;
+    level: number;
+  }
+
+  // 从 Astro.props 传递的 maxDepth
+  const maxDepth = parseInt(Astro.props.maxDepth?.toString() || "3");
+
+  const tocContent = document.getElementById("toc-content");
+  const tocMobileContent = document.getElementById("toc-mobile-content");
+  const tocToggle = document.getElementById("toc-toggle-mobile");
+  const tocMobilePanel = document.getElementById("toc-mobile-panel");
+  const tocMobileClose = document.getElementById("toc-mobile-close");
+
+  // 提取页面中的标题
+  function extractHeadings(): HeadingItem[] {
+    const headings: HeadingItem[] = [];
+    const elements = document.querySelectorAll(
+      "h1[id], h2[id], h3[id], h4[id]",
+    );
+
+    elements.forEach((heading) => {
+      const level = parseInt(heading.tagName.charAt(1));
+      if (level <= maxDepth) {
+        headings.push({
+          id: heading.id,
+          text: heading.textContent || "",
+          level,
+        });
+      }
+    });
+
+    return headings;
+  }
+
+  // 生成目录项 HTML
+  function generateTocItems(headings: HeadingItem[], isMobile = false): string {
+    if (headings.length === 0) {
+      return '<p class="text-sm text-gray-500">暂无目录</p>';
+    }
+
+    return headings
+      .map((item) => {
+        const indentClass = isMobile ? "" : `pl-${(item.level - 2) * 3}`;
+        const sizeClass = isMobile ? "text-base py-2" : "text-xs py-1";
+
+        return `
+        <a
+          href="#${item.id}"
+          class="block ${indentClass} ${sizeClass} text-gray-600 dark:text-gray-400 hover:text-cp-600 dark:hover:text-cp-400 transition-colors truncate"
+          data-heading-level="${item.level}"
+        >
+          ${item.text}
+        </a>
+      `;
+      })
+      .join("");
+  }
+
+  // 初始化目录
+  function initTOC() {
+    const headings = extractHeadings();
+
+    if (tocContent) {
+      tocContent.innerHTML = generateTocItems(headings);
+    }
+
+    if (tocMobileContent) {
+      tocMobileContent.innerHTML = generateTocItems(headings, true);
+    }
+
+    // 如果没有标题，隐藏目录容器
+    if (headings.length === 0) {
+      document.getElementById("table-of-contents")?.classList.add("hidden");
+      tocToggle?.classList.add("hidden");
+    }
+  }
+
+  // 移动端目录开关
+  tocToggle?.addEventListener("click", () => {
+    tocMobilePanel?.classList.toggle("hidden");
+  });
+
+  tocMobileClose?.addEventListener("click", () => {
+    tocMobilePanel?.classList.add("hidden");
+  });
+
+  tocMobilePanel?.addEventListener("click", (e) => {
+    if (e.target === tocMobilePanel) {
+      tocMobilePanel.classList.add("hidden");
+    }
+  });
+
+  // 平滑滚动到锚点
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    if (
+      target.tagName === "A" &&
+      target.getAttribute("href")?.startsWith("#")
+    ) {
+      const href = target.getAttribute("href");
+      if (href && href !== "#") {
+        const element = document.querySelector(href);
+        if (element) {
+          e.preventDefault();
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+
+          // 移动端点击后关闭面板
+          tocMobilePanel?.classList.add("hidden");
+        }
+      }
+    }
+  });
+
+  // 监听 URL hash 变化
+  window.addEventListener("hashchange", () => {
+    const currentHash = window.location.hash;
+    if (currentHash) {
+      const element = document.querySelector(currentHash);
+      element?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  // 初始化
+  initTOC();
+</script>
+
+<style>
+  #toc-content a[data-heading-level="3"],
+  #toc-mobile-content a[data-heading-level="3"] {
+    margin-left: 0.75rem;
+  }
+
+  #toc-content a[data-heading-level="4"],
+  #toc-mobile-content a[data-heading-level="4"] {
+    margin-left: 1.5rem;
+  }
+</style>

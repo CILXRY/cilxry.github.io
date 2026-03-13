@@ -1,0 +1,57 @@
+---
+// 面包屑导航组件
+import Home from "@lucide/astro/icons/house";
+import ChevronRight from "@lucide/astro/icons/chevron-right";
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items = [] } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <nav
+      class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-6"
+      aria-label="Breadcrumb"
+    >
+      <a
+        href="/"
+        class="hover:text-cp-600 dark:hover:text-cp-400 transition-colors"
+        aria-label="首页"
+      >
+        <Home class="w-4 h-4" />
+      </a>
+
+      {items.map((item) => (
+        <div>
+          <ChevronRight class="w-4 h-4 text-gray-400" />
+          {item.href ? (
+            <a
+              href={item.href}
+              class="hover:text-cp-600 dark:hover:text-cp-400 transition-colors"
+            >
+              {item.label}
+            </a>
+          ) : (
+            <span class="text-gray-900 dark:text-gray-100 font-medium">
+              {item.label}
+            </span>
+          )}
+        </div>
+      ))}
+    </nav>
+  )
+}
+
+<style>
+  nav a {
+    text-decoration: none;
+  }
+</style>

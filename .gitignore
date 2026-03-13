@@ -22,3 +22,7 @@ db.json
 # .vscode
 .vscode/extensions.json
 .vscode/settings.json
+
+# contents
+
+src/content/*

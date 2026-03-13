@@ -1,0 +1,231 @@
+---
+// 博客文章专用布局框架（带目录、进度条等增强功能）
+import BasePageFrame from "./BasePageFrame.astro";
+import ReadingProgress from "@/layouts/LayoutComponents/ReadingProgress.astro";
+import BreadcrumbNav from "@/layouts/LayoutComponents/BreadcrumbNav.astro";
+import TableOfContents from "@/layouts/LayoutComponents/TableOfContents.astro";
+import BackToTop from "@/layouts/LayoutComponents/BackToTop.astro";
+import SocialLinks from "@/layouts/LayoutComponents/SocialLinks.astro";
+
+interface Props {
+  websiteTitle?: string;
+  websiteLanguage?: string;
+  category?: string;
+  showTOC?: boolean;
+  showSocialLinks?: boolean;
+}
+
+const {
+  websiteTitle = "CILXRY 的小站",
+  websiteLanguage = "zh-CN",
+  category,
+  showTOC = true,
+  showSocialLinks = false,
+} = Astro.props;
+---
+
+<BasePageFrame {websiteTitle} {websiteLanguage}>
+  <!-- 阅读进度条 -->
+  <ReadingProgress />
+
+  <div class="max-w-7xl mx-auto">
+    <!-- 主内容区 -->
+    <main class={`pb-16 md:py-24 ${showTOC ? "lg:pr-80" : ""}`}>
+      <!-- 面包屑导航 -->
+      {
+        category && (
+          <BreadcrumbNav
+            items={[
+              { label: "博客", href: "/blog" },
+              {
+                label: category!,
+                href: `/blog?category=${category!.toLowerCase()}`,
+              },
+            ]}
+          />
+        )
+      }
+
+      <!-- 文章内容插槽 -->
+      <article class="prose prose-gray dark:prose-invert max-w-none">
+        <slot />
+      </article>
+
+      <!-- 社交链接（可选） -->
+      {
+        showSocialLinks && (
+          <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+            <SocialLinks
+              links={[
+                {
+                  name: "GitHub",
+                  url: "https://github.com/CILXRY",
+                  icon: "github",
+                },
+                {
+                  name: "Email",
+                  url: "mailto:cilxry@outlook.com",
+                  icon: "mail",
+                },
+              ]}
+            />
+          </div>
+        )
+      }
+    </main>
+
+    <!-- 页面内目录（仅桌面端显示） -->
+    {showTOC && <TableOfContents title="文章目录" maxDepth={3} />}
+  </div>
+
+  <!-- 返回顶部按钮 -->
+  <BackToTop />
+</BasePageFrame>
+
+<style is:global>
+  /* Callout 提示框样式 */
+  .callout {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    border-left: 4px solid;
+    background-color: var(--callout-bg);
+    border-color: var(--callout-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .callout:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .callout-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--callout-title);
+    font-size: 0.95rem;
+  }
+
+  .callout-icon {
+    font-size: 1.1rem;
+  }
+
+  .callout-content {
+    color: var(--callout-content);
+    line-height: 1.7;
+  }
+
+  .callout-content p {
+    margin: 0.5rem 0;
+  }
+
+  .callout-content code {
+    background-color: rgba(125, 125, 125, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .callout-content pre {
+    background-color: rgba(0, 0, 0, 0.05);
+    margin: 0.75rem 0;
+  }
+
+  /* Info - 蓝色 */
+  .callout-info {
+    --callout-bg: oklch(97% 0.02 250);
+    --callout-border: oklch(65% 0.15 250);
+    --callout-title: oklch(45% 0.15 250);
+    --callout-content: oklch(35% 0.1 250);
+  }
+
+  .dark .callout-info {
+    --callout-bg: oklch(20% 0.05 250);
+    --callout-border: oklch(55% 0.15 250);
+    --callout-title: oklch(70% 0.1 250);
+    --callout-content: oklch(80% 0.08 250);
+  }
+
+  /* Warn/Warning - 橙色 */
+  .callout-warn,
+  .callout-warning {
+    --callout-bg: oklch(97% 0.03 75);
+    --callout-border: oklch(70% 0.18 75);
+    --callout-title: oklch(50% 0.18 75);
+    --callout-content: oklch(40% 0.12 75);
+  }
+
+  .dark .callout-warn,
+  .dark .callout-warning {
+    --callout-bg: oklch(22% 0.06 75);
+    --callout-border: oklch(60% 0.18 75);
+    --callout-title: oklch(75% 0.12 75);
+    --callout-content: oklch(82% 0.1 75);
+  }
+
+  /* Error - 红色 */
+  .callout-error {
+    --callout-bg: oklch(97% 0.02 25);
+    --callout-border: oklch(65% 0.18 25);
+    --callout-title: oklch(45% 0.18 25);
+    --callout-content: oklch(35% 0.12 25);
+  }
+
+  .dark .callout-error {
+    --callout-bg: oklch(20% 0.05 25);
+    --callout-border: oklch(55% 0.18 25);
+    --callout-title: oklch(70% 0.12 25);
+    --callout-content: oklch(80% 0.1 25);
+  }
+
+  /* Success/Tip - 绿色 */
+  .callout-success,
+  .callout-tip {
+    --callout-bg: oklch(97% 0.02 150);
+    --callout-border: oklch(65% 0.15 150);
+    --callout-title: oklch(45% 0.15 150);
+    --callout-content: oklch(35% 0.1 150);
+  }
+
+  .dark .callout-success,
+  .dark .callout-tip {
+    --callout-bg: oklch(20% 0.05 150);
+    --callout-border: oklch(55% 0.15 150);
+    --callout-title: oklch(70% 0.1 150);
+    --callout-content: oklch(80% 0.08 150);
+  }
+
+  /* Note - 灰色 */
+  .callout-note {
+    --callout-bg: oklch(97% 0.01 250);
+    --callout-border: oklch(60% 0.08 250);
+    --callout-title: oklch(45% 0.08 250);
+    --callout-content: oklch(40% 0.06 250);
+  }
+
+  .dark .callout-note {
+    --callout-bg: oklch(18% 0.03 250);
+    --callout-border: oklch(50% 0.08 250);
+    --callout-title: oklch(70% 0.06 250);
+    --callout-content: oklch(80% 0.05 250);
+  }
+
+  /* Danger - 深红色 */
+  .callout-danger {
+    --callout-bg: oklch(96% 0.03 355);
+    --callout-border: oklch(55% 0.2 355);
+    --callout-title: oklch(40% 0.2 355);
+    --callout-content: oklch(30% 0.15 355);
+  }
+
+  .dark .callout-danger {
+    --callout-bg: oklch(18% 0.06 355);
+    --callout-border: oklch(50% 0.2 355);
+    --callout-title: oklch(70% 0.15 355);
+    --callout-content: oklch(78% 0.12 355);
+  }
+</style>

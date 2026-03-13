@@ -1,0 +1,80 @@
+---
+// Theme Control
+import ThemeController from "@/components/ThemeSwitch/theme_switch.astro";
+
+// Nav Items
+import { navLogo, navItems } from "@/config/NavBar-Items.ts";
+
+// Translation
+import { translate } from "@/i18n/index.ts";
+import type { I18nKeys } from "@/i18n/InternationalKeys.ts";
+
+// Get current page path
+const currentPath = Astro.url.pathname;
+
+// Icon
+import House from "@lucide/astro/icons/house";
+---
+
+<nav
+  px-4
+  flex
+  z-50
+  h-16
+  md:px-8
+  mx-auto
+  max-w-7xl
+  items-center
+  rounded-b-xl
+  duration-300
+  transition-all
+  justify-between
+>
+  <!-- <div flex>
+    <House />
+    <div>Current: {currentPath}</div>
+  </div> -->
+  <a
+    class="text-2xl font-bold tracking-tight font-mono no-underline transition-all duration-200 p2 text-2xl font-bold tracking-tight font-mono no-underline transition-all duration-200 hover:l-bg-secondary l-text-muted hover:l-text-muted transition-all transition-duration-400 b-rd-xl px-4 py-2"
+    text=" hover:[var(--light-link-hover)] dark:hover:[var(--dark-link-default)]"
+    href={navLogo.path}
+  >
+    {navLogo.key}
+  </a>
+
+  <div hidden sm:flex gap-2 items-center transition-all>
+    {
+      navItems.map((item) => {
+        const isActive = item.path === currentPath;
+        return (
+          <a href={item.path} data-i18n={item.key} decoration-none>
+            <span
+              px4
+              py2
+              text-sm
+              b-rd-xl
+              font-bold
+              no-underline
+              duration-600
+              l-text-muted
+              property-all
+              hover:text-lg
+              tracking-tight
+              dark:d-text-muted
+              hover:l-text-muted
+              hover:l-bg-secondary
+              dark-hover:d-text-muted
+              dark-hover:d-bg-secondary
+            >
+              {translate(item.key as I18nKeys)}
+            </span>
+          </a>
+        );
+      })
+    }
+  </div>
+
+  <div>
+    <ThemeController />
+  </div>
+</nav>

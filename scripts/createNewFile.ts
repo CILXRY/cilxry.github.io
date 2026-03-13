@@ -40,7 +40,7 @@ const filePath = path.join(
   "..",
   "src",
   "content",
-  "blog",
+  "blogs",
   `${slug}.md`,
 );
 fs.mkdirSync(path.dirname(filePath), { recursive: true });

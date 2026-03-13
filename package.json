@@ -15,16 +15,25 @@
   "dependencies": {
     "@astrojs/vue": "^5.1.4",
     "@lucide/astro": "^0.564.0",
+    "@swup/astro": "^1.8.0",
+    "@unocss/preset-wind3": "^66.6.6",
     "astro": "^5.16.9",
     "culori": "^4.0.2",
+    "lucide-vue-next": "^0.577.0",
     "node-fetch": "^3.3.2",
+    "pinia": "^3.0.4",
+    "sharp": "^0.34.5",
+    "swup": "^4.8.3",
     "vue": "^3.5.26"
   },
   "devDependencies": {
     "@types/culori": "^4.0.1",
+    "@types/mdast": "^4.0.4",
     "@types/node": "^25.2.3",
     "@unocss/astro": "^66.6.2",
     "@unocss/preset-attributify": "^66.6.2",
+    "@unocss/preset-tagify": "^66.6.6",
+    "unified": "^11.0.5",
     "unocss": "^66.6.2"
   }
 }

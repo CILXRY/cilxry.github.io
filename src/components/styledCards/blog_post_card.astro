@@ -6,97 +6,346 @@ interface Props {
     title: string;
     excerpt?: string;
     date?: string;
-    ai_summary?: string;
+    pubDate?: string;
+    tags?: string[];
+    categories?: string;
     description: string;
+    wordCount?: number;
+    readingTime?: number;
+    ai_summary?: string;
   };
   gradient?: string;
   link?: string;
 }
 
-const { cardData, gradient = "linear-gradient(315deg, #ffbc00, #ff0058)", link } = Astro.props;
+const {
+  cardData,
+  gradient = "linear-gradient(315deg, var(--cp-400), var(--cp-600))",
+  link,
+} = Astro.props;
+
+// 格式化日期显示
+const formatDate = (dateStr?: string) => {
+  if (!dateStr) return "";
+  try {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("zh-CN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  } catch {
+    return dateStr;
+  }
+};
 ---
 
 <div class="box" style={`--glow-gradient: ${gradient}`}>
-  <!-- <span></span> -->
   <div class="content w-full">
-    <h2 class="text-3xl color-white mb-2">{cardData.title}</h2>
-    <p>{cardData.excerpt}</p>
-    <p>{cardData.description}</p>
-    <a href={link}>Read more</a>
+    <!-- 标题 -->
+    <h2 class="title">{cardData.title}</h2>
+
+    <!-- 元信息行：日期、分类、阅读时长 -->
+    <div
+      class="meta-row"
+      display="flex"
+      flex
+      gap-2
+      items-center
+      mb-3
+      text-sm
+      opacity-70
+    >
+      {
+        cardData.pubDate && (
+          <span class="meta-item" display="flex" items-center gap-1>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <>
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                <line x1="16" x2="16" y1="2" y2="6" />
+                <line x1="8" x2="8" y1="2" y2="6" />
+                <line x1="3" x2="21" y1="10" y2="10" />
+              </>
+            </svg>
+            {formatDate(cardData.pubDate)}
+          </span>
+        )
+      }
+      {
+        cardData.categories && (
+          <span class="meta-item" display="flex" items-center gap-1>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <>
+                <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+                <line x1="16" x2="2" y1="8" y2="22" />
+                <line x1="17.5" x2="9" y1="15" y2="15" />
+              </>
+            </svg>
+            {cardData.categories}
+          </span>
+        )
+      }
+      {
+        cardData.readingTime && (
+          <span class="meta-item" display="flex" items-center gap-1>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <>
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </>
+            </svg>
+            {cardData.readingTime} 分钟阅读
+          </span>
+        )
+      }
+      {
+        cardData.wordCount && !cardData.readingTime && (
+          <span class="meta-item" display="flex" items-center gap-1>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+            </svg>
+            {cardData.wordCount} 字
+          </span>
+        )
+      }
+    </div>
+
+    <!-- 描述内容 -->
+    <p class="description">{cardData.description || cardData.excerpt}</p>
+
+    <!-- 标签列表 -->
+    {
+      cardData.tags && cardData.tags.length > 0 && cardData.tags[0] !== "" && (
+        <div class="tags-row" display="flex" flex gap-2 flex-wrap mt-3>
+          {cardData.tags.map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )
+    }
+
+    <!-- 阅读更多按钮 -->
+    {
+      link && (
+        <a href={link} class="read-more">
+          阅读更多
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="arrow-icon"
+          >
+            <>
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </>
+          </svg>
+        </a>
+      )
+    }
   </div>
 </div>
 
 <style scoped>
   .box {
-  box-sizing: border-box;
-  font-family: consolas;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 10px 0;
-  position: relative;
-  display: flex;
-  width: 100%;
-  /* height: 200px; */
-  /* margin-bottom: 120px; */
-  transition: 0.5s;
-}
+    box-sizing: border-box;
+    font-family: consolas;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    position: relative;
+    display: flex;
+    width: 100%;
+    transition: 0.5s;
+  }
 
-.content {
-  position: relative;
-  left: 0;
-  padding: 20px 40px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  z-index: 1;
-  transition: 0.5s;
-}
+  .content {
+    position: relative;
+    left: 0;
+    padding: 20px 40px;
+    color: var(--gray-100);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1;
+    transition: 0.5s;
+  }
 
-.content p {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  line-height: 1.4rem;
-}
+  .title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--cp-200), var(--cp-400));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
-.content a {
-  display: inline-block;
-  font-size: 1.1rem;
-  color: #111;
-  background: #fff;
-  padding: 10px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: 700;
-  margin-top: 5px;
-  transition: 0.6s;
-}
+  .meta-row {
+    color: var(--gray-400);
+    flex-wrap: wrap;
+  }
 
-.box:hover .content {
-  /* left: -25px; */
-  padding: 60px 40px;
-}
+  .meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
 
-.content a:hover {
-  background-color: #222;
-  color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 15px #222;
-}
+  .description {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    line-height: 1.6rem;
+    color: var(--gray-200);
+  }
 
-/* .box::before {
-  content: "";
-  position: absolute;
-  background: #fff;
-  top: 0;
-  left: 40px;
-  width: 20%;
-  height: 100%;
-  text-decoration: none;
-  border-radius: 8px;
-  transform: skewX(7deg);
-  transition: 0.5s;
-}
+  .tags-row {
+    margin-top: 12px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    background: rgba(173, 170, 248, 0.15);
+    color: var(--cp-300);
+    border-radius: 12px;
+    border: 1px solid rgba(173, 170, 248, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .tag:hover {
+    background: rgba(173, 170, 248, 0.25);
+    border-color: var(--cp-400);
+    transform: translateY(-2px);
+  }
+
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    color: var(--gray-900);
+    background: var(--cp-200);
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    margin-top: 16px;
+    transition: all 0.4s ease;
+  }
+
+  .read-more:hover {
+    background: var(--cp-400);
+    color: var(--gray-50);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(173, 170, 248, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .arrow-icon {
+    transition: transform 0.3s ease;
+  }
+
+  .read-more:hover .arrow-icon {
+    transform: translateX(4px);
+  }
+
+  .box:hover .content {
+    padding: 60px 40px;
+  }
+
+  /* 深色模式适配 */
+  @media (prefers-color-scheme: dark) {
+    .content {
+      background: rgba(30, 30, 50, 0.6);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .title {
+      background: linear-gradient(135deg, var(--cp-300), var(--cp-500));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .description {
+      color: var(--gray-300);
+    }
+
+    .tag {
+      background: rgba(173, 170, 248, 0.2);
+      border-color: rgba(173, 170, 248, 0.4);
+    }
+  }
+
+  /* 响应式布局 */
+  @media (max-width: 768px) {
+    .content {
+      padding: 20px 24px;
+    }
+
+    .title {
+      font-size: 1.5rem;
+    }
+
+    .meta-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .box:hover .content {
+      padding: 40px 24px;
+    }
+  }
 </style>

@@ -8,6 +8,10 @@ import { generateFrontmatterFromFile, calculateReadingStats } from "./frontmatte
 const CONFIG = {
   // 是否使用时间格式（包含时分秒），默认 false（仅日期）
   useDateTime: false,
+  // 是否使用 UUID 作为文件名，默认 false（使用标题生成的 slug）
+  useUUID: false,
+  // 输出目录路径，默认为项目内的 src/content/blogs，可改为任意绝对路径
+  outputDir: "C:\\Users\\cilxry\\Documents\\cilxry-markdown-pages\\posts", // 留空使用默认值，或填写如 "D:\\MyBlog\\posts"
 };
 // ================================================
 
@@ -17,6 +21,9 @@ if (!sourceFilePath) {
   console.error('你没有提供文件路径哦，使用 <pnpm exi "文件路径"> 的格式重试。');
   process.exit(1);
 }
+
+// Get optional category from command line arguments
+const category = process.argv[3] || "";
 
 // Check if the source file exists
 if (!fs.existsSync(sourceFilePath)) {
@@ -52,6 +59,7 @@ const frontmatter = generateFrontmatterFromFile(
   birthtime,
   mtime,
   CONFIG.useDateTime,
+  category,
 );
 
 // Combine frontmatter and original content
@@ -60,13 +68,15 @@ const newContent = frontmatter + content.trimStart();
 // Save File
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Generate filename based on configuration
+const filename = CONFIG.useUUID 
+  ? `${crypto.randomUUID()}.md`
+  : `${slug}.md`;
+
 const destFilePath = path.join(
-  __dirname,
-  "..",
-  "src",
-  "content",
-  "blog",
-  `${slug}.md`,
+  CONFIG.outputDir || path.join(__dirname, "..", "src", "content", "blogs"),
+  filename,
 );
 
 // Create directory if not exists
@@ -78,5 +88,8 @@ fs.writeFileSync(destFilePath, newContent);
 // Preserve original file timestamps (atime and mtime) on the file system level
 fs.utimesSync(destFilePath, birthtime, mtime);
 
-console.log(`文件已添加到博客目录：${slug}.md`);
+console.log(`文件已添加到博客目录：${filename}`);
 console.log(`字数：${calculateReadingStats(content).wordCount}，预计阅读时长：${calculateReadingStats(content).readingTime} 分钟`);
+if (category) {
+  console.log(`分类：${category}`);
+}

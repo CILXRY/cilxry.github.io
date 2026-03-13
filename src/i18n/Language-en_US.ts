@@ -6,4 +6,5 @@ export const enUS: Record<I18nKeys, string> = {
   [I18nKeys.archive]: "Archive",
   [I18nKeys.links]: "Hyperlinks",
   [I18nKeys.tags]: "Tags",
+  [I18nKeys.moments]: 'Moments'
 };
