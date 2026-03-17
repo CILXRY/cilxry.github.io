@@ -1,0 +1,91 @@
+// 全局变量
+// Global Variables
+:root {
+  // ==============================
+  // 颜色变量
+  // 基础内容
+  // 背景
+  // 字体
+
+  // ==============================
+  // 颜色变量定义
+  // Primary Color Define
+
+  // 浅色模式亮度 (light-ightness): 0.8
+  // 深色模式亮度 (dark-lightness): 0.6
+  --light-lightness: 0.8;
+  --dark-lightness: 0.6;
+
+  // 色度 (Hue): 0.1
+  // 越小越灰
+  --primary-h: 0.1;
+
+  // 色相 (Chroma): 根据前端调整主题色
+  --primary-c: 0.11;
+
+  // 主色 Primary Color
+  --primary: oklch(var(--primary-l-light) var(--primary-c) var(--primary-h));
+
+  // ==============================
+  // 基础内容定义 Base Define
+
+  // ==============================
+  // 背景 Background
+
+  --light-background-primary: oklch(0.98 0.02 var(--primary-h));
+  --light-background-secondary: oklch(0.95 0.03 var(--primary-h));
+  --light-background-tertiary: oklch(0.92 0.04 var(--primary-h));
+  --dark-background-primary: oklch(0.15 0.03 var(--primary-h));
+  --dark-background-secondary: oklch(0.18 0.04 var(--primary-h));
+
+  // ==============================
+  //
+  // Background
+
+  // ==============================
+  // 字体 Font Lists
+  --font-list-fallback:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu,
+    Cantarell, "Helvetica Neue", sans-serif;
+
+  --font-list-standard: "AiDianFengYaHei", var(--base-font-fallback-list);
+  --font-list-coding:
+    "JetBrainsMono", "Fira Code", "Consolas", monospace,
+    var(--base-font-fallback-list);
+}
+
+// 字体导入
+
+@font-face {
+  font-family: "AiDianFengYaHei";
+  src: url("/fonts/AiDianFengYaHei.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "OPPOSans";
+  src: url("/fonts/OPPO_Sans.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrainsMono";
+  src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "OPPOSans";
+  src: url("/fonts/OPPO_Sans.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  font-family: var(--font-list-standard);
+  font-size: 14px;
+}

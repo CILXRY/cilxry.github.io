@@ -1,21 +1,26 @@
 // Intro: https://docs.astro.build/zh-cn/reference/configuration-reference
-import { defineConfig } from "astro/config";
+
 import UnoCSS from "unocss/astro";
-import vue from "@astrojs/vue";
 import swup from "@swup/astro";
+import vue from "@astrojs/vue";
+import { defineConfig } from "astro/config";
+
+// Markdown Plugins
+// Intro: https://docs.astro.build/zh-cn/guides/markdown-content/#markdown-%E6%8F%92%E4%BB%B6
+import rehypeCodeBlock from "./src/plugins/rehype-code-block.ts";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeSlug from "rehype-slug";
+import remarkBreaks from "remark-breaks";
 import remarkCallout from "./src/plugins/remark-callout.ts";
 
 export default defineConfig({
   site: "https://cilxry.github.io/",
   base: "/",
   trailingSlash: "ignore",
-  integrations: [
-    UnoCSS(), 
-    vue(), 
-    swup(),
-  ],
+  integrations: [UnoCSS(), vue(), swup()],
   markdown: {
-    remarkPlugins: [remarkCallout],
+    remarkPlugins: [remarkCallout, remarkBreaks],
+    rehypePlugins: [rehypeSlug, rehypeAutolinkHeadings, rehypeCodeBlock],
     shikiConfig: {
       themes: {
         light: "one-light",

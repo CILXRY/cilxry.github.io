@@ -12,9 +12,10 @@ const { websiteTitle = "CILXRY 的小站 ", websiteLanguage = "zh-CN" } =
   Astro.props;
 
 // Astro Components and Layouts Here
-import NavBar from "@lc/NavigationBar/NavBar.astro";
-import Footer from "@lc/Footer/Footer.astro";
+import NavBar from "@cp/Navbar.astro";
+import Footer from "@cp/Footer/Footer.astro";
 import SwupTransition from "@cp/Swup/SwupTransition.vue";
+import CodeBlockCopy from "@cp/Blog/CodeBlockCopy.vue";
 ---
 
 <!doctype html>
@@ -55,7 +56,7 @@ import SwupTransition from "@cp/Swup/SwupTransition.vue";
     <main
       id="swup-transitions"
       data-swup-transition-container
-      class="max-w-7xl mx-auto pb-16 md:py-24"
+      class="max-w-7xl mx-auto pb-16 md:py-20"
     >
       <slot />
     </main>
@@ -63,6 +64,9 @@ import SwupTransition from "@cp/Swup/SwupTransition.vue";
 
     <!-- SWUP Vue 组件 -->
     <SwupTransition client:only="vue" />
+    
+    <!-- 代码块复制功能组件 -->
+    <CodeBlockCopy client:load />
   </body>
 </html>
 
@@ -143,8 +147,5 @@ import SwupTransition from "@cp/Swup/SwupTransition.vue";
     }
   }
 
-  * {
-    font-family: "AiDianFengYaHei";
-    font-size: 14px;
-  }
+
 </style>
