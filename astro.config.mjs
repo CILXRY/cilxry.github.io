@@ -7,20 +7,34 @@ import { defineConfig } from "astro/config";
 
 // Markdown Plugins
 // Intro: https://docs.astro.build/zh-cn/guides/markdown-content/#markdown-%E6%8F%92%E4%BB%B6
-import rehypeCodeBlock from "./src/plugins/rehype-code-block.ts";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkCallout from "./src/plugins/remark-callout.ts";
+import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
+
+
+import expressiveCode from "astro-expressive-code";
 
 export default defineConfig({
   site: "https://cilxry.github.io/",
   base: "/",
   trailingSlash: "ignore",
-  integrations: [UnoCSS(), vue(), swup()],
+  integrations: [
+    UnoCSS(),
+    vue(),
+    swup(),
+    expressiveCode(),
+  ],
   markdown: {
     remarkPlugins: [remarkCallout, remarkBreaks],
-    rehypePlugins: [rehypeSlug, rehypeAutolinkHeadings, rehypeCodeBlock],
+    rehypePlugins: [
+      rehypeSlug,
+      [
+        rehypeAutolinkHeadings,
+        { behavior: "append", properties: { className: ["header-anchor"] } },
+      ],
+    ],
     shikiConfig: {
       themes: {
         light: "one-light",

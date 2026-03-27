@@ -1,0 +1,70 @@
+// ================================
+//  颜色变量定义
+// ================================
+:root {
+  // ==============================
+  // 颜色变量定义
+  // Primary Color Define
+
+  // 浅色模式亮度 (light-ightness): 0.8
+  // 深色模式亮度 (dark-lightness): 0.6
+  --light-lightness: 0.8;
+  --dark-lightness: 0.6;
+
+  // 色度 (Hue): 0.1
+  // 越小越灰
+  --primary-h: 0.1;
+
+  // 色相 (Chroma): 根据前端调整主题色
+  --primary-c: 0.11;
+
+  // 主色 Primary Color
+  --primary: oklch(var(--primary-l-light) var(--primary-c) var(--primary-h));
+
+  // ==============================
+
+  /* ========================================
+   * 兼容旧变量 (保留向后兼容)
+   * ======================================== */
+
+  --cp: oklch(var(--primary-l-light) var(--primary-c) var(--primary-h));
+  --cp-50: oklch(
+    calc(var(--primary-l-light) + 0.15) var(--primary-c) var(--primary-h)
+  );
+  --cp-400: oklch(var(--primary-l-light) var(--primary-c) var(--primary-h));
+  --cp-500: oklch(var(--primary-l-dark) var(--primary-c) var(--primary-h));
+  --cp-600: oklch(
+    calc(var(--primary-l-dark) + 0.08) var(--primary-c) var(--primary-h)
+  );
+  --cp-700: oklch(
+    calc(var(--primary-l-dark) + 0.12) var(--primary-c) var(--primary-h)
+  );
+  --cp-800: oklch(
+    calc(var(--primary-l-dark) + 0.15) var(--primary-c) var(--primary-h)
+  );
+  --cp-900: oklch(
+    calc(var(--primary-l-dark) - 0.15) var(--primary-c) var(--primary-h)
+  );
+
+  // 文字颜色
+
+  // C == 0 还取色度干嘛
+  --tp: oklch(0.21 0 0);
+  --ts: oklch(0.37 0 0);
+  --tpd: oklch(0.85 0 var(--primary-h));
+  --tsd: oklch(0.75 0 var(--primary-h));
+
+  /* 中性灰（用于文字、背景、边框） */
+  --neutral-950: oklab(0.08 0 0); /* 几乎纯黑（高对比文字） */
+  --neutral-900: oklab(0.15 0 0); /* 主要文字色 */
+  --neutral-800: oklab(0.25 0 0); /* 次要文字 */
+  --neutral-400: oklab(0.65 0 0); /* 边框、分隔线 */
+  --neutral-200: oklab(0.88 0 0); /* 输入框背景、卡片底色 */
+  --neutral-100: oklab(0.96 0 0); /* 页面背景 */
+  --neutral-50: oklab(0.98 0 0); /* 极浅背景 */
+
+  /* 语义色（可选，也可用主色衍生） */
+  --success: oklch(0.7 0.2 140); /* 绿 */
+  --warning: oklch(0.85 0.2 90); /* 黄 */
+  --error: oklch(0.7 0.25 20); /* 红 */
+}

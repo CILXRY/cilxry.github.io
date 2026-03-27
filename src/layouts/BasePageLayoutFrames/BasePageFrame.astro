@@ -64,40 +64,11 @@ import CodeBlockCopy from "@cp/Blog/CodeBlockCopy.vue";
 
     <!-- SWUP Vue 组件 -->
     <SwupTransition client:only="vue" />
-    
+
     <!-- 代码块复制功能组件 -->
     <CodeBlockCopy client:load />
   </body>
 </html>
-
-<!-- SWUP 初始化脚本 -->
-<!-- <script type="module">
-  // 动态导入 SWUP
-  import('swup').then(({ default: Swup }) => {
-    const swup = new Swup({
-      containers: ['#swup-transitions'],
-      cache: true,
-      preload: true,
-      animateHistoryBrowsing: true,
-    });
-
-    console.log('✅ SWUP 已初始化');
-
-    swup.on('transitionStart', () => {
-      console.log('🚀 页面过渡开始');
-    });
-
-    swup.on('transitionEnd', () => {
-      console.log('✅ 页面过渡结束');
-    });
-
-    swup.on('pageLoaded', () => {
-      console.log('📄 页面已加载');
-    });
-  }).catch(err => {
-    console.error('❌ SWUP 加载失败:', err);
-  });
-</script> -->
 
 <style>
   /* ===== SWUP 页面过渡动画 ===== */

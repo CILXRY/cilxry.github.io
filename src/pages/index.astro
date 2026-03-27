@@ -1,15 +1,26 @@
 ---
-// 我望见她就此昙花一现
-// Astro Components and Layouts Here
+// 首页 Dashboard 布局 - 使用 macOS 卡片样式
 import BasePageLayout from "@basePageLayout";
 import MacOSLikeWindow from "../components/StyledCards/FrameCard-macOS.astro";
+import { DEFAULT_PAGE, HOMEPAGE_CONFIG } from "@/config/c-config.ts";
 
-// Vue Components Here
+// Vue Components
 import Typer from "../components/Typer/type.vue";
 import SwupTransition from "../components/Swup/SwupTransition.vue";
-// import Sleepy from "../components/sleepy.vue";
 
-// Contents Here
+// 获取博客数据（如果配置显示博客卡片）
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+let recentPosts: CollectionEntry<"blogs">[] = [];
+if (HOMEPAGE_CONFIG.showBlogCards && DEFAULT_PAGE === "blog") {
+  const posts = await getCollection("blogs", ({ data }) => !data.draft);
+  recentPosts = posts
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .slice(0, 3); // 只显示最近 3 篇
+}
+
+// Intro 卡片数据
 import { items } from "@/config/Intro-Items.ts";
 ---
 
@@ -17,16 +28,51 @@ import { items } from "@/config/Intro-Items.ts";
   <Typer client:load />
   <SwupTransition client:only="vue" />
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-6">
-    {items.map((item, _index) => <MacOSLikeWindow cardData={item} />)}
-  </div>
+  <!-- 第二行：博客文章卡片（如果配置显示） -->
+  {
+    DEFAULT_PAGE === "blog" && HOMEPAGE_CONFIG.showBlogCards && recentPosts.length > 0 && (
+      <div class="mt-12 mb-6">
+        <h2 class="text-2xl font-bold mb-6 dark:text-gray-100">
+          最新文章
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        {recentPosts.map((post, _index) => (
+          <MacOSLikeWindow>
+            <a href={`/blogs/${post.slug}/`} class="block no-underline">
+              <h3 class="text-lg font-semibold mb-2 dark:text-gray-100">
+                {post.data.title}
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {new Date(post.data.pubDate).toLocaleDateString("zh-CN")}
+              </p>
+              {post.data.description && (
+                <p class="text-sm text-gray-500 dark:text-gray-500 line-clamp-2">
+                  {post.data.description}
+                </p>
+              )}
+            </a>
+          </MacOSLikeWindow>
+        ))}
+      </div>
+    )
+  }
 
-  <!-- <MacOSLikeWindow
-      variable={{
-        header: "Sleepy 状态面板",
-        content: "这里应该是让我放 Sleepy 的地方，但是他还在重构",
-      }}
-    >
-      <Sleepy />
-    </MacOSLikeWindow> -->
+  <!-- 第三行：预留其他功能卡片位置 -->
+  {
+    HOMEPAGE_CONFIG.showStatsCard && (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 mb-6">
+        <MacOSLikeWindow>
+          <div class="p-4">
+            <h3 class="text-lg font-semibold mb-3 dark:text-gray-100">
+              统计信息
+            </h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              这里可以显示文章数量、访问统计等
+            </p>
+          </div>
+        </MacOSLikeWindow>
+      </div>
+    )
+  }
 </BasePageLayout>

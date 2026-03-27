@@ -69,10 +69,35 @@ Mar 14
 2. 添加了一个 JetBrains Mono Regular 字体，未来考虑怎么添加多字重
 3. 接着在这两天依旧是新添加了一些半吊子的东西：
 
-- 隐私协议（ docs 目录下）
+- 隐私协议 \* `docs` 目录下
 - 用 AI 写一个代码块可复制的操作，然后它写了个用不了的
 - 计划写一个后端，在 `@/config` 下新增了 `backend` 配置项
 
 4. 计划重构 `Styles`，将在未来把散落各地的 `Style` 统整理到 `Styles` 内且尽可能采用 `scss`
 5. 在 `astro.config.mjs` 增加 `remark` 和 `rehype` 插件
 6. 小配置修改
+
+## 0.0.2-2
+
+Mar 19 - Mar 27
+
+生日快乐。
+
+（几天后）
+心烦意乱。
+
+好久没来做更新了，
+写一点最近的修改。
+
+### Changes
+
+1. Readme 的小调整，比如说增加了 VSCode 调试描述
+2. 给 Gitignore 雕了个花
+3. 增加了新的 Package，比如 ExpressiveCode
+4. `tsconfig.json` 新增了 `src/config` 的别名
+5. 新增了图片灯箱效果，使用 [ViewImage.js](https://tokinx.github.io/ViewImage/) 实现
+6. 字体和展示效果小幅修改
+7. 修改了 `i18n` 的一些逻辑，现在 `Keys` 会从需要的文件动态生成了
+8. 修改了主页面的内容，计划重构
+9. 从 `css` 迁移到 `scss`，正在进行中
+10. 增加了一个在后端检测过程可能用到的心跳检测

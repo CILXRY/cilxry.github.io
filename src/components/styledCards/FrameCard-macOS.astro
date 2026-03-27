@@ -5,12 +5,11 @@ interface Props {
     header_eng?: string;
     content?: string;
   };
+  floatUp: boolean ;
 }
 
-const { cardData } = Astro.props;
+const { cardData,floatUp= false } = Astro.props;
 ---
-
-<!-- macOS 风格卡片 -->
 <div
   class="mac-card
     w-full rounded-xl mb-0

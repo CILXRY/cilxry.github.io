@@ -11,16 +11,216 @@ const sortedPosts = posts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 const gradients = assignGradients(posts.length);
+
+// 3. 提取所有唯一的分类和标签
+const categories = [...new Set(posts.map(post => post.data.categories).filter(Boolean))];
+const tags = [...new Set(posts.flatMap(post => post.data.tags || []))];
 ---
 
 <BasePageLayout>
-  {
-    sortedPosts.map((post, _index) => (
-      <EchoCard
-        cardData={post.data}
-        gradient={gradients[_index]}
-        link={`/blogs/${post.slug}/`}
+  <!-- 搜索和过滤控制栏 -->
+  <div class="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+    <!-- 搜索框 -->
+    <div class="mb-4">
+      <input
+        type="text"
+        id="blog-search"
+        placeholder="搜索文章标题或描述..."
+        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
       />
-    ))
-  }
+    </div>
+
+    <!-- 分类和标签过滤器 -->
+    <div class="flex flex-wrap gap-4">
+      <!-- 分类选择 -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          📁 分类
+        </label>
+        <select
+          id="category-filter"
+          class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
+        >
+          <option value="">全部分类</option>
+          {categories.map((category) => (
+            <option value={category!}>{category}</option>
+          ))}
+        </select>
+      </div>
+
+      <!-- 标签选择 -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          🏷️ 标签
+        </label>
+        <select
+          id="tag-filter"
+          class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
+        >
+          <option value="">全部标签</option>
+          {tags.map((tag) => (
+            <option value={tag}>{tag}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    <!-- 激活的过滤器显示 -->
+    <div id="active-filters" class="mt-4 flex flex-wrap gap-2 hidden">
+      <!-- 动态插入激活的过滤器标签 -->
+    </div>
+
+    <!-- 结果计数 -->
+    <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+      显示 <span id="result-count">{sortedPosts.length}</span> / {sortedPosts.length} 篇文章
+    </div>
+  </div>
+
+  <!-- 博客卡片列表 -->
+  <div id="blog-list">
+    {sortedPosts.map((post, index) => {
+      // 将 Date 转换为字符串以匹配 EchoCard 的类型定义
+      const cardData = {
+        title: post.data.title,
+        description: post.data.description,
+        pubDate: post.data.pubDate.toISOString(),
+        tags: post.data.tags || [],
+        categories: post.data.categories || undefined,
+        wordCount: post.data.wordCount,
+        readingTime: post.data.readingTime,
+      };
+      return (
+        <EchoCard
+          cardData={cardData}
+          gradient={gradients[index]}
+          link={`/blogs/${post.slug}/`}
+          data-category={post.data.categories || ""}
+          data-tags={(post.data.tags || []).join(",")}
+        />
+      );
+    })}
+  </div>
 </BasePageLayout>
+
+<script>
+  // 博客搜索和过滤功能
+  const searchInput = document.getElementById("blog-search") as HTMLInputElement;
+  const categoryFilter = document.getElementById("category-filter") as HTMLSelectElement;
+  const tagFilter = document.getElementById("tag-filter") as HTMLSelectElement;
+  const activeFiltersContainer = document.getElementById("active-filters");
+  const resultCount = document.getElementById("result-count");
+  const blogList = document.getElementById("blog-list");
+
+  let currentCategory = "";
+  let currentTag = "";
+  let currentSearchQuery = "";
+
+  // 过滤博客文章
+  function filterBlogs() {
+    const cards = blogList?.querySelectorAll("[data-category]");
+    let visibleCount = 0;
+
+    cards?.forEach((card) => {
+      const category = card.getAttribute("data-category") || "";
+      const tags = card.getAttribute("data-tags") || "";
+      const title = card.querySelector("h3")?.textContent?.toLowerCase() || "";
+      const description = card.querySelector("p")?.textContent?.toLowerCase() || "";
+
+      // 检查是否匹配所有条件
+      const matchesCategory = !currentCategory || category === currentCategory;
+      const matchesTag = !currentTag || tags.includes(currentTag);
+      const matchesSearch = !currentSearchQuery || 
+        title.includes(currentSearchQuery.toLowerCase()) || 
+        description.includes(currentSearchQuery.toLowerCase());
+
+      if (matchesCategory && matchesTag && matchesSearch) {
+        card.classList.remove("hidden");
+        visibleCount++;
+      } else {
+        card.classList.add("hidden");
+      }
+    });
+
+    // 更新结果计数
+    if (resultCount) {
+      resultCount.textContent = visibleCount.toString();
+    }
+
+    // 更新活动过滤器显示
+    updateActiveFilters();
+  }
+
+  // 更新活动过滤器标签
+  function updateActiveFilters() {
+    if (!activeFiltersContainer) return;
+
+    const filters = [];
+    if (currentCategory) {
+      filters.push({ type: "category", value: currentCategory });
+    }
+    if (currentTag) {
+      filters.push({ type: "tag", value: currentTag });
+    }
+
+    if (filters.length === 0) {
+      activeFiltersContainer.classList.add("hidden");
+    } else {
+      activeFiltersContainer.classList.remove("hidden");
+      activeFiltersContainer.innerHTML = filters
+        .map(
+          (filter) => `
+          <span class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm">
+            ${filter.type === "category" ? "📁" : "🏷️"} ${filter.value}
+            <button 
+              onclick="removeFilter('${filter.type}')"
+              class="ml-1 hover:text-blue-900 dark:hover:text-blue-100 transition-colors"
+              aria-label="移除过滤器"
+            >
+              ✕
+            </button>
+          </span>
+        `,
+        )
+        .join("");
+    }
+  }
+
+  // 移除过滤器
+  (window as any).removeFilter = function(type: string) {
+    if (type === "category") {
+      currentCategory = "";
+      if (categoryFilter) categoryFilter.value = "";
+    } else if (type === "tag") {
+      currentTag = "";
+      if (tagFilter) tagFilter.value = "";
+    }
+    filterBlogs();
+  };
+
+  // 事件监听
+  searchInput?.addEventListener("input", (e) => {
+    currentSearchQuery = (e.target as HTMLInputElement).value.trim();
+    filterBlogs();
+  });
+
+  categoryFilter?.addEventListener("change", (e) => {
+    currentCategory = (e.target as HTMLSelectElement).value;
+    filterBlogs();
+  });
+
+  tagFilter?.addEventListener("change", (e) => {
+    currentTag = (e.target as HTMLSelectElement).value;
+    filterBlogs();
+  });
+</script>
+
+<style>
+  /* 为隐藏的卡片添加过渡动画 */
+  #blog-list > [*] {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  #blog-list > [*].hidden {
+    display: none;
+  }
+</style>

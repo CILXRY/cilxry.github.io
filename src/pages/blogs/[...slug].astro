@@ -26,6 +26,15 @@ if (!post || post.data.draft) {
 const { Content } = await post.render();
 
 import Calendar from "@lucide/astro/icons/calendar-days";
+
+// 声明 ViewImage 的全局类型
+declare global {
+  interface Window {
+    ViewImage?: {
+      init: (selector: string) => void;
+    };
+  }
+}
 ---
 
 <BasePageLayout>
@@ -57,18 +66,17 @@ import Calendar from "@lucide/astro/icons/calendar-days";
       </div>
     </header>
 
-    <div class="markdown-main-style max-w-full">
+    <div class="markdown-main-style max-w-full" view-image>
       <Content />
     </div>
   </article>
+  <script src="/scripts/view-image.min.js" is:inline></script>
+  <script >
+    window.ViewImage && ViewImage.init("img");
+  </script>
 </BasePageLayout>
 
 <style scoped>
-  /* .post-header {
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 2px solid var(--gray-300);
-  } */
 
   .post-meta {
     display: flex;
@@ -79,7 +87,6 @@ import Calendar from "@lucide/astro/icons/calendar-days";
   }
 
   .post-date {
-    /* padding: 0.5rem 1rem; */
     background-color: var(--gray-100);
     border-radius: 8px;
     border: 1px solid var(--gray-300);
