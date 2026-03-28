@@ -23,5 +23,5 @@ export function validateI18nKeys(translations: Record<string, string>, lang: str
       `[i18n] 请在 src/i18n/Language-${lang.replace('-', '_')}.ts 中补充这些翻译`
     );
   }
-  console.info(`${lang} 语言包完整`)
+  console.info(`[i18n] ${lang} 语言包完整`)
 }

@@ -11,21 +11,13 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkCallout from "./src/plugins/remark-callout.ts";
-import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
-
-
 import expressiveCode from "astro-expressive-code";
 
 export default defineConfig({
   site: "https://cilxry.github.io/",
   base: "/",
   trailingSlash: "ignore",
-  integrations: [
-    UnoCSS(),
-    vue(),
-    swup(),
-    expressiveCode(),
-  ],
+  integrations: [UnoCSS(), vue(), swup(), expressiveCode()],
   markdown: {
     remarkPlugins: [remarkCallout, remarkBreaks],
     rehypePlugins: [
