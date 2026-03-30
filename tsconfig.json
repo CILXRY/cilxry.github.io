@@ -13,11 +13,13 @@
     "allowUnusedLabels": false,
     "moduleResolution": "node16",
     "allowUnreachableCode": false,
+    "strictNullChecks": true,
     "paths": {
       "@basePageLayout": ["src/layouts/BasePageLayout.astro"],
       "@cp/*": ["src/components/*"],
       "@cfg/*": ["src/config/*"],
       "@lc/*": ["src/layouts/LayoutComponents/*"],
+      "@ut/*":["src/utils/*"],
       "@/*": ["src/*"]
     }
   }

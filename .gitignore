@@ -8,6 +8,7 @@ src/content/*
 
 # Current Rules
 rules/*
+.lingma/rules/*
 
 # ======================================
 # === WILL BE IGNORED ALL TIME UNDER ===
