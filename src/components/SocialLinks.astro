@@ -1,0 +1,37 @@
+---
+// Social Links Component
+import { Github, Mail, Twitter, Linkedin } from "@lucide/astro";
+
+interface Props {
+  links?: Array<{
+    name: string;
+    url: string;
+    icon: string;
+  }>;
+}
+
+const { links = [] } = Astro.props;
+
+const iconMap: Record<string, any> = {
+  github: Github,
+  mail: Mail,
+  twitter: Twitter,
+  linkedin: Linkedin,
+};
+---
+
+<div class="flex items-center gap-3">
+  {links.map((link) => {
+    const Icon = iconMap[link.icon] || Github;
+    return (
+      <a
+        href={link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={link.name}
+      >
+        <Icon />
+      </a>
+    );
+  })}
+</div>

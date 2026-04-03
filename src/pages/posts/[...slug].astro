@@ -1,0 +1,112 @@
+---
+import { safeGetCollection } from "@ut/content/safeCollection.ts";
+import BasePageLayout from "@basePageLayout";
+import "@/styles/standardBlogPage.scss";
+
+export async function getStaticPaths() {
+  const allPosts = await safeGetCollection("posts");
+  return allPosts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const allPosts = await safeGetCollection("posts");
+const post = allPosts.find((p) => p.slug === slug);
+
+if (!post || post.data.draft) {
+  return Astro.redirect("/404");
+}
+
+// 渲染 Markdown 内容
+const { Content } = await post.render();
+
+import Calendar from "@lucide/astro/icons/calendar-days";
+
+// 声明 ViewImage 的全局类型
+declare global {
+  interface Window {
+    ViewImage?: {
+      init: (selector: string) => void;
+    };
+  }
+}
+---
+
+<BasePageLayout k={post.data.title} styled={"default"}>
+  <article
+    py4
+    px8
+    l-bg-secondary
+    rounded-2xl
+    dark:d-bg-secondary
+    dark:d-text-primary
+  >
+    <header class="post-header">
+      <h1
+        class="post-title"
+        font800
+        text-4xl
+        mb-6
+        bg-clip-text
+        l-text-muted
+        dark:d-text-muted
+      >
+        {post.data.title}
+      </h1>
+      <div class="post-meta" p0 m0>
+        <div class="post-date" px1 py2 m0 flex items-center gap-2>
+          <Calendar size="16" />
+          {post.data.creation.toLocaleDateString("zh-CN")}
+        </div>
+      </div>
+    </header>
+
+    <div class="markdown-main-style max-w-full" view-image>
+      <Content />
+    </div>
+  </article>
+  <script src="/scripts/view-image.min.js" is:inline></script>
+  <script >
+    window.ViewImage && window.ViewImage.init("img");
+  </script>
+</BasePageLayout>
+
+<style scoped>
+
+  .post-meta {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    color: var(--gray-600);
+    font-size: 0.95rem;
+  }
+
+  .post-date {
+    background-color: var(--gray-100);
+    border-radius: 8px;
+    border: 1px solid var(--gray-300);
+    transition: all 0.3s;
+  }
+
+  .post-date:hover {
+    background-color: var(--cp-50);
+    border-color: var(--cp-400);
+    transform: translateY(-2px);
+  }
+
+  .markdown-body {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

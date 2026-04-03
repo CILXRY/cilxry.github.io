@@ -11,6 +11,7 @@ export function getContrastYIQ(rgbHex: string): boolean {
 
 export function applyThemeColor(oklch: number) {
   const color = oklchToHex(oklch);
+  // console.log(color)
 
   document.documentElement.style.setProperty("--primary", color);
   document.documentElement.style.setProperty("--primary-h", oklch.toString());

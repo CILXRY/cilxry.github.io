@@ -1,0 +1,37 @@
+---
+interface Props {
+  contentData?: {
+    header: string;
+    header_eng?: string;
+    content: string;
+  };
+  clickData?: {
+    href: string;
+  };
+  styling: {
+    theme: "macos" | "win11";
+    floatUp: boolean;
+  };
+}
+
+const { contentData, clickData, styling } = Astro.props;
+import Mac from "./FrameCard-macOS.astro";
+import WinE from "./FrameCard-Windows11.astro";
+const ThemeComponment = styling.theme == "macos" ? Mac : WinE;
+---
+
+<div class={styling.floatUp ? "floatUp" : ""}>
+  <ThemeComponment contentData={contentData} clickData={clickData}><slot /></ThemeComponment>
+</div>
+
+<style>
+  .floatUp {
+    will-change: transform, box-shadow;
+    transition:
+      transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.25s ease;
+  }
+  .floatUp:hover {
+    transform: translateY(-4px);
+  }
+</style>

@@ -1,5 +1,22 @@
-# Astro Build Output and
-# Astro automatic Generated types
+# Visual Studio Code Specific files
+# .vscode
+# .vscode/extensions.json
+# .vscode/settings.json
+
+# contents
+src/content/*
+
+# Current Rules
+rules/*
+.lingma/rules/*
+.trae/*
+
+# ======================================
+# === WILL BE IGNORED ALL TIME UNDER ===
+# ======================================
+
+# Astro Automatic Generated Files and
+# Astro build output
 .astro/
 dist/
 
@@ -17,8 +34,3 @@ node_modules/
 .DS_Store
 Thumbs.db
 db.json
-
-# Visual Studio Code Specific files
-# .vscode
-.vscode/extensions.json
-.vscode/settings.json

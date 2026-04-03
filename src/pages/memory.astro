@@ -1,0 +1,142 @@
+---
+import BasePageLayout from "@basePageLayout";
+import { getPositiveRelativeTimeDiff } from "./../utils/getRelativeTime.js";
+
+// 模拟数据 - 实际使用时可以从 CMS 或 Markdown 文件读取
+const moments = [
+  {
+    id: 1,
+    avatar: "/avatars/default.png",
+    nickname: "CILXRY",
+    content: "今天是个好日子，阳光正好 ☀️",
+    images: ["/images/moment1.jpg"],
+    date: "2024-03-20 14:30:00",
+    views: 156,
+    comments: 3,
+    likes: 12,
+  },
+  {
+    id: 2,
+    avatar: "/avatars/default.png",
+    nickname: "CILXRY",
+    content: "深夜 coding，享受这份宁静 🌙",
+    images: [],
+    date: "2024-03-19 23:15:00",
+    views: 234,
+    comments: 5,
+    likes: 28,
+  },
+  {
+    id: 3,
+    avatar: "/avatars/default.png",
+    nickname: "CILXRY",
+    content: "新学的技术栈真有趣！Astro + Vue 的组合太棒了",
+    images: ["/images/moment2.jpg", "/images/moment3.jpg"],
+    date: "2024-03-18 10:00:00",
+    views: 189,
+    comments: 2,
+    likes: 15,
+  },
+];
+
+// 格式化相对时间
+const formatRelativeTime = (dateString: string) => {
+  try {
+    return getPositiveRelativeTimeDiff(new Date(), dateString);
+  } catch {
+    return dateString;
+  }
+};
+---
+
+<BasePageLayout>
+  <div class="memory-container max-w-2xl mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-8 text-left">记忆瞬间</h1>
+
+    {
+      moments.map((moment) => (
+        <div class="moment-card mb-6 p-6 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
+          {/* 头部：头像和信息 */}
+          <div class="flex items-start gap-3 mb-4">
+            <img
+              src={moment.avatar}
+              alt={moment.nickname}
+              class="w-10 h-10 rounded-full object-cover flex-shrink-0"
+              loading="lazy"
+            />
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h3 class="font-semibold text-gray-900 dark:text-white">
+                  {moment.nickname}
+                </h3>
+                <span class="text-sm text-gray-500 dark:text-gray-400">
+                  {formatRelativeTime(moment.date)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* 内容区域 */}
+          <div class="mb-4">
+            <p class="text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">
+              {moment.content}
+            </p>
+
+            {/* 图片网格 */}
+            {moment.images && moment.images.length > 0 && (
+              <div
+                class="grid gap-2 mt-3"
+                class:list={[
+                  moment.images.length === 1 && 'grid-cols-1',
+                  moment.images.length === 2 && 'grid-cols-2',
+                  moment.images.length === 3 && 'grid-cols-3',
+                  moment.images.length > 3 && 'grid-cols-3'
+                ]}
+              >
+                {moment.images.map((img) => (
+                  <img
+                    src={img}
+                    alt="Moment image"
+                    class="w-full h-48 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 底部互动栏 */}
+          <div class="flex items-center gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <span>{moment.views}</span>
+            </div>
+
+            <button class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              <span>{moment.comments}</span>
+            </button>
+
+            <button class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span>{moment.likes}</span>
+            </button>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</BasePageLayout>
+
+<style is:global>
+  .memory-container {
+    min-height: 100vh;
+  }
+</style>

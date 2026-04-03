@@ -1,0 +1,69 @@
+---
+// 公告提示栏组件
+import { X } from "@lucide/astro";
+
+interface Props {
+  message?: string;
+  type?: "info" | "success" | "warning" | "error";
+  dismissible?: boolean;
+  storageKey?: string;
+}
+
+const {
+  message = "这是一条公告信息",
+  type = "info",
+  dismissible = true,
+  storageKey = "announcement-dismissed"
+} = Astro.props;
+
+const typeStyles = {
+  info: "bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800",
+  success: "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800",
+  warning: "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800",
+  error: "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800",
+};
+---
+
+<div
+  id="announcement-bar"
+  class={`w-full py-2 px-4 text-sm text-center border-b transition-all duration-300 ${typeStyles[type]}`}
+>
+  <div class="max-w-7xl mx-auto flex items-center justify-center gap-2">
+    <span>{message}</span>
+    {dismissible && (
+      <button
+        id="announcement-close"
+        class="ml-2 hover:opacity-70 transition-opacity p-1"
+        aria-label="关闭公告"
+      >
+        <X class="w-4 h-4" />
+      </button>
+    )}
+  </div>
+</div>
+
+<script>
+  const closeBtn = document.getElementById("announcement-close");
+  const announcementBar = document.getElementById("announcement-bar");
+  
+  // 检查是否已关闭过
+  const dismissed = localStorage.getItem("${storageKey}");
+  if (dismissed && announcementBar) {
+    announcementBar.style.display = "none";
+  }
+  
+  // 关闭事件
+  closeBtn?.addEventListener("click", () => {
+    if (announcementBar) {
+      announcementBar.style.maxHeight = "0";
+      announcementBar.style.opacity = "0";
+      announcementBar.style.padding = "0";
+      announcementBar.style.border = "none";
+      
+      setTimeout(() => {
+        announcementBar.style.display = "none";
+        localStorage.setItem("${storageKey}", "true");
+      }, 300);
+    }
+  });
+</script>

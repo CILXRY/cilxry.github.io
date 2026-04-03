@@ -1,0 +1,31 @@
+@use "./font.scss";
+@use "./color.scss";
+
+// 全局变量
+// Global Variables
+:root {
+  // ==============================
+  // 颜色变量
+  // 基础内容
+  // 背景
+
+  // ==============================
+  // 基础内容定义 Base Define
+
+  // ==============================
+  // 背景 Background
+
+  --light-background-primary: oklch(0.98 0.02 var(--primary-h));
+  --light-background-secondary: oklch(0.95 0.03 var(--primary-h));
+  --light-background-tertiary: oklch(0.92 0.04 var(--primary-h));
+  --dark-background-primary: oklch(0.15 0.03 var(--primary-h));
+  --dark-background-secondary: oklch(0.18 0.04 var(--primary-h));
+
+  // ==============================
+  //
+  // Background
+}
+
+* {
+  user-select: none;
+}

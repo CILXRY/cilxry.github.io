@@ -1,22 +1,26 @@
 {
+  "exclude": ["dist"],
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"],
   "compilerOptions": {
-    "jsx": "preserve",
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "checkJs": true,
-    "noImplicitAny": true,
-    "moduleResolution": "node16",
-    "module": "node16",
-    "types": ["node"],
-    "lib": ["ES2020", "DOM"],
     "baseUrl": ".",
+    "checkJs": true,
+    "jsx": "react-jsx",
+    "types": ["node"],
+    "module": "node16",
+    "noImplicitAny": true,
+    "lib": ["ES2020", "DOM"],
+    "allowUnusedLabels": false,
+    "moduleResolution": "node16",
+    "allowUnreachableCode": false,
+    "strictNullChecks": true,
     "paths": {
       "@basePageLayout": ["src/layouts/BasePageLayout.astro"],
-      "@/*": ["src/*"],
-      "@cp/*": ["src/components/*"]
+      "@cp/*": ["src/components/*"],
+      "@cfg/*": ["src/config/*", "config/*"],
+      "@lc/*": ["src/layouts/LayoutComponents/*"],
+      "@ut/*": ["src/utils/*"],
+      "@/*": ["src/*"]
     }
   }
 }

@@ -1,0 +1,44 @@
+---
+import type { GetStaticPaths } from "astro";
+import BasePageLayout from "@basePageLayout";
+import { sortedPosts } from "@ut/content/postsMap.ts";
+import EchoCard from "../components/StyledCards/blog_post_card.astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return paginate(sortedPosts, { pageSize: 10 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<BasePageLayout k="" styled={"default"}>
+    <!-- 博客卡片列表 -->
+  <div id="blog-list">
+    {
+      sortedPosts.map((post, index) => {
+        // 将 Date 转换为字符串以匹配 EchoCard 的类型定义
+        const cardData = {
+          title: post.data.title,
+          description: post.data.description,
+          published: post.data.creation.toISOString(),
+          tags: post.data.tags || [],
+          categories: post.data.category || undefined,
+          wordCount: post.data.wordCount ?? undefined,
+          readingTime: post.data.readingTime ?? undefined,
+        };
+        return (
+          <EchoCard
+            postData={cardData}
+
+            link={`/posts/${post.slug}/`}
+            data-category={post.data.category || ""}
+            data-tags={(post.data.tags || []).join(",")}
+          />
+        );
+      })
+    }
+  </div>
+  <h1>Page {page.currentPage}/{page.lastPage}</h1>
+   {page.data.map(({ data }) => <li>{data.title}</li>)}
+   <a href={page.url.next}>{page.currentPage+1}</a>
+</BasePageLayout>

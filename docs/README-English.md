@@ -1,5 +1,10 @@
 # CILXRY's Website Intro
 
+## All right...
+
+Let me try to write down the instruction in english.
+_My english is not good enough Orz_
+
 Hi there.
 
 Here is a just english introduction for my website.
@@ -8,7 +13,18 @@ and i dont know why i do this......
 I am CILXRY.
 
 the website update by my mind,idk when and what i'll update next.
-because i think there's nobody saw,even myself.
+because i think there's nobody saw, even myself.
+
+## About this Project
+
+(it is a stuff translate🌚)
+
+In actually, to do a website is a too boring choice for me.
+~~if i write a self-introduction on my website and you have been read~~
+i knew that most of experienced tech-people have their own websites,
+it maybe a sure of self?
+
+in a word, i could be free in my website.
 
 ## How to run this project localy?
 
