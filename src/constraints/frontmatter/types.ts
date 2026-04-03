@@ -22,8 +22,8 @@ export interface DescriptionInfo {
 
 /** 时间信息字段 */
 export interface TimeInfo {
-  date: string | Date;
-  pubDate: string | Date;
+  creation: string | Date;
+  published: string | Date;
 }
 
 /** 阅读统计字段 */
@@ -39,7 +39,8 @@ export interface ContentInfo {
 }
 
 /** 完整的 Frontmatter 配置选项 */
-export interface FrontmatterOptions extends BaseInfo, DescriptionInfo, TimeInfo, ReadingStats, ContentInfo {}
+export interface FrontmatterOptions
+  extends BaseInfo, DescriptionInfo, TimeInfo, ReadingStats, ContentInfo {}
 
 /** 部分字段的 Frontmatter 配置（用于更新场景） */
 export type PartialFrontmatterOptions = Partial<FrontmatterOptions>;

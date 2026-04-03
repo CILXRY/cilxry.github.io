@@ -2,23 +2,14 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateFrontmatterFromFile, calculateReadingStats } from "./frontmatter.ts";
-
-// ==================== 配置区域 ====================
-const CONFIG = {
-  // 是否使用时间格式（包含时分秒），默认 false（仅日期）
-  useDateTime: false,
-  // 是否使用 UUID 作为文件名，默认 false（使用标题生成的 slug）
-  useUUID: false,
-  // 输出目录路径，默认为项目内的 src/content/blogs，可改为任意绝对路径
-  outputDir: "C:\\Users\\cilxry\\Documents\\cilxry-markdown-pages\\posts", // 留空使用默认值，或填写如 "D:\\MyBlog\\posts"
-};
-// ================================================
+import { generateFrontmatterFromFile } from "../frontmatter.ts";
+import { calculateReadingStats } from "../frontmatter/utils/calculateStats.ts";
+import { ScriptConfig } from "./config.ts";
 
 // Get the source file path from command line arguments
 const sourceFilePath = process.argv[2];
 if (!sourceFilePath) {
-  console.error('你没有提供文件路径哦，使用 <pnpm exi "文件路径"> 的格式重试。');
+  console.error(`你没有提供文件路径哦，${ScriptConfig.cli.helpMessages.exi}`);
   process.exit(1);
 }
 
@@ -58,7 +49,7 @@ const frontmatter = generateFrontmatterFromFile(
   baseName,
   birthtime,
   mtime,
-  CONFIG.useDateTime,
+  ScriptConfig.frontmatter.useDateTime,
   category,
 );
 
@@ -70,17 +61,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Generate filename based on configuration
-const filename = CONFIG.useUUID 
+const filename = ScriptConfig.frontmatter.useUUIDAsFileName
   ? `${crypto.randomUUID()}.md`
   : `${slug}.md`;
 
-const destFilePath = path.join(
-  CONFIG.outputDir || path.join(__dirname, "..", "src", "content", "blogs"),
-  filename,
-);
+// Determine output path based on category
+const baseOutputDir = ScriptConfig.paths.outputDir || path.join(__dirname, "..", ScriptConfig.paths.projectBlogsDir);
+const destDir = category
+  ? path.join(baseOutputDir, category)
+  : baseOutputDir;
+const destFilePath = path.join(destDir, filename);
 
-// Create directory if not exists
-fs.mkdirSync(path.dirname(destFilePath), { recursive: true });
+// Create directory if not exists (including category subdirectory)
+fs.mkdirSync(destDir, { recursive: true });
 
 // Write the content with frontmatter to destination
 fs.writeFileSync(destFilePath, newContent);

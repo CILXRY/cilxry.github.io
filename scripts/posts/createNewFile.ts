@@ -4,14 +4,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateFrontmatter, formatDate } from "./frontmatter.ts";
-
-// ==================== 配置区域 ====================
-const CONFIG = {
-  // 是否使用时间格式（包含时分秒），默认 false（仅日期）
-  useDateTime: false,
-};
-// ================================================
+import { generateFrontmatter } from "../frontmatter.ts";
+import { ScriptConfig } from "../config.ts";
 
 // 生成 Frontmatter 需要的内容
 const title = process.argv.slice(2).join(" ");
@@ -26,23 +20,19 @@ const slug = title
 const now = new Date();
 
 // 使用统一的 frontmatter 生成函数
-const content = generateFrontmatter({
-  title,
-  date: now,
-  pubDate: now,
-}, CONFIG.useDateTime);
+const content = generateFrontmatter(
+  {
+    title,
+    creation: now,
+    published: now,
+  },
+  ScriptConfig.frontmatter.useDateTime
+);
 
 // 保存文件
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const filePath = path.join(
-  __dirname,
-  "..",
-  "src",
-  "content",
-  "blogs",
-  `${slug}.md`,
-);
+const filePath = path.join(__dirname, "..", "src", "content", "blogs", `${slug}.md`);
 fs.mkdirSync(path.dirname(filePath), { recursive: true });
 fs.writeFileSync(filePath, content);
 

@@ -15,7 +15,7 @@
 export {
   generateFrontmatter,
   generateFrontmatterFromFile,
-} from "./frontmatter/index.ts";
+} from "../src/constraints/frontmatter/index.ts";
 
 export type {
   FrontmatterOptions,
@@ -25,14 +25,14 @@ export type {
   TimeInfo,
   ReadingStats,
   ContentInfo,
-} from "./frontmatter/types.ts";
+} from "../src/constraints/frontmatter/types.ts";
 
-export { CONFIG } from "./frontmatter/config.ts";
+export { CONFIG } from "../src/config/postsFrontmatter.ts";
 
 export {
   formatDate,
   formatDateTime,
   normalizeDate,
-} from "./frontmatter/utils/formatDate.ts";
+} from "../src/utils/formatDate.ts";
 
 export { calculateReadingStats } from "./frontmatter/utils/calculateStats.ts";

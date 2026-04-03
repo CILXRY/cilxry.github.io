@@ -1,6 +1,6 @@
 /// <reference types="node" />
 
-import { CONFIG } from "../config.ts";
+import { CONFIG } from "@cfg/postsFrontmatter.ts";
 import type { BaseInfo } from "../types.ts";
 
 /**
@@ -15,18 +15,16 @@ export const generateBaseInfo = (options: Partial<BaseInfo>): string => {
     draft = CONFIG.DEFAULT_DRAFT,
   } = options;
 
-  let output = `title: "${title}"\n`;
-  output += `tags: [${tags.map((tag) => `"${tag}"`).join(", ")}]\n`;
-  output += `category: ${category}\n`;
-
-  // 可选字段：仅在有值时添加
-  if (author) {
-    output += `author: ${author}\n`;
-  }
-
-  if (draft !== undefined && draft !== CONFIG.DEFAULT_DRAFT) {
-    output += `draft: ${draft}\n`;
-  }
+  let output = `title: "${title}"
+`;
+  output += `tags: [${tags.map((tag) => `"${tag}"`).join(", ")}]
+`;
+  output += `category: ${category}
+`;
+  output += `author: ${author}
+`;
+  output += `draft: ${draft}
+`;
 
   return output;
 };

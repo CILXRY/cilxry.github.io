@@ -1,26 +1,25 @@
 /// <reference types="node" />
 
+// 导入库
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import {
-  generateFrontmatter,
-  calculateReadingStats,
-  formatDate,
-  formatDateTime,
-} from "./frontmatter.ts";
+import { generateFrontmatter } from "../frontmatter.ts";
+import { calculateReadingStats } from "../frontmatter/utils/calculateStats.ts";
+import { formatDate, formatDateTime } from "../src/utils/formatDate.ts";
+import { ScriptConfig } from "./config.ts";
 import fetch from "node-fetch";
 
 // ==================== 配置区域 ====================
 const CONFIG = {
   // 是否使用时间格式（包含时分秒），默认 false（仅日期）
-  useDateTime: true,
+  useDateTime: ScriptConfig.frontmatter.useDateTime,
 
   // 默认更新选项
   defaultOptions: {
     preserveTitle: true, // 保留原有标题
     preserveTags: true, // 保留原有标签
-    preserveCategories: true, // 保留原有分类
+    preserveCategory: true, // 保留原有分类
     addReadingStats: true, // 添加字数和阅读时长统计
     preserveMtime: true, // 保留原修改时间（元数据修改不视为内容修改）
   },
@@ -169,7 +168,7 @@ const updateFileFrontmatter = async (
   const {
     preserveTitle,
     preserveTags,
-    preserveCategories,
+    preserveCategory,
     addReadingStats,
     preserveMtime,
     aiDescription,
@@ -181,41 +180,49 @@ const updateFileFrontmatter = async (
   // 如果没有 frontmatter，则创建新的
   if (!frontmatter) {
     console.log(`📝 ${path.basename(filePath)} 没有 frontmatter，正在创建...`);
-    
+
     const stats = fs.statSync(filePath);
     const originalMtime = stats.mtime;
     const birthtime = stats.birthtime.getTime() > 0 ? stats.birthtime : stats.mtime;
     const title = path.basename(filePath, ".md");
-    
+
     // 计算阅读统计
     const readingStats = addReadingStats ? calculateReadingStats(body) : { wordCount: 0, readingTime: 0 };
-    
+
     // 构建 frontmatter 选项
     const newFrontmatterOptions: any = {
       title,
-      date: CONFIG.useDateTime ? formatDateTime(birthtime) : formatDate(birthtime),
-      pubDate: CONFIG.useDateTime ? formatDateTime(stats.mtime) : formatDate(stats.mtime),
-      tags: [""],
-      categories: "",
+      creation: CONFIG.useDateTime ? formatDateTime(birthtime) : formatDate(birthtime),
+      published: CONFIG.useDateTime ? formatDateTime(stats.mtime) : formatDate(stats.mtime),
+      tags: [],
+      category: "",
+      author: "",
+      draft: false,
       description: "这是一个没有描述的文章",
+      descGenAuthor: "",
+      descGenTime: CONFIG.useDateTime ? formatDateTime(new Date()) : formatDate(new Date()),
+      wordCount: 0,
+      readingTime: 0,
+      warning: "",
+      original: true,
     };
-    
+
     if (addReadingStats) {
       newFrontmatterOptions.wordCount = readingStats.wordCount;
       newFrontmatterOptions.readingTime = readingStats.readingTime;
     }
-    
+
     // 生成并写入新 frontmatter
     const newFrontmatter = generateFrontmatter(newFrontmatterOptions, CONFIG.useDateTime);
     const newContent = newFrontmatter + body.trimStart();
     fs.writeFileSync(filePath, newContent, "utf-8");
-    
+
     // 保留原修改时间
     if (preserveMtime) {
       fs.utimesSync(filePath, originalMtime, originalMtime);
       console.log(`🕒 已保留原修改时间`);
     }
-    
+
     return true;
   }
 
@@ -226,13 +233,13 @@ const updateFileFrontmatter = async (
 
   // 保留原有的标题、标签和分类
   const title = preserveTitle && frontmatter.title ? frontmatter.title : path.basename(filePath, ".md");
-  const tags = preserveTags && frontmatter.tags ? frontmatter.tags : [""];
-  const categories = preserveCategories && frontmatter.categories ? frontmatter.categories : "";
-  
+  const tags = preserveTags && frontmatter.tags ? frontmatter.tags : [];
+  const category = preserveCategory && frontmatter.category ? frontmatter.category : "";
+
   // 判断是否需要 AI 生成 description（为空或使用默认文本时）
-  const needsAiDescription = aiDescription && 
+  const needsAiDescription = aiDescription &&
     (!frontmatter.description || frontmatter.description === "这是一个没有描述的文章");
-  
+
   // 如果启用 AI 生成描述且当前没有有效描述，则生成新描述
   let description = frontmatter.description || "这是一个没有描述的文章";
   if (needsAiDescription) {
@@ -245,11 +252,19 @@ const updateFileFrontmatter = async (
   // 构建新的 frontmatter 选项
   const newFrontmatterOptions: any = {
     title,
-    date: frontmatter.date || (CONFIG.useDateTime ? formatDateTime(birthtime) : formatDate(birthtime)),
-    pubDate: frontmatter.pubDate || (CONFIG.useDateTime ? formatDateTime(stats.mtime) : formatDate(stats.mtime)),
+    creation: frontmatter.creation || (CONFIG.useDateTime ? formatDateTime(birthtime) : formatDate(birthtime)),
+    published: frontmatter.published || frontmatter.pubDate || (CONFIG.useDateTime ? formatDateTime(stats.mtime) : formatDate(stats.mtime)),
     tags,
-    categories,
-    description,
+    category,
+    author: frontmatter.author || "",
+    draft: frontmatter.draft !== undefined ? frontmatter.draft : false,
+    description: frontmatter.description || "这是一个没有描述的文章",
+    descGenAuthor: frontmatter.descGenAuthor || "",
+    descGenTime: frontmatter.descGenTime || (CONFIG.useDateTime ? formatDateTime(new Date()) : formatDate(new Date())),
+    wordCount: 0,
+    readingTime: 0,
+    warning: frontmatter.warning || "",
+    original: frontmatter.original !== undefined ? frontmatter.original : true,
   };
 
   // 添加阅读统计
@@ -285,7 +300,7 @@ const updateAllFrontmatter = async (
   options: {
     preserveTitle?: boolean;
     preserveTags?: boolean;
-    preserveCategories?: boolean;
+    preserveCategory?: boolean;
     addReadingStats?: boolean;
     preserveMtime?: boolean;
     aiDescription?: boolean;

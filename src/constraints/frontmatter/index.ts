@@ -1,13 +1,13 @@
 /// <reference types="node" />
 
 import fs from "fs";
-import { generateBaseInfo } from "./generators/baseInfo.ts";
-import { generateDescriptionInfo } from "./generators/descriptionInfo.ts";
-import { generateTimeInfo } from "./generators/timeInfo.ts";
-import { generateReadingStats } from "./generators/stats.ts";
-import { generateContentInfo } from "./generators/contentInfo.ts";
-import { calculateReadingStats as calcStats } from "./utils/calculateStats.ts";
-import type { FrontmatterOptions, PartialFrontmatterOptions } from "./types.ts";
+import { generateBaseInfo } from "./infoLists/baseInfo.ts";
+import { generateDescriptionInfo } from "./infoLists/descriptionInfo.ts";
+import { generateTimeInfo } from "./infoLists/timeInfo.ts";
+import { generateReadingStats } from "./infoLists/stats.ts";
+import { generateContentInfo } from "./infoLists/contentInfo.ts";
+import { calculateReadingStats as calcStats } from "../../../scripts/frontmatter/utils/calculateStats.ts";
+import type { PartialFrontmatterOptions } from "./types.ts";
 
 /**
  * 生成完整的 Frontmatter 字符串
@@ -42,7 +42,7 @@ export const generateFrontmatter = (
  * 从文件读取内容并生成带统计信息的 frontmatter
  * @param filePath 文件路径
  * @param title 标题
- * @param date 创建日期（可选，默认使用文件创建时间）
+ * @param creation 创建日期（可选，默认使用文件创建时间）
  * @param pubDate 发布日期（可选，默认使用文件修改时间）
  * @param useDateTime 是否使用时间格式
  * @param category 分类（可选）
@@ -51,7 +51,7 @@ export const generateFrontmatter = (
 export const generateFrontmatterFromFile = (
   filePath: string,
   title: string,
-  date?: Date,
+  creation?: Date,
   pubDate?: Date,
   useDateTime: boolean = false,
   category: string = "",
@@ -61,7 +61,7 @@ export const generateFrontmatterFromFile = (
 
   // 使用提供的日期或文件统计信息
   const birthtime =
-    date || (stats.birthtime.getTime() > 0 ? stats.birthtime : stats.mtime);
+    creation || (stats.birthtime.getTime() > 0 ? stats.birthtime : stats.mtime);
   const mtime = pubDate || stats.mtime;
 
   // 计算阅读统计
@@ -70,8 +70,8 @@ export const generateFrontmatterFromFile = (
   return generateFrontmatter(
     {
       title,
-      date: birthtime,
-      pubDate: mtime,
+      creation: birthtime,
+      published: mtime,
       wordCount,
       readingTime,
       category,
