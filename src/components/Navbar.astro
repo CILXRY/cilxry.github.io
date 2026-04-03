@@ -1,27 +1,19 @@
 ---
 // Theme Control
-import ThemeController from "@/components/ThemeSwitch/theme_switch.astro";
+import ControlPanel from "./ControlPanel.vue";
 
 // Nav Items
 import { navLogo, navItems } from "@/config/NavBar-Items.ts";
-
-// Translation
-import { translate } from "@/i18n/index.ts";
-import type { I18nKeys } from "@/i18n/InternationalKeys.ts";
-
-// Get current page path
-const currentPath = Astro.url.pathname;
+import LinksMap from "@/components/navigationBar/LinksMap.astro";
 
 // Icon
 import House from "@lucide/astro/icons/house";
 ---
 
 <nav
-  px-4
   flex
   z-50
   h-16
-  md:px-8
   mx-auto
   max-w-7xl
   items-center
@@ -45,35 +37,12 @@ import House from "@lucide/astro/icons/house";
   <div hidden sm:flex gap-2 items-center transition-all>
     {
       navItems.map((item) => {
-        const isActive = item.path === currentPath;
-        return (
-          <a href={item.path} data-i18n={item.key} decoration-none>
-            <span
-              px4
-              py2
-              text-base
-              b-rd-xl
-              no-underline
-              duration-600
-              l-text-muted
-              property-all
-              hover:text-2xl
-              tracking-tight
-              dark:d-text-muted
-              hover:l-text-muted
-              hover:l-bg-secondary
-              dark-hover:d-text-muted
-              dark-hover:d-bg-secondary
-            >
-              {translate(item.key as I18nKeys)}
-            </span>
-          </a>
-        );
+        return <LinksMap path={item.path} key={item.key} />;
       })
     }
   </div>
 
-  <div>
-    <ThemeController />
+  <div flex items-center gap-2>
+    <ControlPanel client:load />
   </div>
 </nav>

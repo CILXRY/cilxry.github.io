@@ -1,23 +1,19 @@
 ---
-// 获取当前请求的文章
-import { getCollection } from "astro:content";
+import { safeGetCollection } from "@ut/content/safeCollection.ts";
 import BasePageLayout from "@basePageLayout";
 import "@/styles/standardBlogPage.scss";
 
-// 在 getStaticPaths 中获取所有文章
 export async function getStaticPaths() {
-  const allPosts = await getCollection("blogs");
+  const allPosts = await safeGetCollection("posts");
   return allPosts.map((post) => ({
     params: { slug: post.slug },
   }));
 }
 
-// 获取当前 slug 对应的文章
 const { slug } = Astro.params;
-const allPosts = await getCollection("blogs"); // 重复一次，用于渲染
+const allPosts = await safeGetCollection("posts");
 const post = allPosts.find((p) => p.slug === slug);
 
-// 如果找不到或草稿，重定向
 if (!post || post.data.draft) {
   return Astro.redirect("/404");
 }
@@ -37,7 +33,7 @@ declare global {
 }
 ---
 
-<BasePageLayout>
+<BasePageLayout k={post.data.title} styled={"default"}>
   <article
     py4
     px8
@@ -61,7 +57,7 @@ declare global {
       <div class="post-meta" p0 m0>
         <div class="post-date" px1 py2 m0 flex items-center gap-2>
           <Calendar size="16" />
-          {post.data.pubDate.toLocaleDateString("zh-CN")}
+          {post.data.creation.toLocaleDateString("zh-CN")}
         </div>
       </div>
     </header>
@@ -72,7 +68,7 @@ declare global {
   </article>
   <script src="/scripts/view-image.min.js" is:inline></script>
   <script >
-    window.ViewImage && ViewImage.init("img");
+    window.ViewImage && window.ViewImage.init("img");
   </script>
 </BasePageLayout>
 

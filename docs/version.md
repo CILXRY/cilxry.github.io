@@ -115,3 +115,14 @@ Mar 28
 1. 在 `package.json` 修改了版本，引入 `astro check`
 2. 移除了不用而且会报错的 `dev` 和 `Layout` 页面
 3. i18n 和文档的优化
+
+## 0.0.4
+
+Apr 3
+
+首先先说，这是一个很平平无常的 feature，但是，孩子们我们有 Standard-Version 了
+
+故，此文档将整合到 Standard-Version 生成的版本文档里
+
+End there.
+Next step!

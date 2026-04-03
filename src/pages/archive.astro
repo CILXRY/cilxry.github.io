@@ -1,13 +1,12 @@
 ---
 import BasePageLayout from "@basePageLayout";
-import { getCollection } from "astro:content";
+import { safeGetCollection } from "@ut/content/safeCollection";
 
-// 获取所有已发布的博客
-const posts = await getCollection("blogs", ({ data }) => !data.draft);
+const posts = await safeGetCollection("blogs", ({ data }) => !data.draft);
 
 // 按年份分组
 const groupedPosts = posts.reduce((acc, post) => {
-  const year = post.data.pubDate.getFullYear().toString();
+  const year = post.data.creation.getFullYear().toString();
   if (!acc[year]) {
     acc[year] = [];
   }
@@ -22,7 +21,7 @@ const sortedYears = Object.keys(groupedPosts).sort((a, b) => parseInt(b) - parse
 const totalPosts = posts.length;
 ---
 
-<BasePageLayout>
+<BasePageLayout k="archive">
   <div class="max-w-4xl mx-auto px-4 py-8">
     <!-- 标题和统计 -->
     <div class="mb-8">
@@ -53,7 +52,7 @@ const totalPosts = posts.length;
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                   {post.data.title}
                 </h3>
-                
+
                 <!-- 元信息 -->
                 <div class="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
                   <!-- 日期 -->
@@ -61,19 +60,19 @@ const totalPosts = posts.length;
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
-                    {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    {post.data.creation.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
                   </span>
-                  
+
                   <!-- 分类 -->
-                  {post.data.categories && (
+                  {post.data.category && (
                     <span class="flex items-center gap-1">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                       </svg>
-                      {post.data.categories}
+                      {post.data.category}
                     </span>
                   )}
-                  
+
                   <!-- 阅读时长 -->
                   {post.data.readingTime && (
                     <span class="flex items-center gap-1">

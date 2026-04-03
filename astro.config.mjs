@@ -5,6 +5,7 @@ import vue from "@astrojs/vue";
 import svelte from "@astrojs/svelte";
 import UnoCSS from "unocss/astro";
 import { defineConfig } from "astro/config";
+import { SiteConfig } from "./src/config/CLIX.ts";
 
 // Markdown Plugins
 // Intro: https://docs.astro.build/zh-cn/guides/markdown-content/#markdown-%E6%8F%92%E4%BB%B6
@@ -15,10 +16,22 @@ import remarkCallout from "./src/plugins/remark-callout.ts";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 export default defineConfig({
-  site: "https://cilxry.github.io/",
+  site: SiteConfig.siteUrl,
   base: "/",
   trailingSlash: "ignore",
-  integrations: [UnoCSS(), vue(), svelte(), swup(), expressiveCode()],
+  integrations: [
+    UnoCSS(),
+    vue(),
+    svelte(),
+    swup({
+      theme: false,
+      animationClass: 'transition-',
+      cache: true,
+      smoothScrolling: true,
+      debug: true,
+    }),
+    expressiveCode(),
+  ],
   markdown: {
     remarkPlugins: [remarkCallout, remarkBreaks],
     rehypePlugins: [

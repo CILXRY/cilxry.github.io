@@ -1,12 +1,12 @@
 ---
 interface Props {
-  cardData: {
+  postData: {
     type?: string;
     slug?: string;
     title: string;
     excerpt?: string;
     date?: string;
-    pubDate?: string;
+    published?: string;
     tags?: string[];
     categories?: string;
     description: string;
@@ -15,13 +15,17 @@ interface Props {
     ai_summary?: string;
   };
   gradient?: string;
-  link?: string;
+  link: string;
+  "data-category"?: string;
+  "data-tags"?: string;
 }
 
 const {
-  cardData,
+  postData,
   gradient = "linear-gradient(315deg, var(--cp-400), var(--cp-600))",
   link,
+  "data-category": dataCategory,
+  "data-tags": dataTags,
 } = Astro.props;
 
 // 格式化日期显示
@@ -40,312 +44,225 @@ const formatDate = (dateStr?: string) => {
 };
 ---
 
-<div class="box" style={`--glow-gradient: ${gradient}`}>
-  <div class="content w-full">
-    <!-- 标题 -->
-    <h2 class="title">{cardData.title}</h2>
+<a href={link} class="blog-card" data-category={dataCategory} data-tags={dataTags}>
+  <div class="card-content">
+    <!-- 左侧黄色竖条 -->
+    <div class="card-indicator"></div>
 
-    <!-- 元信息行：日期、分类、阅读时长 -->
-    <div
-      class="meta-row"
-      display="flex"
-      flex
-      gap-2
-      items-center
-      mb-3
-      text-sm
-      opacity-70
-    >
-      {
-        cardData.pubDate && (
-          <span class="meta-item" display="flex" items-center gap-1>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <>
-                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                <line x1="16" x2="16" y1="2" y2="6" />
-                <line x1="8" x2="8" y1="2" y2="6" />
-                <line x1="3" x2="21" y1="10" y2="10" />
-              </>
-            </svg>
-            {formatDate(cardData.pubDate)}
+    <!-- 卡片主体 -->
+    <div class="card-body">
+      <!-- 标题 -->
+      <h2 class="card-title">
+        {postData.type === 'draft' && <span class="draft-badge">Draft</span>}
+        {postData.title}
+      </h2>
+
+      <!-- 元信息行：日期、分类、标签 -->
+      <div class="meta-row">
+        {postData.published && (
+          <span class="meta-item">
+            <span class="meta-icon">📅</span>
+            {formatDate(postData.published)}
           </span>
-        )
-      }
-      {
-        cardData.categories && (
-          <span class="meta-item" display="flex" items-center gap-1>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <>
-                <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
-                <line x1="16" x2="2" y1="8" y2="22" />
-                <line x1="17.5" x2="9" y1="15" y2="15" />
-              </>
-            </svg>
-            {cardData.categories}
+        )}
+        {postData.categories && (
+          <span class="meta-item">
+            <span class="meta-icon">📁</span>
+            {postData.categories}
           </span>
-        )
-      }
-      {
-        cardData.readingTime && (
-          <span class="meta-item" display="flex" items-center gap-1>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <>
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </>
-            </svg>
-            {cardData.readingTime} 分钟阅读
+        )}
+        {postData.tags && postData.tags.length > 0 && (
+          <span class="meta-item tags">
+            <span class="meta-icon">#</span>
+            {postData.tags.join(' / ')}
           </span>
-        )
-      }
-      {
-        cardData.wordCount && !cardData.readingTime && (
-          <span class="meta-item" display="flex" items-center gap-1>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-            </svg>
-            {cardData.wordCount} 字
-          </span>
-        )
-      }
+        )}
+      </div>
+
+      <!-- 描述内容 -->
+      <p class="card-description">{postData.description || postData.excerpt}</p>
+
+      <!-- 底部信息：字数和阅读时间 -->
+      <div class="card-footer">
+        {postData.wordCount && (
+          <span class="footer-item">{postData.wordCount} 字</span>
+        )}
+        {postData.readingTime && (
+          <span class="footer-item">| {postData.readingTime} 分钟</span>
+        )}
+      </div>
     </div>
 
-    <!-- 描述内容 -->
-    <p class="description">{cardData.description || cardData.excerpt}</p>
-
-    <!-- 标签列表 -->
-    {
-      cardData.tags && cardData.tags.length > 0 && cardData.tags[0] !== "" && (
-        <div class="tags-row" display="flex" flex gap-2 flex-wrap mt-3>
-          {cardData.tags.map((tag) => (
-            <span class="tag">{tag}</span>
-          ))}
-        </div>
-      )
-    }
-
-    <!-- 阅读更多按钮 -->
-    {
-      link && (
-        <a href={link} class="read-more">
-          阅读更多
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="arrow-icon"
-          >
-            <>
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </>
-          </svg>
-        </a>
-      )
-    }
+    <!-- 右侧箭头 -->
+    <div class="card-arrow">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M5 12h14" />
+        <path d="m12 5 7 7-7 7" />
+      </svg>
+    </div>
   </div>
-</div>
+</a>
 
 <style scoped>
-  .box {
-    box-sizing: border-box;
-    font-family: consolas;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: 10px 0;
-    position: relative;
+  .blog-card {
+    display: block;
+    text-decoration: none;
+    margin-bottom: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-content {
     display: flex;
-    width: 100%;
-    transition: 0.5s;
-  }
-
-  .content {
-    position: relative;
-    left: 0;
-    padding: 20px 40px;
-    color: var(--gray-100);
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    align-items: stretch;
+    background: #1a1a1a;
     border-radius: 8px;
-    z-index: 1;
-    transition: 0.5s;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
-  .title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, var(--cp-200), var(--cp-400));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .card-indicator {
+    width: 4px;
+    background: #ffc107;
+    flex-shrink: 0;
+  }
+
+  .card-body {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .draft-badge {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #ffc107;
+    margin-right: 8px;
   }
 
   .meta-row {
-    color: var(--gray-400);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
   }
 
   .meta-item {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-  }
-
-  .description {
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-    line-height: 1.6rem;
-    color: var(--gray-200);
-  }
-
-  .tags-row {
-    margin-top: 12px;
-  }
-
-  .tag {
-    display: inline-block;
-    padding: 4px 12px;
+    gap: 6px;
     font-size: 0.85rem;
-    background: rgba(173, 170, 248, 0.15);
-    color: var(--cp-300);
-    border-radius: 12px;
-    border: 1px solid rgba(173, 170, 248, 0.3);
-    transition: all 0.3s ease;
+    color: #888888;
   }
 
-  .tag:hover {
-    background: rgba(173, 170, 248, 0.25);
-    border-color: var(--cp-400);
-    transform: translateY(-2px);
+  .meta-icon {
+    font-size: 1rem;
   }
 
-  .read-more {
-    display: inline-flex;
+  .tags {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .card-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #cccccc;
+    margin: 0 0 16px 0;
+    flex: 1;
+  }
+
+  .card-footer {
+    display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 1.1rem;
-    color: var(--gray-900);
-    background: var(--cp-200);
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 700;
-    margin-top: 16px;
-    transition: all 0.4s ease;
+    font-size: 0.85rem;
+    color: #888888;
   }
 
-  .read-more:hover {
-    background: var(--cp-400);
-    color: var(--gray-50);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(173, 170, 248, 0.4);
-    transform: translateY(-2px);
+  .footer-item {
+    display: inline-block;
   }
 
-  .arrow-icon {
-    transition: transform 0.3s ease;
+  .card-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    color: #ffc107;
   }
 
-  .read-more:hover .arrow-icon {
-    transform: translateX(4px);
-  }
-
-  .box:hover .content {
-    padding: 60px 40px;
-  }
-
-  /* 深色模式适配 */
-  @media (prefers-color-scheme: dark) {
-    .content {
-      background: rgba(30, 30, 50, 0.6);
-      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+  /* 亮色模式适配 */
+  @media (prefers-color-scheme: light) {
+    .card-content {
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .title {
-      background: linear-gradient(135deg, var(--cp-300), var(--cp-500));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .card-title {
+      color: #333333;
     }
 
-    .description {
-      color: var(--gray-300);
+    .meta-item {
+      color: #666666;
     }
 
-    .tag {
-      background: rgba(173, 170, 248, 0.2);
-      border-color: rgba(173, 170, 248, 0.4);
+    .card-description {
+      color: #555555;
+    }
+
+    .card-footer {
+      color: #666666;
     }
   }
 
   /* 响应式布局 */
   @media (max-width: 768px) {
-    .content {
-      padding: 20px 24px;
+    .card-body {
+      padding: 16px;
     }
 
-    .title {
-      font-size: 1.5rem;
+    .card-title {
+      font-size: 1.1rem;
     }
 
     .meta-row {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
+      gap: 12px;
+      font-size: 0.8rem;
     }
 
-    .box:hover .content {
-      padding: 40px 24px;
+    .card-description {
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .card-arrow {
+      padding: 0 16px;
     }
   }
 </style>

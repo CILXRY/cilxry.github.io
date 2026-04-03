@@ -2,31 +2,21 @@
 // 我望见她就此昙花一现
 // Astro Components and Layouts Here
 import BasePageLayout from "@basePageLayout";
-import MacOSLikeWindow from "../components/StyledCards/FrameCard-macOS.astro";
+import FrameCard from "../components/StyledCards/FrameCard.astro";
 
 // Vue Components Here
 import Typer from "../components/Typer/type.vue";
-import SwupTransition from "../components/Swup/SwupTransition.vue";
-// import Sleepy from "../components/sleepy.vue";
 
 // Contents Here
 import { items } from "@/config/Intro-Items.ts";
 ---
 
-<BasePageLayout>
+<BasePageLayout k="about">
   <Typer client:load />
-  <SwupTransition client:only="vue" />
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-6">
-    {items.map((item, _index) => <MacOSLikeWindow cardData={item} />)}
+    {items.map((item, _index) => <FrameCard contentData={item} styling={{ theme: "macos", floatUp: true }} />)}
   </div>
 
-  <!-- <MacOSLikeWindow
-      variable={{
-        header: "Sleepy 状态面板",
-        content: "这里应该是让我放 Sleepy 的地方，但是他还在重构",
-      }}
-    >
-      <Sleepy />
-    </MacOSLikeWindow> -->
+
 </BasePageLayout>

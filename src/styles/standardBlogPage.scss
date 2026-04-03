@@ -357,7 +357,7 @@
         top: 0.7rem;
         width: 0.6rem;
         height: 0.6rem;
-        background-color: var(--main-color);
+        background-color: var(--primary);
         border-radius: 50%;
       }
 
@@ -379,7 +379,7 @@
 
     li {
       &::marker {
-        color: var(--main-color);
+        color: var(--primary);
         font-weight: bold;
       }
     }
@@ -391,7 +391,7 @@
   .table-container {
     width: 100%;
     margin: 1rem 0;
-    border: 1px solid var(--main-card-border);
+    border: 1px solid var(--neutral-400);
     border-radius: 8px;
     overflow-y: hidden;
     overflow-x: auto; // 横向滚动适配移动端
@@ -412,12 +412,12 @@
         line-height: normal;
         letter-spacing: normal;
         vertical-align: middle;
-        border: 1px solid var(--main-card-border);
+        border: 1px solid var(--neutral-400);
       }
 
       // 表头：浅色背景
       thead {
-        background-color: var(--main-card-second-background);
+        background-color: var(--neutral-200);
       }
 
       // 表格主体：行悬停效果
@@ -428,7 +428,7 @@
 
           // 悬停时高亮背景
           &:hover {
-            background-color: var(--main-card-second-background);
+            background-color: var(--neutral-200);
           }
         }
       }
@@ -440,7 +440,7 @@
     margin: 1rem 0;
     height: 2px;
     border: none;
-    background-color: var(--main-card-border);
+    background-color: var(--neutral-400);
   }
 
   // 图片

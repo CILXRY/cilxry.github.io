@@ -1,6 +1,23 @@
+---
+import { SiteConfig } from "@cfg/CLIX.ts";
+---
+
 <div>
   <p m-0>&copy; 2026 CILXRY. All Systems operational.</p>
-  <a href="#" link>&gt; Status: Not Registering at MIIT yet</a><br />
-  <a href="#" link>&gt; RSS: Offline</a><br />
-  <a href="#" link>&gt; Sitemap is unavailable now</a>
+  {
+    SiteConfig.FilingInfo.filingStatus && (
+      <>
+        <a href="https://beian.miit.gov.cn" target="_blank" link block>
+          &gt;
+          {SiteConfig.FilingInfo.icpFiling}
+        </a>
+        <a href={SiteConfig.FilingInfo.psbUrl} link block>
+          &gt; {SiteConfig.FilingInfo.psbFiling}
+        </a>
+      </>
+    )
+  }
+  <!-- <a href="#" link>&gt; Status: Not Registering at MIIT yet</a><br /> -->
+  <a href="#" link block>&gt; RSS: Offline</a>
+  <a href="#" link block>&gt; Sitemap is unavailable now</a>
 </div>

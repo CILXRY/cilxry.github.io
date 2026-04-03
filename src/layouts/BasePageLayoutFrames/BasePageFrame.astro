@@ -5,118 +5,43 @@ import "@/style/colorProfileStyle.css";
 
 // Props Here
 interface Props {
-  websiteTitle?: string;
-  websiteLanguage?: string;
+  websiteTitle: string;
+  websiteLanguage: "zh-CN" | "en-US";
+  description?: string;
 }
-const { websiteTitle = "CILXRY 的小站 ", websiteLanguage = "zh-CN" } =
-  Astro.props;
+const { websiteLanguage: language = "zh-CN", websiteTitle = "", description } = Astro.props;
 
 // Astro Components and Layouts Here
 import NavBar from "@cp/Navbar.astro";
 import Footer from "@cp/Footer/Footer.astro";
-import SwupTransition from "@cp/Swup/SwupTransition.vue";
-import CodeBlockCopy from "@cp/Blog/CodeBlockCopy.vue";
+import AttachedHeader from "./AttachedHeader.astro";
 ---
 
 <!doctype html>
-<html lang={websiteLanguage}>
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, max-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <title>{websiteTitle}</title>
-    <meta name="description" content="这是 CILXRY 的个人网站" />
-    <meta name="author" content="CILXRY" />
-    <meta property="og:title" content={websiteTitle} />
-    <meta property="og:description" content="这是 CILXRY 的个人网站" />
-    <!-- <meta property="og:image" content="https://cilxry.cc/banner.webp"> -->
-    <!-- <meta property="og:url" content="https://cilxry.cc"> -->
-    <!-- <meta name="theme-color" content="#cccccc" /> -->
-    <meta name="robots" content="noindex, nofollow" />
-    <link rel="shortcut icon" href="favicon.svg" />
-
-    <slot name="InsHeader" />
-  </head>
+<html lang={language}>
+  <AttachedHeader title={websiteTitle} description={description} />
   <body
-    id="swup"
-    data-swup
     class="l-bg-primary dark:d-bg-primary"
     text="left [var(--light-text-secondary)] dark:[var(--gray-400)]"
-    font-sans
+    font-[--font-list-standard]
     antialiased
     max-w-full
     px="6 md:12"
     py-0
     my-0
     duration-500
+
   >
     <NavBar />
-    <main
-      id="swup-transitions"
-      data-swup-transition-container
-      class="max-w-7xl mx-auto pb-16 md:py-20"
-    >
+    <main id="swup" class="max-w-7xl mx-auto pb-16 md:py-20 transition-fade" flex-1>
       <slot />
     </main>
     <Footer />
-
-    <!-- SWUP Vue 组件 -->
-    <SwupTransition client:only="vue" />
-
-    <!-- 代码块复制功能组件 -->
-    <CodeBlockCopy client:load />
   </body>
 </html>
 
 <style>
-  /* ===== SWUP 页面过渡动画 ===== */
-  /*
-   * SWUP 在页面切换时会添加这些类到 <html> 标签：
-   * - is-animating: 整个动画过程中
-   * - is-leaving: 页面离开阶段
-   * - is-rendering: 新页面渲染阶段
-   * - is-mounted: 新页面已挂载
-   */
-
-  /* 基础过渡效果 - 淡入淡出 */
-  html.is-animating {
-    overflow: hidden; /* 防止动画期间滚动 */
+  * {
+    font-family: var(--font-list-standard);
   }
-
-  /* 旧页面离开：淡出 */
-  html.is-leaving body#swup {
-    animation: swup-fade-out 0.4s ease-in-out forwards;
-  }
-
-  /* 新页面进入：隐藏直到挂载 */
-  html.is-rendering body#swup {
-    opacity: 0;
-  }
-
-  /* 新页面挂载后：淡入显示 */
-  html.is-mounted body#swup {
-    animation: swup-fade-in 0.4s ease-in-out forwards;
-  }
-
-  @keyframes swup-fade-out {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-
-  @keyframes swup-fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-
 </style>

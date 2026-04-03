@@ -1,11 +1,31 @@
 ---
+interface Props {
+  k: string;
+  styled?: "grid" | "default";
+}
 import BasePageFrame from "./BasePageLayoutFrames/BasePageFrame.astro";
+import GridLayout from "./BasePageLayoutFrames/GridLayout.astro";
+
+import { translate } from "@/i18n/index.ts";
+const { k, styled = "default" } = Astro.props;
+
 import "@/styles/base.scss";
 ---
 
-<BasePageFrame>
-  <slot />
-</BasePageFrame>
+{
+  styled === "default" && (
+    <BasePageFrame websiteLanguage="zh-CN" websiteTitle={translate(k)}>
+      <slot />
+    </BasePageFrame>
+  )
+}
+{
+  styled === "grid" && (
+    <GridLayout websiteLanguage="zh-CN" websiteTitle={translate(k)}>
+      <slot />
+    </GridLayout>
+  )
+}
 
 <style is:global>
   /* Callout 提示框样式 */

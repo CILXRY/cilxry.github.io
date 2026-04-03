@@ -9,6 +9,7 @@ src/content/*
 # Current Rules
 rules/*
 .lingma/rules/*
+.trae/*
 
 # ======================================
 # === WILL BE IGNORED ALL TIME UNDER ===
