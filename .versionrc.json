@@ -1,0 +1,15 @@
+{
+  "types": [
+    { "type": "fix", "section": "Problem Fixes | 问题修复" },
+    { "type": "feat", "section": "Features | 功能添加" },
+    { "type": "docs", "section": "Docs | 文档" },
+    { "type": "style", "section": "Styles | 样式" },
+    { "type": "ci", "section": "CI | CI 配置" },
+    { "type": "conf", "section": "Config | 配置文件" }
+  ],
+
+  "releaseCommitMessageFormat": "{{currentTag}}",
+  "commitUrlFormat": "https://github.com/cilxry/cilxry.github.io/commits/{{hash}}",
+  "compareUrlFormat": "https://github.com/cilxry/cilxry.github.io/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "https://github.com/cilxry/cilxry.github.io/issues/{{id}}"
+}
