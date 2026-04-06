@@ -1,7 +1,7 @@
 {
   "name": "cilxry-intro",
   "type": "module",
-  "version": "0.0.3-3a",
+  "version": "0.0.3",
   "packageManager": "pnpm@10.28.2",
   "scripts": {
     "dev": "astro dev --host 0.0.0.0 --port 4000",
@@ -11,7 +11,11 @@
     "new": "node ./scripts/createNewFile.ts",
     "exi": "node ./scripts/importExistFile.ts",
     "exi-batch": "node ./scripts/importBatchFiles.ts",
-    "update-frontmatter": "node ./scripts/updateFrontmatter.ts"
+    "update-frontmatter": "node ./scripts/updateFrontmatter.ts",
+    "rel": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:init": "standard-version --first-release"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
