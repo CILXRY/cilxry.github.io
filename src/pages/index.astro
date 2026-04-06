@@ -9,20 +9,25 @@ import Typer from "../components/Typer/type.vue";
 
 // 获取博客数据（如果配置显示博客卡片）
 import { sortedPosts } from "@ut/content/postsMap.ts";
+import ShowenCard from "@cp/posts/ShowenCard.astro";
+import { items } from "@cfg/Intro-Items.ts";
 
 let recentPosts: typeof sortedPosts = [];
 if (HOMEPAGE_CONFIG.showBlogCards && DEFAULT_PAGE === "blog") {
   recentPosts = sortedPosts.slice(0, 3);
 }
-
-// content += `<p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${creationDate}</p>`;
-// if (description) {
-//   content += `<p class="text-sm text-gray-500 dark:text-gray-500 line-clamp-2">${description}</p>`;
-// }
 ---
 
 <BasePageLayout k="">
   <Typer client:load />
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-6">
+    {
+      items.map((item, _index) => (
+        <FrameCard contentData={item} styling={{ theme: "macos", floatUp: true }} />
+      ))
+    }
+  </div>
 
   {
     HOMEPAGE_CONFIG.showBlogCards && recentPosts.length > 0 && (
@@ -33,7 +38,7 @@ if (HOMEPAGE_CONFIG.showBlogCards && DEFAULT_PAGE === "blog") {
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {recentPosts.map((post, _index) => (
-          <FrameCard contentData={{header: post.data.title,content: `${post.data.creation}<br>${post.data.description}`}} styling={{theme: "macos", floatUp: false}} clickData={{href:`/blogs/${post.slug}`}}/>
+          <FrameCard contentData={{header: post.data.title,content: `${post.data.creation}<br>${post.data.description}`}} styling={{theme: "macos", floatUp: false}} clickData={{href:`/posts/${post.id}`}}/>
         ))}
       </div>
     )

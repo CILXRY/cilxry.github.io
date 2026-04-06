@@ -1,27 +1,37 @@
 ---
-import { safeGetCollection } from "@ut/content/safeCollection.ts";
+// 基础骨架和样式表
 import BasePageLayout from "@basePageLayout";
 import "@/styles/standardBlogPage.scss";
+
+// 渲染和获取内容
+import { render } from "astro:content";
+import { safeGetCollection } from "@ut/content/safeCollection.ts";
 
 export async function getStaticPaths() {
   const allPosts = await safeGetCollection("posts");
   return allPosts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
   }));
 }
 
 const { slug } = Astro.params;
 const allPosts = await safeGetCollection("posts");
-const post = allPosts.find((p) => p.slug === slug);
+const post = allPosts.find((p) => p.id === slug);
 
 if (!post || post.data.draft) {
   return Astro.redirect("/404");
 }
 
-// 渲染 Markdown 内容
-const { Content } = await post.render();
+const { Content, headings } = await render(post);
+
+const firstH1 = headings.find((h) => h.depth === 1);
+const displayTitle = firstH1?.text ?? post.data.title;
 
 import Calendar from "@lucide/astro/icons/calendar-days";
+import Modified from "@lucide/astro/icons/pencil";
+
+import Category from "@lucide/astro/icons/chart-column-stacked";
+import Tags from "@lucide/astro/icons/tags";
 
 // 声明 ViewImage 的全局类型
 declare global {
@@ -52,30 +62,66 @@ declare global {
         l-text-muted
         dark:d-text-muted
       >
-        {post.data.title}
+        {displayTitle}
       </h1>
-      <div class="post-meta" p0 m0>
+      <div class="post-meta" flex p0 m0>
         <div class="post-date" px1 py2 m0 flex items-center gap-2>
           <Calendar size="16" />
-          {post.data.creation.toLocaleDateString("zh-CN")}
+          {
+            post.data.creation
+              ? post.data.creation.toLocaleDateString("zh-CN")
+              : "缺失创建时间"
+          }
+        </div>
+        <div class="post-date" px1 py2 m0 flex items-center gap-2>
+          <Modified size="16" />
+          {
+            post.data.published
+              ? post.data.published.toLocaleDateString("zh-CN")
+              : "缺失修改时间"
+          }
+        </div>
+        <div class="post-date" px1 py2 m0 flex items-center gap-2>
+          <Category size="16" />
+          {post.data.category ? post.data.category : "没有分类"}
+        </div>
+        <div class="post-date" px1 py2 m0 flex items-center gap-2>
+          <Tags size="16" />
+          {post.data.tags ? post.data.tags : "没有标签"}
         </div>
       </div>
     </header>
 
-    <div class="markdown-main-style max-w-full" view-image>
-      <Content />
+    <div
+      class:list={[
+        "markdown-main-style",
+        "max-w-full",
+        { "has-content-h1": firstH1 },
+      ]}
+
+    >
+      <Content view-image/>
+
+      <div id="tcomment"></div>
+      <script src="/scripts/twikoo.min.js" is:inline></script>
+      <script>
+        window.addEventListener("load", () => {
+          (window as any).twikoo.init({
+            envId: "http://8.159.156.167:29204/",
+            el: "#tcomment",
+          });
+        });
+      </script>
     </div>
   </article>
   <script src="/scripts/view-image.min.js" is:inline></script>
-  <script >
+  <script>
     window.ViewImage && window.ViewImage.init("img");
   </script>
 </BasePageLayout>
 
 <style scoped>
-
   .post-meta {
-    display: flex;
     gap: 1.5rem;
     align-items: center;
     color: var(--gray-600);
@@ -97,6 +143,10 @@ declare global {
 
   .markdown-body {
     animation: fadeInUp 0.6s ease-out;
+  }
+
+  .has-content-h1 :global(h1:first-of-type) {
+    display: none;
   }
 
   @keyframes fadeInUp {

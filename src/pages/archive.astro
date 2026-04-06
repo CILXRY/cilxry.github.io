@@ -1,8 +1,8 @@
 ---
 import BasePageLayout from "@basePageLayout";
-import { safeGetCollection } from "@ut/content/safeCollection";
+import { safeGetCollection } from "@ut/content/safeCollection.ts";
 
-const posts = await safeGetCollection("blogs", ({ data }) => !data.draft);
+const posts = await safeGetCollection("posts", ({ data }) => !data.draft);
 
 // 按年份分组
 const groupedPosts = posts.reduce((acc, post) => {
@@ -44,7 +44,7 @@ const totalPosts = posts.length;
         <div class="space-y-3">
           {groupedPosts[year].map((post) => (
             <a
-              href={`/blogs/${post.slug}/`}
+              href={`/blogs/${post.id}/`}
               class="block group"
             >
               <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:border-orange-500 dark:hover:border-orange-400 transition-all duration-200 hover:shadow-md">

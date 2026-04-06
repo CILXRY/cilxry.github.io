@@ -21,13 +21,13 @@ export async function safeGetCollection<T extends CollectionName>(
 
 export async function safeGetEntry<T extends CollectionName>(
   collection: T,
-  slug: string
+  id: string
 ): Promise<CollectionEntry<T> | null> {
   try {
     const entries = await getCollection(collection);
-    return entries.find((entry) => entry.slug === slug) || null;
+    return entries.find((entry) => entry.id === id) || null;
   } catch (error) {
-    console.error(`[Content Error] Failed to get entry "${slug}" from "${collection}":`);
+    console.error(`[Content Error] Failed to get entry "${id}" from "${collection}":`);
     console.error(error);
     return null;
   }
