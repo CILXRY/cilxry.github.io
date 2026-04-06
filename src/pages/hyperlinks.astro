@@ -5,28 +5,34 @@ import HyperlinkCard from "@cp/HyperLinks/hyperlinkCard.astro";
 import { hyperlinks } from "@/config/Hyperlinks-Items.ts";
 ---
 
-<BasePageLayout>
-  <h1 m-0>友情链接</h1>
-  <h3 my-1>HyperLinks</h3>
-  <div font-mono>Here's the standard hyperlinks list:</div>
-  <div grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 my-2>
-    {
-      hyperlinks.map(
-        (items: {
-          name: string;
-          content: string;
-          reachUrl: string;
-          imageUrl: string;
-        }) => (
-          <HyperlinkCard
-            name={items.name}
-            content={items.content}
-            reachUrl={new URL(items.reachUrl)}
-            imageUrl={items.imageUrl}
-          />
-        ),
-      )
-    }
+<BasePageLayout k="hyperlinks">
+  <div md:flex>
+    <div flex-1>
+      <h1 m-0>友情链接</h1>
+      <h3 my-1>HyperLinks</h3>
+      <div font-mono>Here's the standard hyperlinks list:</div>
+      <div grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-2>
+        {
+          hyperlinks.map(
+            (items: {
+              name: string;
+              content: string;
+              reachUrl: string;
+              imageUrl: string;
+            }) => (
+              <HyperlinkCard
+                name={items.name}
+                content={items.content}
+                reachUrl={new URL(items.reachUrl)}
+                imageUrl={items.imageUrl}
+              />
+            )
+          )
+        }
+      </div>
+    </div>
+    <div>
+      <AddHyperlink />
+    </div>
   </div>
-  <AddHyperlink />
 </BasePageLayout>

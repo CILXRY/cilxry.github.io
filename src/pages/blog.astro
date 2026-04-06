@@ -96,7 +96,7 @@ import SearchBox from "@cp/SearchBox.svelte";
           <EchoCard
             postData={cardData}
             gradient={gradients[index]}
-            link={`/posts/${post.slug}/`}
+            link={`/posts/${post.id}/`}
             data-category={post.data.category || ""}
             data-tags={(post.data.tags || []).join(",")}
           />
