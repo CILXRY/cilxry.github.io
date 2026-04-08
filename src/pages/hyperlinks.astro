@@ -1,0 +1,17 @@
+---
+import BasePageLayout from "@basePageLayout";
+import AddHyperlink from "@cp/HyperLinks/AddHyperlink.astro";
+import HyperlinkSide from "@cp/HyperLinks/HyperlinkSide.astro";
+---
+
+<BasePageLayout k="hyperlinks">
+  <div md:flex>
+    <div flex-auto>
+      <h1 m-0>友情链接</h1>
+      <HyperlinkSide />
+    </div>
+    <div flex-initial>
+      <AddHyperlink />
+    </div>
+  </div>
+</BasePageLayout>

@@ -1,0 +1,17 @@
+---
+import type { GetStaticPaths } from "astro";
+import BasePageLayout from "@basePageLayout";
+import { categories, sortedPosts, tags } from "@ut/content/postsMap.ts";
+import PerPage from "@cp/posts/PerPage.astro";
+import SearchBox from "@cp/SearchBox.svelte";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return paginate(sortedPosts, { pageSize: 10 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<BasePageLayout k="" styled={"default"}>
+  <PerPage p={page}/>
+</BasePageLayout>

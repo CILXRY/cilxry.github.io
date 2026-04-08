@@ -1,0 +1,94 @@
+---
+interface Props {
+  name: string;
+  content: string;
+  reachUrl: URL;
+  imageUrl: string; // URL
+}
+const { name, content, imageUrl: imageURL, reachUrl: reachURL = "#" } = Astro.props;
+import ExternalLink from "@lucide/astro/icons/external-link";
+import "@/style/colorProfileStyle.css";
+---
+
+<a href={reachURL} target="_blank" class="my-3 block decoration-none group">
+  <div
+    class="relative
+      overflow-hidden
+      p-4
+      b-rd-2xl
+      bg-gradient-to-br from-blue-50/80 to-purple-50/80
+      dark:from-blue-900/20 dark:to-purple-900/20
+      border border-blueGray-200/60 dark:border-blueGray-700/60
+      shadow-sm shadow-blueGray-200/50 dark:shadow-blueGray-900/50
+      hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-blue-400/30
+      hover:border-blue-400/60 dark:hover:border-blue-500/60
+      hover:-translate-y-1
+      active:scale-98
+      transition-all duration-300 ease-out
+      backdrop-blur-sm"
+  >
+    <!-- 背景装饰 -->
+    <div
+      class="absolute -top-10 -right-10 w-20 h-20 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-xl"
+    >
+    </div>
+    <div
+      class="absolute -bottom-8 -left-8 w-16 h-16 bg-gradient-to-tr from-purple-400/10 to-pink-400/10 rounded-full blur-lg"
+    >
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="relative flex items-center gap-3">
+      <!-- 头像/图标区域 -->
+      <div
+        class="relative
+        flex-shrink-0
+        h-14 w-14
+        rounded-full
+        p-0.5
+        bg-gradient-to-br from-blue-400 to-purple-500
+        shadow-md shadow-blue-500/20
+        group-hover:shadow-lg group-hover:shadow-blue-500/30
+        transition-shadow duration-300"
+      >
+        <img
+          src={imageURL}
+          alt={name}
+          loading="lazy"
+          class="w-full h-full
+            rounded-full
+            object-cover
+            border-2 border-white dark:border-gray-800"
+        />
+      </div>
+
+      <!-- 文字内容区域 -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1">
+          <span
+            class="font-bold text-base
+            bg-gradient-to-r from-blue-600 to-purple-600
+            dark:from-blue-400 dark:to-purple-400
+            bg-clip-text text-transparent
+            group-hover:from-blue-700 group-hover:to-purple-700
+            dark:group-hover:from-blue-300 dark:group-hover:to-purple-300
+            transition-all duration-300"
+          >
+            {name}
+          </span>
+          <!-- 外链图标 -->
+          <ExternalLink size={12} />
+        </div>
+        <p
+          class="my-0
+          text-sm
+          text-gray-600 dark:text-gray-400
+          line-clamp-2
+          leading-relaxed"
+        >
+          {content}
+        </p>
+      </div>
+    </div>
+  </div>
+</a>

@@ -1,0 +1,216 @@
+---
+// SidebarNav - 侧边栏导航组件
+// 支持移动端抽屉式和桌面端固定侧边栏布局
+
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: NavItem[];
+  position?: "left" | "right";
+}
+
+const { items = [], position = "left" } = Astro.props;
+---
+
+<div class="sidebar-nav" data-position={position}>
+  <!-- 移动端菜单按钮 -->
+  <button
+    id="sidebar-toggle"
+    class="md:hidden fixed top-4 z-50 p-2 rounded-lg bg-cp-500 text-white shadow-lg hover:bg-cp-600 transition-colors"
+    style={position === "left" ? "left: 4" : "right: 4"}
+    aria-label="切换菜单"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <!-- 遮罩层 -->
+  <div
+    id="sidebar-overlay"
+    class="fixed inset-0 bg-black/50 z-40 md:hidden opacity-0 pointer-events-none transition-opacity"
+  >
+  </div>
+
+  <!-- 侧边栏内容 -->
+  <aside
+    id="sidebar"
+    class={`
+      fixed md:sticky top-0 h-screen w-64 
+      ${position === "left" ? "left-0 -translate-x-full md:translate-x-0" : "right-0 translate-x-full md:translate-x-0"}
+      bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800
+      z-50 md:z-auto
+      transform transition-transform duration-300 ease-in-out
+      flex flex-col py-6 px-4
+    `}
+  >
+    <!-- 站点标题 -->
+    <div class="mb-8 px-2">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+        CILXRY 的小站
+      </h2>
+    </div>
+
+    <!-- 卡片区域 - 可自由添加各种卡片 -->
+    <div class="cards-container mb-6">
+      <!-- 示例 1: 公告卡片 -->
+      <!-- 
+      <SidebarCard 
+        title="欢迎来到我的小站"
+        content="这里记录我的技术学习和生活点滴"
+        icon="notification"
+        gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+      />
+      -->
+
+      <!-- 示例 2: 个人简介卡片 -->
+      <!-- 
+      <SidebarCard 
+        title="关于作者"
+        content="热爱编程的开发者，喜欢分享技术知识"
+        icon="user"
+        gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+        href="/about"
+        clickable={true}
+      />
+      -->
+
+      <!-- 示例 3: 自定义图标卡片 -->
+      <!-- 
+      <SidebarCard 
+        title="特别推荐"
+        content="查看精选文章和教程"
+        customIconSvg='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+        gradient="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+        href="/featured"
+        clickable={true}
+      />
+      -->
+    </div>
+
+    <!-- 导航列表 -->
+    <nav class="flex-1">
+      <ul class="space-y-2">
+        {
+          items.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="block px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-cp-100 dark:hover:bg-cp-900 hover:text-cp-600 dark:hover:text-cp-400 transition-colors"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- 底部信息 -->
+    <div class="mt-auto pt-6 px-2 text-sm text-gray-500 dark:text-gray-400">
+      <p>© 2026 CILXRY</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+  // 移动端侧边栏开关控制
+  const sidebar = document.getElementById("sidebar")!;
+  const toggleBtn = document.getElementById("sidebar-toggle")!;
+  const overlay = document.getElementById("sidebar-overlay")!;
+
+  let isOpen = false;
+
+  function toggleSidebar() {
+    isOpen = !isOpen;
+
+    if (isOpen) {
+      // 打开侧边栏
+      sidebar.classList.remove(
+        window.location.pathname.includes("left")
+          ? "-translate-x-full"
+          : "translate-x-full",
+      );
+      sidebar.classList.add("translate-x-0");
+      overlay.classList.remove("opacity-0", "pointer-events-none");
+    } else {
+      // 关闭侧边栏
+      const position = sidebar.getAttribute("data-position") || "left";
+      if (position === "left") {
+        sidebar.classList.add("-translate-x-full");
+      } else {
+        sidebar.classList.add("translate-x-full");
+      }
+      sidebar.classList.remove("translate-x-0");
+      overlay.classList.add("opacity-0", "pointer-events-none");
+    }
+  }
+
+  // 切换按钮点击事件
+  toggleBtn.addEventListener("click", toggleSidebar);
+
+  // 遮罩层点击关闭
+  overlay.addEventListener("click", () => {
+    if (isOpen) {
+      toggleSidebar();
+    }
+  });
+
+  // ESC 键关闭
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && isOpen) {
+      toggleSidebar();
+    }
+  });
+
+  // 窗口大小改变时重置状态（从移动端切换到桌面端）
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 768 && isOpen) {
+      toggleSidebar();
+    }
+  });
+</script>
+
+<style>
+  /* 侧边栏容器 */
+  .sidebar-nav {
+    --cp-100: oklch(0.96 0.02 250);
+    --cp-400: oklch(0.7 0.12 250);
+    --cp-500: oklch(0.6 0.15 250);
+    --cp-600: oklch(0.5 0.18 250);
+    --cp-900: oklch(0.3 0.2 250);
+  }
+
+  /* 暗色模式 */
+  @media (prefers-color-scheme: dark) {
+    .sidebar-nav {
+      --cp-100: oklch(0.3 0.2 250);
+      --cp-400: oklch(0.6 0.15 250);
+      --cp-500: oklch(0.7 0.12 250);
+      --cp-600: oklch(0.75 0.1 250);
+      --cp-900: oklch(0.9 0.08 250);
+    }
+  }
+
+  /* 卡片容器 */
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+</style>

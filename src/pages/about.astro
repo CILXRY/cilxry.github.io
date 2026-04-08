@@ -1,0 +1,24 @@
+---
+// 我望见她就此昙花一现
+// Astro Components and Layouts Here
+import BasePageLayout from "@basePageLayout";
+import FrameCard from "../components/StyledCards/FrameCard.astro";
+
+// Vue Components Here
+import Typer from "../components/Typer/type.vue";
+
+// Contents Here
+import { items } from "@/config/Intro-Items.ts";
+---
+
+<BasePageLayout k="about">
+  <Typer client:load />
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-6">
+    {
+      items.map((item, _index) => (
+        <FrameCard contentData={item} styling={{ theme: "macos", floatUp: true }} />
+      ))
+    }
+  </div>
+</BasePageLayout>

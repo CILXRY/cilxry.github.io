@@ -1,0 +1,59 @@
+---
+// 如果温柔是罪。
+// Base Color Style
+import "@/style/colorProfileStyle.css";
+
+// Props Here
+interface Props {
+  websiteTitle: string;
+  websiteLanguage: "zh-CN" | "en-US";
+  description?: string;
+}
+const {
+  websiteLanguage: language = "zh-CN",
+  websiteTitle = "",
+  description,
+} = Astro.props;
+
+// Astro Components and Layouts Here
+import NavBar from "@cp/Navbar.astro";
+import Footer from "@cp/Footer/Footer.astro";
+import AttachedHeader from "./AttachedHeader.astro";
+---
+
+<!doctype html>
+<html lang={language}>
+  <AttachedHeader title={websiteTitle} description={description} />
+  <body
+    class="l-bg-primary dark:d-bg-primary"
+    text="left [var(--light-text-secondary)] dark:[var(--gray-400)]"
+    font-[--font-list-standard]
+    antialiased
+    max-w-full
+    px="6 md:12"
+    py-0
+    my-0
+    duration-300
+  >
+    <NavBar />
+    <div animation-layer>
+      
+    </div>
+    <main
+      id="swup"
+      class="max-w-7xl mx-auto pb-16 md:py-20 transition-fade"
+      md:translate-y-10
+      duration-300
+      transition-all
+    >
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  * {
+    font-family: var(--font-list-standard);
+  }
+</style>

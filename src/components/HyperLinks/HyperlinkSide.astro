@@ -1,0 +1,21 @@
+---
+import { hyperlinks } from "@cfg/Hyperlinks-Items.ts";
+import HyperlinkCard from "./HyperlinkCard.astro";
+---
+
+<div pr-4>
+  <h3 my-1>HyperLinks</h3>
+  <div font-mono>Here's the standard hyperlinks list:</div>
+  <div grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 my-2>
+    {
+      hyperlinks.map((items) => (
+        <HyperlinkCard
+          name={items.name}
+          content={items.content}
+          reachUrl={new URL(items.reachUrl)}
+          imageUrl={items.imageUrl}
+        />
+      ))
+    }
+  </div>
+</div>
