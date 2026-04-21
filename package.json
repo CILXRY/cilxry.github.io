@@ -29,7 +29,7 @@
     "@tailwindcss/vite": "^4.2.1",
     "@types/react-dom": "^19.2.3",
     "@unocss/preset-wind3": "^66.6.6",
-    "astro": "^5.16.9",
+    "astro": "^6.1.6",
     "astro-expressive-code": "^0.41.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
