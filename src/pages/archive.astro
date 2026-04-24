@@ -1,0 +1,100 @@
+---
+import BasePageLayout from "@basePageLayout";
+import { safeGetCollection } from "@ut/content/safeCollection.ts";
+
+const posts = await safeGetCollection("posts", ({ data }) => !data.draft);
+
+// 按年份分组
+const groupedPosts = posts.reduce((acc, post) => {
+  const year = post.data.creation.getFullYear().toString();
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(post);
+  return acc;
+}, {} as Record<string, typeof posts>);
+
+// 按年份降序排列
+const sortedYears = Object.keys(groupedPosts).sort((a, b) => parseInt(b) - parseInt(a));
+
+// 计算总文章数
+const totalPosts = posts.length;
+---
+
+<BasePageLayout k="archive">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- 标题和统计 -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 inline-flex items-center gap-2">
+        文章
+        <span class="text-lg text-gray-500 dark:text-gray-400 font-normal">{totalPosts}</span>
+      </h1>
+    </div>
+
+    <!-- 按年份分组展示 -->
+    {sortedYears.map((year) => (
+      <div class="mb-10">
+        <!-- 年份标题 -->
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+          <div class="w-1 h-6 bg-orange-500 rounded"></div>
+          {year}
+        </h2>
+
+        <!-- 该年份的文章列表 -->
+        <div class="space-y-3">
+          {groupedPosts[year].map((post) => (
+            <a
+              href={`/blogs/${post.id}/`}
+              class="block group"
+            >
+              <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:border-orange-500 dark:hover:border-orange-400 transition-all duration-200 hover:shadow-md">
+                <!-- 标题 -->
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                  {post.data.title}
+                </h3>
+
+                <!-- 元信息 -->
+                <div class="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  <!-- 日期 -->
+                  <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    {post.data.creation.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </span>
+
+                  <!-- 分类 -->
+                  {post.data.category && (
+                    <span class="flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                      </svg>
+                      {post.data.category}
+                    </span>
+                  )}
+
+                  <!-- 阅读时长 -->
+                  {post.data.readingTime && (
+                    <span class="flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      {post.data.readingTime} 分钟
+                    </span>
+                  )}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</BasePageLayout>
+
+<style>
+  /* 平滑过渡动画 */
+  a {
+    text-decoration: none;
+  }
+</style>

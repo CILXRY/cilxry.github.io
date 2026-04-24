@@ -1,0 +1,61 @@
+---
+interface Props {
+  name: string;
+  content: string;
+  reachUrl: URL;
+  imageUrl: string; // URL
+}
+const { name, content, imageUrl: imageURL, reachUrl: reachURL } = Astro.props;
+import ExternalLink from "@lucide/astro/icons/external-link";
+import "@/style/colorProfileStyle.css";
+import "@/styles/color.scss";
+---
+
+<a href={reachURL} w-70 b b-[--] decoration-none my-3 block transition-all
+  ><div
+    class="bg-blue
+    p-4
+    flex
+    gap-4
+    items-center
+    cursor-pointer
+    shadow-none
+    hover:shadow-lg
+    relative
+    overflow-hidden
+    group"
+    b-rd-2xl
+    transition-all
+  >
+    <div class="flex-1 flex flex-col gap-1 relative z-10 overflow-hidden" m-0 p-0>
+      <div class="items-start" flex>
+        <div w-14 h-14 rounded-full pr-2>
+          <img
+            src={imageURL}
+            alt="Avatar"
+            class="w-full hfull object-cover rounded-[inherit] opacity-90"
+          />
+        </div>
+
+        <div>
+          <h3 font-bold text-base text-gray-800 truncate m-0>{name}</h3>
+          <div
+            flex
+            flex-1
+            w-full
+            justify-between
+            text-sm
+            text-gray-500
+
+          >
+            <p class='font-[--font-list-coding]' m-0>|{reachURL.host}|</p>
+            <p class='font-[--font-list-coding]' m-0>|6ms|</p>
+          </div>
+        </div>
+      </div>
+      <p text-sm text-gray-600 line-clamp-2 m-0>
+        {content}
+      </p>
+    </div>
+  </div></a
+>

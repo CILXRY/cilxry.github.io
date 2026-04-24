@@ -1,0 +1,46 @@
+---
+// Imports
+import ExternalLink from "@lucide/astro/icons/external-link";
+import { translate } from "@/i18n/index.ts";
+import type { I18nKeys } from "@/i18n/InternationalKeys.ts";
+
+// Props
+interface Props {
+  path: string;
+  key: string;
+}
+const { path, key } = Astro.props;
+
+// Check if external link
+let external = false;
+const link = new URL(path, Astro.url.origin);
+if (link.origin !== Astro.url.origin) external = true;
+
+// Check if active
+const currentPath = Astro.url.pathname;
+const isActive = path === currentPath;
+---
+
+<a href={path} data-i18n={key} decoration-none>
+  <span
+    px4
+    py2
+    flex
+    text-base
+    b-rd-xl
+    no-underline
+    duration-600
+    l-text-muted
+    property-all
+    hover:text-2xl
+    tracking-tight
+    dark:d-text-muted
+    hover:l-text-muted
+    hover:l-bg-secondary
+    dark-hover:d-text-muted
+    dark-hover:d-bg-secondary
+  >
+    {translate(key as I18nKeys)}
+    {external && <ExternalLink size={12} />}
+  </span>
+</a>

@@ -1,0 +1,160 @@
+{
+  "$ref": "#/definitions/postsFrontmatter",
+  "definitions": {
+    "postsFrontmatter": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "category": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "author": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "draft": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "descGenAuthor": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "descGenTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "wordCount": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "readingTime": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "creation": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "published": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "warning": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "creation"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

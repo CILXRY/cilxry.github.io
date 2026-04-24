@@ -1,0 +1,48 @@
+---
+// Theme Control
+import ControlPanel from "./ControlPanel.vue";
+
+// Nav Items
+import { navLogo, navItems } from "@/config/NavBar-Items.ts";
+import LinksMap from "@/components/navigationBar/LinksMap.astro";
+
+// Icon
+import House from "@lucide/astro/icons/house";
+---
+
+<nav
+  flex
+  z-50
+  h-16
+  mx-auto
+  max-w-7xl
+  items-center
+  rounded-b-xl
+  duration-300
+  transition-all
+  justify-between
+>
+  <!-- <div flex>
+    <House />
+    <div>Current: {currentPath}</div>
+  </div> -->
+  <a
+    class="text-2xl font-bold tracking-tight font-mono no-underline transition-all duration-200 p2 text-2xl font-bold tracking-tight font-mono no-underline transition-all duration-200 hover:l-bg-secondary l-text-muted hover:l-text-muted transition-all transition-duration-400 b-rd-xl px-4 py-2"
+    text=" hover:[var(--light-link-hover)] dark:hover:[var(--dark-link-default)]"
+    href={navLogo.path}
+  >
+    {navLogo.key}
+  </a>
+
+  <div hidden sm:flex gap-2 items-center transition-all>
+    {
+      navItems.map((item) => {
+        return <LinksMap path={item.path} key={item.key} />;
+      })
+    }
+  </div>
+
+  <div flex items-center gap-2>
+    <ControlPanel client:load />
+  </div>
+</nav>

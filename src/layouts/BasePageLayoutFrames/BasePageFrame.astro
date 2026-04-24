@@ -1,0 +1,64 @@
+---
+// 如果温柔是罪。
+// Base Color Style
+// 它在这里是有原因的
+import "@/style/colorProfileStyle.css";
+// 卧槽 我原来一直用的老样式表我都没发现吗。
+// 我写新样式它又是怎么用起来的。
+// 太牛逼了。
+import "@/styles/base.scss";
+
+// Props Here
+interface Props {
+  websiteTitle: string;
+  websiteLanguage: "zh-CN" | "en-US";
+  description?: string;
+}
+const {
+  websiteLanguage: language = "zh-CN",
+  websiteTitle = "",
+  description,
+} = Astro.props;
+
+// Astro Components and Layouts Here
+import NavBar from "@cp/Navbar.astro";
+import Footer from "@cp/Footer/Footer.astro";
+import AttachedHeader from "./AttachedHeader.astro";
+import BackToTop from "@cp/BackToTop.astro";
+const renderdBackground = 0;
+---
+
+<!doctype html>
+<html lang={language}>
+  <AttachedHeader title={websiteTitle} description={description}
+    ><slot /></AttachedHeader
+  >
+  <body
+    class=`l-bg-primary dark:d-bg-primary`
+    text="left [var(--)] dark:[var(--gray-400)]"
+    font-[--font-list-standard]
+    antialiased
+    max-w-full
+    px="sm:12"
+    py-0
+    my-0
+    duration-300
+  >
+    <NavBar />
+    <div animation-layer>
+      <main
+        id="swup"
+        class=`max-w-7xl mx-auto pb-16 md:py-20 transition-fade ${renderdBackground && "bg-blue"}`
+        md:translate-y-10
+        duration-300
+        transition-all
+      >
+        <slot />
+      </main>
+    </div>
+
+    <Footer />
+    <BackToTop />
+  </body>
+</html>
+

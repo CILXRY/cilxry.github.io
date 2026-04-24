@@ -1,0 +1,74 @@
+---
+import "@/styles/base.scss";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CILXRY 纪事小栈 颜色测试系统</title>
+  </head>
+  <body>
+    <h1 text-center>CILXRY 纪事小栈 颜色测试系统</h1>
+    <div px-8>
+      <h2>Light Theme</h2>
+      <div flex flex-1>
+        <!-- primary -->
+        <div
+          class="bg-[--primary] text-[--text-light]"
+          id="primary-light"
+          h-20
+          rounded-md
+          p3
+        >
+          <span line-clamp-1>这是主要文字的背景色和文字颜色。</span>
+          <span id="primary-light-holder" font-bold></span>
+        </div>
+        <!-- secondary -->
+        <div
+          class="bg-[--secondary] text-[--text-light]"
+          id="secondary-light"
+          h-20
+          rounded-md
+          p3
+        >
+          <span line-clamp-1>这是次要文字的背景色和文字颜色。</span>
+          <span id="secondary-light-holder" font-bold></span>
+        </div>
+        <!-- tertiary -->
+        <div
+          class="bg-[--tertiary] text-[--text-light]"
+          id="tertiary-light"
+          h-20
+          rounded-md
+          p3
+        >
+          <span line-clamp-1>这是三级文字的背景色和文字颜色。</span>
+          <span id="tertiary-light-holder" font-bold></span>
+        </div>
+        <!-- error -->
+        <div
+          class="bg-[--error] text-[--text-light]"
+          id="error-light"
+          h-20
+          rounded-md
+          p3
+        >
+          <span line-clamp-1>这是重要文字的背景色和文字颜色。</span>
+          <span id="error-light-holder" font-bold></span>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.getElementById("primary-light-holder")!.textContent =
+        document.getElementById("primary-light")!.className;
+      document.getElementById("secondary-light-holder")!.textContent =
+        document.getElementById("secondary-light")!.className;
+      document.getElementById("tertiary-light-holder")!.textContent =
+        document.getElementById("tertiary-light")!.className;
+      document.getElementById("error-light-holder")!.textContent =
+        document.getElementById("error-light")!.className;
+    </script>
+  </body>
+</html>

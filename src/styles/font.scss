@@ -1,0 +1,85 @@
+:root {
+  // 字体列表 Font Lists
+  --font-list-fallback:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu,
+    Cantarell, "Helvetica Neue", sans-serif;
+
+  $pf: op;
+  @if $pf==ad {
+    --font-list-standard: "AiDianFengYaHei", var(--font-list-fallback);
+  } @else if $pf==op {
+    --font-list-standard: "OPPOSans", var(--font-list-fallback);
+  }
+
+  --font-list-coding:
+    "JetBrainsMono", "Fira Code", "Consolas", var(--font-list-standard);
+}
+
+// 字体导入
+@font-face {
+  font-family: "AiDianFengYaHei";
+  src: url("/fonts/AiDianFengYaHei.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrainsMono";
+  src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "OPPOSans";
+  src:
+    url("/fonts/OPPO Sans 4.0.woff2") format("woff2"),
+    url("/fonts/OPPO Sans 4.0.woff") format("woff");
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  font-family: var(--font-list-standard);
+}
+:root {
+  // 字体列表 Font Lists
+  --font-list-fallback:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu,
+    Cantarell, "Helvetica Neue", sans-serif;
+
+  $pf: op;
+  @if $pf==ad {
+    --font-list-standard: "AiDianFengYaHei", var(--font-list-fallback);
+  } @else if $pf==op {
+    --font-list-standard: "OPPOSans", var(--font-list-fallback);
+  }
+
+  --font-list-coding:
+    "JetBrainsMono", "Fira Code", "Consolas", var(--font-list-standard);
+}
+
+// 字体导入
+
+@font-face {
+  font-family: "AiDianFengYaHei";
+  src: url("/fonts/AiDianFengYaHei.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrainsMono";
+  src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "OPPOSans";
+  src:
+    url("/fonts/OPPO Sans 4.0.woff2") format("woff2"),
+    url("/fonts/OPPO Sans 4.0.woff") format("woff");
+  font-style: normal;
+  font-display: swap;
+}

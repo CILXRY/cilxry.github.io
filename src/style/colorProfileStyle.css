@@ -1,0 +1,29 @@
+:root {
+  /* ========================================
+   * 主色配置 - 供 UnoCSS 规则使用
+   * ======================================== */
+  /* 主色相 (Hue): 0.1 (紫色调) */
+  --primary-h: 0.1;
+
+  /* 浅色模式主色亮度 (Lightness): 0.8 */
+  --primary-l-light: 0.8;
+
+  /* 深色模式主色亮度 (Lightness): 0.6 */
+  --primary-l-dark: 0.6;
+
+  /* 主色彩度 (Chroma) */
+  --primary-c: 0.11;
+
+  /* ========================================
+   * 兼容旧变量 (保留向后兼容)
+   * ======================================== */
+  --primary: oklch(var(--primary-l-light) var(--primary-c) var(--primary-h));
+  --cp: oklch(var(--primary-l-light) var(--primary-c) var(--primary-h));
+  --cp-50: oklch(calc(var(--primary-l-light) + 0.15) var(--primary-c) var(--primary-h));
+  --cp-400: oklch(var(--primary-l-light) var(--primary-c) var(--primary-h));
+  --cp-500: oklch(var(--primary-l-dark) var(--primary-c) var(--primary-h));
+  --cp-600: oklch(calc(var(--primary-l-dark) + 0.08) var(--primary-c) var(--primary-h));
+  --cp-700: oklch(calc(var(--primary-l-dark) + 0.12) var(--primary-c) var(--primary-h));
+  --cp-800: oklch(calc(var(--primary-l-dark) + 0.15) var(--primary-c) var(--primary-h));
+  --cp-900: oklch(calc(var(--primary-l-dark) - 0.15) var(--primary-c) var(--primary-h));
+}
