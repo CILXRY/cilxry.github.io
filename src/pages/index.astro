@@ -12,13 +12,16 @@ import { HOMEPAGE_CONFIG } from "@/config/c-config.ts";
 ---
 
 <BasePageLayout k="">
-  <div md:flex>
-    <div md:h-xl w-xl l-text-muted>
-      <h1 text-5xl font-400>{name}</h1>
-      <h3 font-400>许愿 如所愿 皆所愿</h3>
+  <div md:flex sm:px-4>
+    <div flex md:block md:h-xl w-xl l-text-muted>
+      <img src="https://avatar.cilxry.cc" alt="" rounded-full h-32 w-32 />
+      <header ml-6 my-a md:ml0 mt6>
+        <h1 text-5xl font-400 m-0>{name}</h1>
+        <h3 font-400 mb-0>许愿 如所愿 皆所愿</h3>
+      </header>
     </div>
-    <div l-text-muted flex-1>
-      <h1>Last Writing</h1>
+    <div l-text-muted flex-auto mt6 md:mt0>
+      <h1 mt0>Last Writing</h1>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {
           recentPosts.map((post, _index) => (
