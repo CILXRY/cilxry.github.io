@@ -11,9 +11,10 @@ import "@/style/colorProfileStyle.css";
 import "@/styles/color.scss";
 ---
 
-<a href={reachURL} w-70 b b-[--] decoration-none my-3 block transition-all
+<a href={reachURL} w-70 decoration-none my-3 block transition-all
   ><div
-    class="bg-blue
+    class="bg-transparent
+
     p-4
     flex
     gap-4
@@ -29,7 +30,7 @@ import "@/styles/color.scss";
   >
     <div class="flex-1 flex flex-col gap-1 relative z-10 overflow-hidden" m-0 p-0>
       <div class="items-start" flex>
-        <div w-14 h-14 rounded-full pr-2>
+        <div w-12 h-12 rounded-full pr-2>
           <img
             src={imageURL}
             alt="Avatar"
@@ -37,7 +38,7 @@ import "@/styles/color.scss";
           />
         </div>
 
-        <div>
+        <div mya>
           <h3 font-bold text-base text-gray-800 truncate m-0>{name}</h3>
           <div
             flex
@@ -48,8 +49,8 @@ import "@/styles/color.scss";
             text-gray-500
 
           >
-            <p class='font-[--font-list-coding]' m-0>|{reachURL.host}|</p>
-            <p class='font-[--font-list-coding]' m-0>|6ms|</p>
+            <p class='font-[--font-list-coding]' m-0>{reachURL.host}</p>
+            <p class='font-[--font-list-coding]' m-0>|6ms</p>
           </div>
         </div>
       </div>
