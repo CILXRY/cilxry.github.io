@@ -5,22 +5,8 @@ import HyperlinkCardR from "./HyperlinkCardR.astro";
 ---
 
 <div pr-4>
-  <h3 my-1>HyperLinks</h3>
-  <div font-mono>Here's the standard hyperlinks list:</div>
-  <div grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 my-2>
-    {
-      hyperlinks.map((items) => (
-        <HyperlinkCardR
-          name={items.name}
-          content={items.content}
-          reachUrl={new URL(items.reachUrl)}
-          imageUrl={items.imageUrl}
-        />
-      ))
-    }
-  </div>
-    <h3 my-1>HyperLinks</h3>
-  <div font-mono>Here's the standard hyperlinks list:</div>
+  <h3 my-1>正常的友链</h3>
+  <div font-mono>Here are normal friend-links.</div>
   <div grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 my-2>
     {
       hyperlinks.map((items) => (
@@ -33,8 +19,13 @@ import HyperlinkCardR from "./HyperlinkCardR.astro";
       ))
     }
   </div>
-    <h3 my-1>HyperLinks</h3>
-  <div font-mono>Here's the standard hyperlinks list:</div>
+  <!-- 友链分类，插个TODO -->
+  <!-- <h3 my-1>高延时访问列表</h3>
+  <div font-mono>here are slow loading friend-links.</div>
+  <p m0>
+    他们的友链因为各种各样的问题，加载略久。<br
+    />这个访问延时只是我单方面给出的结果，它仅做参考。
+  </p>
   <div grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 my-2>
     {
       hyperlinks.map((items) => (
@@ -46,9 +37,10 @@ import HyperlinkCardR from "./HyperlinkCardR.astro";
         />
       ))
     }
-  </div>
-    <h3 my-1>HyperLinks</h3>
-  <div font-mono>Here's the standard hyperlinks list:</div>
+  </div> -->
+  <!-- <h3 my-1>这些是死链</h3>
+  <div font-mono>Dead links.</div>
+  <p m0>他们也曾来过。</p>
   <div grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 my-2>
     {
       hyperlinks.map((items) => (
@@ -60,5 +52,19 @@ import HyperlinkCardR from "./HyperlinkCardR.astro";
         />
       ))
     }
-  </div>
+  </div> -->
+  <!-- <h3 my-1>这些是单向链</h3>
+  <div font-mono>here are single direction friend-links.</div>
+  <div grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 my-2>
+    {
+      hyperlinks.map((items) => (
+        <HyperlinkCard
+          name={items.name}
+          content={items.content}
+          reachUrl={new URL(items.reachUrl)}
+          imageUrl={items.imageUrl}
+        />
+      ))
+    }
+  </div> -->
 </div>
