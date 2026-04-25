@@ -1,10 +1,10 @@
-name: Deploy to Server
+name: Deploy To Dev-Env
 
 on:
   push:
-    branches: [dev]
+    branches: [elegant-dev]
   pull_request:
-    branches: [dev]
+    branches: [elegant-dev]
 
 permissions:
   contents: read
@@ -12,7 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,14 +20,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          node-version: "22"
+          cache: "pnpm"
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: '10'
+          version: "10"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -46,8 +46,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: production
-    
+      name: Dev-Env
+
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -72,18 +72,11 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |
-          echo "Deploying to $SERVER_USER@$SERVER_HOST:$SERVER_PATH"
-          
-          # Create remote directory if not exists
           ssh -p 22 -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST "mkdir -p $SERVER_PATH"
-          
-          # Sync files using rsync
           rsync -avz --delete \
             -e "ssh -p 22 -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             dist/ \
             $SERVER_USER@$SERVER_HOST:$SERVER_PATH/
-          
-          echo "Deployment completed successfully!"
 
       - name: Cleanup SSH key
         run: rm -rf ~/.ssh/deploy_key
