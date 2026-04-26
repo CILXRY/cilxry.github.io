@@ -15,11 +15,29 @@ from datetime import datetime
 DisplayExactInfo: bool = True
 
 SCHEMA = {
-    "title": {"type": str, "required": True},
-    "tags": {"type": list, "required": True},
-    "category": {"type": str, "required": True},
-    "author": {"type": str, "required": True},
-    "draft": {"type": bool, "required": True},
+    "title": {
+        "type": str,
+        "required": True,
+        "prompt": "请根据文章内容生成一个合适的45字以内的标题",
+    },
+    "tags": {
+        "type": list,
+        "required": True,
+        "prompt": "请根据文章内容生成一个合适的不超过7个的标签",
+    },
+    "category": {
+        "type": str,
+        "required": True,
+        "prompt": "请根据文章内容生成一个合适的分类",
+    },
+    "author": {
+        "type": str,
+        "required": True,
+    },
+    "draft": {
+        "type": bool,
+        "required": True,
+    },
     "creation": {"type": datetime, "required": True},
     "description": {"type": str, "required": True},
     "descGenAuthor": {"type": str, "required": True},
@@ -33,9 +51,11 @@ LOCATION = {
 }
 
 client = OpenAI(
-    api_key="sk-0b4ebf02792c4da39c34048f94b4158c",
+    api_key=os.environ.get("DEEPSEEK_API_KEY"),
     base_url="https://api.deepseek.com",
 )
+
+# region 读取文件
 
 
 def get_folder_md_files(dir_path: str) -> list[str]:
@@ -56,7 +76,7 @@ def get_folder_md_files(dir_path: str) -> list[str]:
     return files
 
 
-def read_markdown_file(fi: str) -> list:
+def read_markdown_content(fi: str) -> list:
     """尝试读取文件 Frontmatter 和其内容
 
     根据提供的 Markdown 文件路径，获取该文件的 Frontmatter 和内容。
@@ -69,38 +89,48 @@ def read_markdown_file(fi: str) -> list:
     # 显示提示信息
     print(f"[INFO] 检查文件：{fi}")
 
-    # 尝试读取文件内容
+    # 尝试读取文件内容，如果读取失败，返回的就只会是空列表
     try:
         with open(fi, "r", encoding="utf-8") as f:
             content = f.read()
     except FileNotFoundError:
         print(f"[ERROR] 文件不存在：{fi}")
-        return ["", {}]
+        return []
     except PermissionError:
         print(f"[ERROR] 无权限读取文件：{fi}")
-        return ["", {}]
+        return []
     except Exception as e:
         print(f"[ERROR] 读取文件时发生错误：{fi} - {e}")
-        return ["", {}]
+        return []
 
     # 尝试解析 Frontmatter
     fm_content = {}
+    fms, fme = 0, 0
+    fms = content.startswith("---")
     try:
-        # 有 Frontmatter 的文件都是以 --- 开头吧。
-        if content.startswith("---"):
-            end_idx = content.find("---", 3)
-            if end_idx != -1:
-                fm_content = content[3:end_idx].strip()
+        if fms:
+            fme = content.find("---", fms + 3)
+            if fme != 0:
+                fm_content = content[3:fme].strip()
                 fm_content = yaml.safe_load(fm_content)
     except yaml.YAMLError as e:
         print(f"[ERROR] YAML 解析错误：{fi} - {e}")
         # YAML 解析失败时，创建一个空字典
         fm_content = {}
 
+    # 当读取成功时，将正文和 Frontmatter 拆分开。
+
+    article_content = content[fme + 3 : :]
+
     # 显示提示信息和返回结果
     if DisplayExactInfo:
         print(f"[INFO] 检查文件：{fi} Frontmatter 内容：\n {fm_content}")
-    return [content, fm_content]
+    return [fm_content, article_content]
+
+
+# endregion
+
+# region 校验文件
 
 
 def validate_frontmatter(frontmatter: dict, schema: dict) -> list[str]:
@@ -108,6 +138,8 @@ def validate_frontmatter(frontmatter: dict, schema: dict) -> list[str]:
 
     必填检查 → 类型检查 → 空值检查 → 扩展规则
     不再拆分两个函数
+    Args:
+        frontmatter(dict): 字典
     """
     errors = []
 
@@ -153,36 +185,36 @@ def check_file(file_name: str):
       file_name (str): Markdown 文件路径
     """
     # 读取文件内容和 Frontmatter
-    content, fm = read_markdown_file(file_name)
-    
+    content, fm = read_markdown_content(file_name)
+
     # 验证 Frontmatter，获取错误信息
     errors_dict = {}
     for error in validate_frontmatter(fm, SCHEMA):
         for field, error_type in error.items():
             errors_dict[field] = error_type
-    
+
     # 执行 L1 级补充
     if errors_dict:
         print("[INFO] 执行 L1 级补充...")
         fm = auto_l1_fix(errors_dict, fm, content, file_name)
-        
+
         # 再次验证，检查是否还有缺失字段
         errors_dict = {}
         for error in validate_frontmatter(fm, SCHEMA):
             for field, error_type in error.items():
                 errors_dict[field] = error_type
-        
+
         # 如果还有缺失字段，执行 L2 级 AI 辅助补充
         if errors_dict:
             print("[INFO] 执行 L2 级 AI 辅助补充...")
             fm = ask_ai(errors_dict, fm, content)
-            
+
             # 再次验证
             errors_dict = {}
             for error in validate_frontmatter(fm, SCHEMA):
                 for field, error_type in error.items():
                     errors_dict[field] = error_type
-    
+
     # 保存更新后的 Frontmatter 到文件
     if fm:
         # 构建新的文件内容
@@ -200,20 +232,20 @@ def check_file(file_name: str):
                 # 其他类型，确保值是字符串且正确处理包含冒号的值
                 value_str = str(value)
                 # 如果值包含冒号或其他特殊字符，使用引号包围
-                if any(char in value_str for char in [':', '#', '-', '@']):
+                if any(char in value_str for char in [":", "#", "-", "@"]):
                     new_content += f"{key}: '{value_str}'\n"
                 else:
                     new_content += f"{key}: {value_str}\n"
         new_content += "---\n"
-        
+
         # 添加原文件内容（去掉旧的 Frontmatter）
         if content.startswith("---"):
             end_idx = content.find("---", 3)
             if end_idx != -1:
-                new_content += content[end_idx + 3:]
+                new_content += content[end_idx + 3 :]
         else:
             new_content += content
-        
+
         # 写入文件
         try:
             with open(file_name, "w", encoding="utf-8") as f:
@@ -221,7 +253,7 @@ def check_file(file_name: str):
             print(f"[INFO] 文件已更新：{file_name}")
         except Exception as e:
             print(f"[ERROR] 写入文件失败：{e}")
-    
+
     # 输出最终结果
     if not errors_dict:
         print("[INFO] Frontmatter 检查通过")
@@ -229,6 +261,11 @@ def check_file(file_name: str):
         print("[INFO] 仍有以下字段缺失：")
         for field, error_type in errors_dict.items():
             print(f"{field}: {error_type}")
+
+
+# endregion
+
+# region 修复文件
 
 
 def extract_h1(content: str) -> str:
@@ -313,8 +350,9 @@ def auto_l1_fix(errors, fm, file_content, file_path):
     # references 缺失 → 从内容中的链接提取
     if "references" in errors and errors["references"] == "lost":
         import re
+
         # 提取内容中的所有链接
-        links = re.findall(r'\[([^\]]+)\]\(([^\)]+)\)', file_content)
+        links = re.findall(r"\[([^\]]+)\]\(([^\)]+)\)", file_content)
         if links:
             fm["references"] = [link[1] for link in links]
             print("[AUTO_FIX] references 从内容中的链接提取 ")
@@ -330,14 +368,14 @@ def auto_l1_fix(errors, fm, file_content, file_path):
 
 def ask_ai(errors, fm, content):
     """L2级AI辅助补充功能
-    
+
     当L1级补充后仍有缺失字段时，调用AI进行分析和补充
-    
+
     Args:
         errors: 缺失的字段信息
         fm: 当前的Frontmatter
         content: 文件内容
-    
+
     Returns:
         更新后的Frontmatter
     """
@@ -345,13 +383,13 @@ def ask_ai(errors, fm, content):
     missing_fields = [field for field, error in errors.items() if error == "lost"]
     if not missing_fields:
         return fm
-    
+
     # 生成系统提示
     system_prompt = "你是一个专业的Markdown文档分析工具，负责根据文档内容补充缺失的Frontmatter字段。请根据文档的整体内容，生成准确、专业的字段值。"
-    
+
     # 生成用户提示
     user_prompt = f"请根据以下Markdown文档内容，补充缺失的Frontmatter字段：{', '.join(missing_fields)}。\n\n文档内容：\n{content[:3000]}  # 限制内容长度，避免API调用失败"
-    
+
     # 调用OpenAI API
     try:
         response = client.chat.completions.create(
@@ -361,13 +399,13 @@ def ask_ai(errors, fm, content):
                 {"role": "user", "content": user_prompt},
             ],
             stream=False,
-            reasoning_effort="high"
+            reasoning_effort="high",
         )
-        
+
         # 解析AI生成的内容
         ai_response = response.choices[0].message.content.strip()
         print(f"[AI_RESPONSE] {ai_response}")
-        
+
         # 尝试解析AI生成的YAML格式内容
         try:
             # 提取YAML部分
@@ -382,7 +420,7 @@ def ask_ai(errors, fm, content):
             else:
                 # 尝试直接解析整个响应
                 ai_fm = yaml.safe_load(ai_response)
-            
+
             # 更新Frontmatter
             if isinstance(ai_fm, dict):
                 for field in missing_fields:
@@ -402,7 +440,10 @@ def ask_ai(errors, fm, content):
                         # 处理不同类型的值
                         if value.startswith("[") and value.endswith("]"):
                             # 列表类型
-                            value = [item.strip().strip('"').strip("'") for item in value[1:-1].split(",")]
+                            value = [
+                                item.strip().strip('"').strip("'")
+                                for item in value[1:-1].split(",")
+                            ]
                         elif value.lower() in ["true", "false"]:
                             # 布尔类型
                             value = value.lower() == "true"
@@ -411,7 +452,10 @@ def ask_ai(errors, fm, content):
                             if isinstance(value, str):
                                 # 如果是字符串，尝试解析为列表
                                 if value.startswith("[") and value.endswith("]"):
-                                    value = [item.strip().strip('"').strip("'") for item in value[1:-1].split(",")]
+                                    value = [
+                                        item.strip().strip('"').strip("'")
+                                        for item in value[1:-1].split(",")
+                                    ]
                                 else:
                                     # 否则创建一个包含该字符串的列表
                                     value = [value]
@@ -419,8 +463,13 @@ def ask_ai(errors, fm, content):
                         print(f"[AI_FIX] {key} 由AI补充")
     except Exception as e:
         print(f"[ERROR] AI调用失败: {e}")
-    
+
     return fm
+
+
+# endregion
+
+# region 主入口
 
 
 def checkDir(dir_path: str):
@@ -436,4 +485,4 @@ def checkDir(dir_path: str):
         check_file(file)
 
 
-checkDir("cilxry-markdown-pages\\posts")
+# checkDir("cilxry-markdown-pages\\posts")

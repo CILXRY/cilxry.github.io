@@ -1,3 +1,5 @@
 {
-  "markdown.validate.enabled": false
+  "markdown.validate.enabled": false,
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python.defaultInterpreterPath": "C:\\Users\\cilxry\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
 }
