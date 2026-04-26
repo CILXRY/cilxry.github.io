@@ -128,6 +128,20 @@ def read_markdown_content(fi: str) -> list:
     return [fm_content, article_content]
 
 
+def read_markdown_metadata(fi:str) -> list:
+    """获得文章的元数据
+
+    Args:
+        fi (file path): 文件输入路径
+
+    Returns:
+        metadata: 元数据
+    """
+    # 创建时间
+    creation = os.path.getctime(fi)
+
+    return[creation]
+
 # endregion
 
 # region 校验文件
@@ -182,7 +196,7 @@ def check_file(file_name: str):
     根据提供的 Markdown 文件路径，检查该文件的 Frontmatter 是否符合要求，并执行补充。
 
     Args:
-      file_name (str): Markdown 文件路径
+        file_name (str): Markdown 文件路径
     """
     # 读取文件内容和 Frontmatter
     content, fm = read_markdown_content(file_name)
@@ -478,7 +492,7 @@ def checkDir(dir_path: str):
     根据提供的目录路径，检查该目录下所有 Markdown 文件的 Frontmatter 是否符合要求。
 
     Args:
-      dir_path (str): 目录路径
+        dir_path (str): 目录路径
     """
     for file in get_folder_md_files(dir_path=dir_path):
         print("\n")
