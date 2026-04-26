@@ -1,12 +1,13 @@
 {
   "types": [
-    { "type": "fix", "section": "Problem Fixes | 问题修复" },
+    { "type": "fix", "section": "Fixes | 修复和优化" },
     { "type": "feat", "section": "Features | 功能添加" },
     { "type": "docs", "section": "Docs | 文档" },
     { "type": "style", "section": "Styles | 样式" },
     { "type": "ci", "section": "CI | CI 配置" },
     { "type": "conf", "section": "Config | 配置文件" },
-    { "type": "refactor", "section": "Refactor | 重构" }
+    { "type": "refactor", "section": "Refactor | 重构" },
+    { "type": "chore", "section": "Chore | 杂项" }
   ],
 
   "releaseCommitMessageFormat": "{{currentTag}}",
