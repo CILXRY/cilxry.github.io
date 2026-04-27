@@ -44,7 +44,6 @@ declare global {
 ---
 
 <BasePageLayout k={post.data.title} styled={"default"}>
-  <!-- <head></head> -->
   <article
     py4
     px8
@@ -99,9 +98,15 @@ declare global {
         "max-w-full",
         { "has-content-h1": firstH1 },
       ]}
-
     >
-      <Content view-image/>
+      <flex>
+        <div>
+          <Content view-image />
+        </div>
+        <div w-25% flex-auto sticky top-20 h-full ml8>
+          侧边栏
+        </div>
+      </flex>
 
       <div id="tcomment"></div>
       <script src="/scripts/twikoo.min.js" is:inline></script>
