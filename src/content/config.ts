@@ -1,5 +1,4 @@
 import { defineCollection } from "astro:content";
-import remarkCallout from "@/plugins/remark-callout.ts";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 
@@ -39,6 +38,3 @@ const posts = defineCollection({
 // });
 
 export const collections = { posts, };
-
-// 导出 remark 插件供 markdown 配置使用
-export { remarkCallout };
