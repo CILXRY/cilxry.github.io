@@ -41,6 +41,11 @@ const { title, description = SiteConfig.defaultDescription } = Astro.props;
   <!-- 其他内容 -->
   <meta name="robots" content="noindex, nofollow" />
   <link rel="shortcut icon" href={SiteConfig.avatarLink} />
+  <script>
+    import { applyThemeWhileStartup } from "@ut/CustomizationUtils/themeUtils.ts";
+
+    applyThemeWhileStartup();
+  </script>
 
   <!-- Swup 过渡动画样式 -->
   <style is:global>
