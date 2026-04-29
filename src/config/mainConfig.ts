@@ -20,4 +20,6 @@ export const SiteConfig = {
     psbUrl: "http://www.beian.gov.cn",
     psbFiling: "京公网安备 11010802030000 号",
   },
+  umamiTrackingSrc: "https://umami.cilxry.cc/ciumami.js",
+  websiteID: "164c37f9-5a70-428b-9f5d-81f680dae480"
 };
