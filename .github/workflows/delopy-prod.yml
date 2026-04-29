@@ -34,6 +34,11 @@ jobs:
           node-version: "20"
           cache: pnpm
 
+      - name: 部署 pnpm 环境
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: 安装依赖
         run: pnpm i
 
