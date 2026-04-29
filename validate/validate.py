@@ -10,6 +10,7 @@ CILXRY 纪事小栈文章校验
 import os
 import yaml
 from openai import OpenAI
+from openai.types.chat import ChatCompletionMessageParam
 from datetime import datetime
 
 DisplayExactInfo: bool = True
@@ -18,7 +19,7 @@ SCHEMA = {
     "title": {
         "type": str,
         "required": True,
-        "prompt": "请根据文章内容生成一个合适的45字以内的标题",
+        "prompt": "参考文章的 H1 和文章内容中作者语气生成一个合适的45字以内的标题",
     },
     "tags": {
         "type": list,
@@ -39,7 +40,11 @@ SCHEMA = {
         "required": True,
     },
     "creation": {"type": datetime, "required": True},
-    "description": {"type": str, "required": True},
+    "description": {
+        "type": str,
+        "required": True,
+        "prompt": "根据这个文章生成一个简短的不超过50字的简介",
+    },
     "descGenAuthor": {"type": str, "required": True},
     "descGenTime": {"type": datetime, "required": True},
     "references": {"type": list, "required": False},
@@ -128,7 +133,7 @@ def read_markdown_content(fi: str) -> list:
     return [fm_content, article_content]
 
 
-def read_markdown_metadata(fi:str) -> list:
+def read_markdown_metadata(fi: str) -> list:
     """获得文章的元数据
 
     Args:
@@ -140,7 +145,8 @@ def read_markdown_metadata(fi:str) -> list:
     # 创建时间
     creation = os.path.getctime(fi)
 
-    return[creation]
+    return [creation]
+
 
 # endregion
 
@@ -299,6 +305,8 @@ def extract_h1(content: str) -> str:
 
 
 def auto_l1_fix(errors, fm, file_content, file_path):
+    # 其实我在想既然lost，为什么不是用ai来补充呢。
+
     # title 缺失 → 从 H1 补
     if "title" in errors and errors["title"] == "lost":
         h1 = extract_h1(file_content)
@@ -380,6 +388,33 @@ def auto_l1_fix(errors, fm, file_content, file_path):
     return fm
 
 
+def ask_ai_generation(article, want):
+    messages: list[ChatCompletionMessageParam] = [
+        {
+            "role": "system",
+            "content": "你是专业的Markdown文档分析工具，负责根据文档内容补充缺失的Frontmatter字段。请根据用户给出的文档的整体内容，生成准确的字段值。",
+        },
+        {"role": "user", "content": f"文章内容：{article}"},
+        {"role": "user", "content": f"{SCHEMA.get(want, {}).get('prompt')}"},
+    ]
+
+    response = client.chat.completions.create(
+        model="deepseek-v4-flash",
+        messages=messages,
+        stream=False,
+        extra_body={"thinking": {"type": "disabled"}},
+    )
+
+    responseContent = (
+        response.choices[0].message.content.strip()
+        if response.choices[0].message.content
+        else "AI returns None"
+    )
+    return responseContent
+
+
+
+
 def ask_ai(errors, fm, content):
     """L2级AI辅助补充功能
 
@@ -399,7 +434,7 @@ def ask_ai(errors, fm, content):
         return fm
 
     # 生成系统提示
-    system_prompt = "你是一个专业的Markdown文档分析工具，负责根据文档内容补充缺失的Frontmatter字段。请根据文档的整体内容，生成准确、专业的字段值。"
+    system_prompt = "你是专业的Markdown文档分析工具，负责根据文档内容补充缺失的Frontmatter字段。请根据用户给出的文档的整体内容，生成准确的字段值。"
 
     # 生成用户提示
     user_prompt = f"请根据以下Markdown文档内容，补充缺失的Frontmatter字段：{', '.join(missing_fields)}。\n\n文档内容：\n{content[:3000]}  # 限制内容长度，避免API调用失败"
