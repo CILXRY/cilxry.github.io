@@ -9,35 +9,23 @@ export const unSRule: Rule[] = [
   // 主色彩度 (Chroma): 0.11
 
   // ========================================
-  // 浅色主题 - 文字颜色
+  // 文字颜色
   // ========================================
   [
-    /^l-text-(primary|secondary|tertiary|muted)$/,
+    /^ci-text-(primary|secondary|tertiary|muted|colord)$/,
     ([, type]) => {
-      const lightness = {
-        primary: "0.15",
-        secondary: "0.35",
-        tertiary: "0.5",
-        muted: "0.6",
+      const priority = {
+        primary: "text-primary",
+        secondary: "text-secondary",
+        tertiary: "text-tertiary",
+        colord:"text-colord"
       }[type];
       return {
-        color: `oklch(${lightness} var(--primary-c) var(--primary-h))`,
+        color: `var(--${priority})`,
       };
     },
   ],
 
-  // ========================================
-  // 浅色主题 - 标题颜色
-  // ========================================
-  [
-    /^l-heading-(h[1-4])$/,
-    ([, level]) => {
-      const lightness = { h1: "0.12", h2: "0.15", h3: "0.18", h4: "0.2" }[level];
-      return {
-        color: `oklch(${lightness} var(--primary-c) var(--primary-h))`,
-      };
-    },
-  ],
 
   // ========================================
   // 浅色主题 - 背景颜色
