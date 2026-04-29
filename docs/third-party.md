@@ -5,6 +5,12 @@
 所以可能 **包括但不限于** 下面列出来的内容，
 还烦请指正。感谢。
 
+## Curve
+
+一个极简的 VitePress 主题。文章页的样式思路来自于此
+
+[GitHub](https://github.com/imsyy/vitepress-theme-curve)
+
 ## Shiki
 
 Markdown 文章内嵌的语法高亮，这是 astro 内置支持的
