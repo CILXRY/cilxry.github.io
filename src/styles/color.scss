@@ -55,13 +55,6 @@
     calc(var(--primary-l-dark) - 0.15) var(--primary-c) var(--primary-h)
   );
 
-  // 文字颜色
-
-  // C == 0 还取色度干嘛
-  --text-primary: oklch(0.21 0 0);
-  --ts: oklch(0.37 0 0);
-  --ti: oklch(0.5 0 0);
-
   --tpd: oklch(0.85 0 0);
   --tsd: oklch(0.75 0 0);
 
@@ -80,6 +73,17 @@
   --error: oklch(0.7 0.25 20); /* 红 */
 }
 
+:root {
+  // 文字颜色
+
+  // C == 0 还取色度干嘛
+  --text-primary: oklch(0.21 0 0); // 0.15 0 0
+  --text-secondary: oklch(0.37 0 0); // 0.35 0 0
+  --text-tertiary: oklch(0.5 0 0);
+
+  --text-colord: oklch(var(--light-lightness) var(--primary-c) var(--primary-h));
+}
+
 // ========================================
 // 深色模式文字颜色覆盖
 // ========================================
@@ -87,7 +91,7 @@
   // 主要文字颜色 - 深色模式下使用浅色
   --text-primary: oklch(0.95 0 0);
   // 次要文字颜色 - 深色模式下使用稍暗的浅色
-  --ts: oklch(0.78 0 0);
+  --text-secondary: oklch(0.78 0 0);
   // 深色主题的主要文字（反向）
   --tpd: oklch(0.21 0 0);
   // 深色主题的次要文字（反向）
