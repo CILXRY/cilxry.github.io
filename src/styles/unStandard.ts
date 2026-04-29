@@ -12,20 +12,19 @@ export const unSRule: Rule[] = [
   // 文字颜色
   // ========================================
   [
-    /^ci-text-(primary|secondary|tertiary|muted|colord)$/,
+    /^text-(primary|secondary|tertiary|muted|colord)$/,
     ([, type]) => {
       const priority = {
         primary: "text-primary",
         secondary: "text-secondary",
         tertiary: "text-tertiary",
-        colord:"text-colord"
+        colord: "text-colord",
       }[type];
       return {
         color: `var(--${priority})`,
       };
     },
   ],
-
 
   // ========================================
   // 浅色主题 - 背景颜色
