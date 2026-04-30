@@ -23,10 +23,10 @@ defineProps<{
           class="sticky top-0 z-10 flex items-center justify-between px-6 py-5 border-b l-border-default dark:d-border-default l-bg-primary dark:d-bg-primary"
         >
           <div>
-            <h3 class="text-lg font-semibold ci-text-primary m-0 leading-tight">
+            <h3 class="text-lg font-semibold text-primary m-0 leading-tight">
               控制中心
             </h3>
-            <p class="text-xs ci-text-tertiary m-0 mt-0.5">
+            <p class="text-xs text-tertiary m-0 mt-0.5">
               Control Center
             </p>
           </div>
@@ -35,7 +35,7 @@ defineProps<{
             class="w-10 h-10 rounded-lg l-bg-secondary dark:d-bg-secondary hover:l-bg-tertiary dark:hover:d-bg-tertiary transition-colors flex items-center justify-center border l-border-default dark:d-border-default"
             aria-label="关闭"
           >
-            <X class="w-5 h-5 ci-text-secondary" />
+            <X class="w-5 h-5 text-secondary" />
           </button>
         </header>
 

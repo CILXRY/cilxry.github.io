@@ -29,7 +29,7 @@ const isButtonActive = (id: string) => activeButtons.value.has(id);
 
 <template>
   <div class="rounded-xl border l-border-default dark:d-border-default l-bg-secondary dark:d-bg-secondary p-5">
-    <h4 class="text-sm font-medium ci-text-primary m-0 mb-4">功能开关</h4>
+    <h4 class="text-sm font-medium text-primary m-0 mb-4">功能开关</h4>
 
     <div class="grid grid-cols-5 gap-3">
       <button
@@ -48,14 +48,14 @@ const isButtonActive = (id: string) => activeButtons.value.has(id);
       </button>
     </div>
 
-    <p class="text-xs ci-text-tertiary text-center mt-3 mb-0">
+    <p class="text-xs text-tertiary text-center mt-3 mb-0">
       橙色 - 已启用 · 灰色 - 已禁用
     </p>
   </div>
 
   <div class="pt-4 border-t l-border-default dark:d-border-default">
-    <h4 class="text-sm font-medium ci-text-primary m-0 mb-3">其他设置</h4>
-    <p class="text-xs ci-text-tertiary m-0">
+    <h4 class="text-sm font-medium text-primary m-0 mb-3">其他设置</h4>
+    <p class="text-xs text-tertiary m-0">
       更多功能敬请期待...
     </p>
   </div>

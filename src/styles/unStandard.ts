@@ -118,24 +118,6 @@ export const unSRule: Rule[] = [
   ["light-info", { color: "oklch(0.7 0.1 240)" }],
 
   // ========================================
-  // 深色主题 - 文字颜色
-  // ========================================
-  [
-    /^d-text-(primary|secondary|tertiary|muted)$/,
-    ([, type]) => {
-      const lightness = {
-        primary: "0.95",
-        secondary: "0.85",
-        tertiary: "0.7",
-        muted: "0.6",
-      }[type];
-      return {
-        color: `oklch(${lightness} 0.0${type === "primary" ? "2" : type === "secondary" ? "3" : "4"} var(--primary-h))`,
-      };
-    },
-  ],
-
-  // ========================================
   // 深色主题 - 标题颜色
   // ========================================
   [

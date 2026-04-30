@@ -75,13 +75,14 @@
 
 :root {
   // 文字颜色
+  // 上色
+  --text-colord: oklch(var(--light-lightness) var(--primary-c) var(--primary-h));
 
   // C == 0 还取色度干嘛
+  // 纯色，黑/灰色
   --text-primary: oklch(0.21 0 0); // 0.15 0 0
   --text-secondary: oklch(0.37 0 0); // 0.35 0 0
   --text-tertiary: oklch(0.5 0 0);
-
-  --text-colord: oklch(var(--light-lightness) var(--primary-c) var(--primary-h));
 }
 
 // ========================================

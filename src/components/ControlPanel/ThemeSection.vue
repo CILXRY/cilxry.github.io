@@ -4,7 +4,7 @@ import { Moon, Sun, SunMoon, Palette } from "lucide-vue-next";
 import {
   useTheme,
   applyThemeColor,
-} from "@/utils/CustomizationUtils/themeUtils";
+} from "@/utils/CustomizationUtils/themeUtils.ts";
 
 const { currentTheme, toggleTheme } = useTheme();
 
@@ -48,23 +48,23 @@ onMounted(() => {
 <template>
   <div class="p-5 rounded-xl border l-border-default dark:d-border-default l-bg-secondary dark:d-bg-secondary">
     <div class="flex items-center gap-3 mb-4">
-      <component :is="themeIcon" class="w-5 h-5 flex-shrink-0 ci-text-secondary" />
-      <span class="text-sm font-medium ci-text-primary">主题模式</span>
-      <span class="text-xs ci-text-tertiary ml-auto px-2 py-0.5 rounded-full l-bg-tertiary dark:d-bg-tertiary">{{ themeLabel }}</span>
+      <component :is="themeIcon" class="w-5 h-5 flex-shrink-0 text-secondary" />
+      <span class="text-sm font-medium text-primary">主题模式</span>
+      <span class="text-xs text-tertiary ml-auto px-2 py-0.5 rounded-full l-bg-tertiary dark:d-bg-tertiary">{{ themeLabel }}</span>
     </div>
 
     <button
       @click="toggleTheme"
-      class="w-full py-2.5 px-4 rounded-lg text-sm font-medium ci-text-secondary l-bg-primary dark:d-bg-primary border l-border-default dark:d-border-default hover:l-bg-tertiary dark:hover:d-bg-tertiary transition-colors"
+      class="w-full py-2.5 px-4 rounded-lg text-sm font-medium text-secondary l-bg-primary dark:d-bg-primary border l-border-default dark:d-border-default hover:l-bg-tertiary dark:hover:d-bg-tertiary transition-colors"
     >
       点击切换主题
     </button>
 
     <div class="mt-5 pt-5 border-t l-border-default dark:d-border-default">
       <div class="flex items-center gap-3 mb-4">
-        <Palette class="w-5 h-5 flex-shrink-0 ci-text-secondary" />
-        <span class="text-sm font-medium ci-text-primary">主题色</span>
-        <span class="text-xs ci-text-tertiary ml-auto">Color</span>
+        <Palette class="w-5 h-5 flex-shrink-0 text-secondary" />
+        <span class="text-sm font-medium text-primary">主题色</span>
+        <span class="text-xs text-tertiary ml-auto">Color</span>
       </div>
       <input
         type="range"
@@ -76,8 +76,8 @@ onMounted(() => {
         class="w-full h-2 b-rd-1 cursor-pointer theme-slider"
       />
       <div class="flex justify-between mt-1.5">
-        <span class="text-xs ci-text-tertiary">0°</span>
-        <span class="text-xs ci-text-tertiary">360°</span>
+        <span class="text-xs text-tertiary">0°</span>
+        <span class="text-xs text-tertiary">360°</span>
       </div>
     </div>
   </div>
