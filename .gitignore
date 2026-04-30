@@ -6,7 +6,6 @@
 # contents but config.ts
 src/content/*
 !src/content/config.ts
-!src/content/instructions
 
 # Current Rules
 rules/*
