@@ -15,12 +15,11 @@ export function getContrastYIQ(rgbHex: string): boolean {
   return yiq >= 128;
 }
 
+// 应用主题色
 export function applyThemeColor(oklch: number) {
-  const color = oklchToHex(oklch);
-  // console.log(color)
-
-  document.documentElement.style.setProperty("--primary", color);
+  document.documentElement.style.setProperty("--primary", oklchToHex(oklch));
   document.documentElement.style.setProperty("--primary-h", oklch.toString());
+  localStorage.setItem("ThemeColor", oklch.toString());
 }
 
 export function useTheme() {
@@ -37,10 +36,12 @@ export function useTheme() {
   };
 
   onMounted(() => {
-    const save = localStorage.getItem(STORAGE_KEY) as Theme | null;
-    if (save && THEMES.includes(save)) {
-      currentTheme.value = save;
+    const saveTheme = localStorage.getItem(STORAGE_KEY) as Theme | null;
+
+    if (saveTheme && THEMES.includes(saveTheme)) {
+      currentTheme.value = saveTheme;
     }
+
     applyTheme(currentTheme.value);
   });
 
@@ -53,4 +54,10 @@ export function useTheme() {
     currentTheme,
     toggleTheme,
   };
+}
+
+export function applyThemeWhileStartup() {
+  const saveTheme = localStorage.getItem(STORAGE_KEY) as Theme | null;
+  const saveColor = localStorage.getItem("ThemeColor") as string;
+  if (saveColor) applyThemeColor(Number(saveColor));
 }

@@ -110,7 +110,7 @@
     text-align: left;
     letter-spacing: 0.6px;
     line-height: 2;
-    color: var(--ts);
+    color: var(--text-secondary);
 
     // 行内代码
     code {
@@ -445,8 +445,10 @@
 
   // 图片
   img {
-    width: 100%;
-    height: 100%;
+    max-width: 24rem;
+    max-height: 42rem;
+    width: auto;
+    height: auto;
     border-radius: 12px;
   }
 }
