@@ -1,7 +1,7 @@
 import { oklchToHex } from "./convertColorTypeUtil.ts";
 import { ref, watch, onMounted } from "vue";
 
-const THEMES = ["light", "dark", "auto"] as const;
+const THEMES = ["auto", "light", "dark"] as const;
 type Theme = (typeof THEMES)[number];
 
 const STORAGE_KEY = "user-theme";
@@ -23,7 +23,7 @@ export function applyThemeColor(oklch: number) {
 }
 
 export function useTheme() {
-  const currentTheme = ref<Theme>("light");
+  const currentTheme = ref<Theme>("auto");
 
   const toggleTheme = () => {
     const cur = THEMES.indexOf(currentTheme.value);
@@ -32,7 +32,21 @@ export function useTheme() {
   };
 
   const applyTheme = (theme: Theme) => {
-    document.documentElement.className = `${theme}`;
+    const html = document.documentElement;
+    if (theme === "dark") {
+      html.classList.add("dark");
+    } else if (theme === "light") {
+      html.classList.remove("dark");
+    } else {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+      if (prefersDark) {
+        html.classList.add("dark");
+      } else {
+        html.classList.remove("dark");
+      }
+    }
   };
 
   onMounted(() => {
