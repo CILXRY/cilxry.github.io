@@ -9,6 +9,7 @@ CILXRY 纪事小栈文章校验
 
 import os
 import yaml
+import argparse
 from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
 from datetime import datetime
@@ -153,7 +154,7 @@ def read_markdown_metadata(fi: str) -> list:
 # region 校验文件
 
 
-def validate_frontmatter(frontmatter: dict, schema: dict) -> list[str]:
+def file_validate_frontmatter(frontmatter: dict, schema: dict) -> list[str]:
     """校验 Frontmatter
 
     必填检查 → 类型检查 → 空值检查 → 扩展规则
@@ -189,14 +190,13 @@ def validate_frontmatter(frontmatter: dict, schema: dict) -> list[str]:
         # 按类型做空值检查
         if isinstance(field_value, str) and not field_value.strip():
             errors.append({field_name: "empty_string"})
-
         elif isinstance(field_value, list) and len(field_value) == 0:
             errors.append({field_name: "empty_list"})
 
     return errors
 
 
-def check_file(file_name: str):
+def file_check(file_path: str):
     """检查 Markdown 文件的 Frontmatter
 
     根据提供的 Markdown 文件路径，检查该文件的 Frontmatter 是否符合要求，并执行补充。
@@ -205,35 +205,31 @@ def check_file(file_name: str):
         file_name (str): Markdown 文件路径
     """
     # 读取文件内容和 Frontmatter
-    content, fm = read_markdown_content(file_name)
+    content, fm = read_markdown_content(file_path)
 
-    # 验证 Frontmatter，获取错误信息
     errors_dict = {}
-    for error in validate_frontmatter(fm, SCHEMA):
+    for error in file_validate_frontmatter(fm, SCHEMA):
         for field, error_type in error.items():
             errors_dict[field] = error_type
 
-    # 执行 L1 级补充
-    if errors_dict:
-        print("[INFO] 执行 L1 级补充...")
-        fm = auto_l1_fix(errors_dict, fm, content, file_name)
 
-        # 再次验证，检查是否还有缺失字段
+# endregion
+
+# region 修复文件
+
+
+def write_frontmatter():
+    errors_dict = {}
+
+    if errors_dict:
+        print("[INFO] 执行 AI 辅助补充...")
+        fm = ask_ai(errors_dict, fm, content)
+
+        # 再次验证
         errors_dict = {}
-        for error in validate_frontmatter(fm, SCHEMA):
+        for error in file_validate_frontmatter(fm, SCHEMA):
             for field, error_type in error.items():
                 errors_dict[field] = error_type
-
-        # 如果还有缺失字段，执行 L2 级 AI 辅助补充
-        if errors_dict:
-            print("[INFO] 执行 L2 级 AI 辅助补充...")
-            fm = ask_ai(errors_dict, fm, content)
-
-            # 再次验证
-            errors_dict = {}
-            for error in validate_frontmatter(fm, SCHEMA):
-                for field, error_type in error.items():
-                    errors_dict[field] = error_type
 
     # 保存更新后的 Frontmatter 到文件
     if fm:
@@ -281,11 +277,7 @@ def check_file(file_name: str):
         print("[INFO] 仍有以下字段缺失：")
         for field, error_type in errors_dict.items():
             print(f"{field}: {error_type}")
-
-
-# endregion
-
-# region 修复文件
+    return
 
 
 def extract_h1(content: str) -> str:
@@ -388,7 +380,7 @@ def auto_l1_fix(errors, fm, file_content, file_path):
     return fm
 
 
-def ask_ai_generation(article, want):
+def ask_ai_generation(article, want, client: OpenAI):
     messages: list[ChatCompletionMessageParam] = [
         {
             "role": "system",
@@ -413,109 +405,6 @@ def ask_ai_generation(article, want):
     return responseContent
 
 
-
-
-def ask_ai(errors, fm, content):
-    """L2级AI辅助补充功能
-
-    当L1级补充后仍有缺失字段时，调用AI进行分析和补充
-
-    Args:
-        errors: 缺失的字段信息
-        fm: 当前的Frontmatter
-        content: 文件内容
-
-    Returns:
-        更新后的Frontmatter
-    """
-    # 构建提示信息
-    missing_fields = [field for field, error in errors.items() if error == "lost"]
-    if not missing_fields:
-        return fm
-
-    # 生成系统提示
-    system_prompt = "你是专业的Markdown文档分析工具，负责根据文档内容补充缺失的Frontmatter字段。请根据用户给出的文档的整体内容，生成准确的字段值。"
-
-    # 生成用户提示
-    user_prompt = f"请根据以下Markdown文档内容，补充缺失的Frontmatter字段：{', '.join(missing_fields)}。\n\n文档内容：\n{content[:3000]}  # 限制内容长度，避免API调用失败"
-
-    # 调用OpenAI API
-    try:
-        response = client.chat.completions.create(
-            model="deepseek-v4-flash",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            stream=False,
-            reasoning_effort="high",
-        )
-
-        # 解析AI生成的内容
-        ai_response = response.choices[0].message.content.strip()
-        print(f"[AI_RESPONSE] {ai_response}")
-
-        # 尝试解析AI生成的YAML格式内容
-        try:
-            # 提取YAML部分
-            if "---" in ai_response:
-                yaml_start = ai_response.find("---") + 3
-                yaml_end = ai_response.find("---", yaml_start)
-                if yaml_end != -1:
-                    ai_fm = yaml.safe_load(ai_response[yaml_start:yaml_end].strip())
-                else:
-                    # 尝试直接解析整个响应
-                    ai_fm = yaml.safe_load(ai_response)
-            else:
-                # 尝试直接解析整个响应
-                ai_fm = yaml.safe_load(ai_response)
-
-            # 更新Frontmatter
-            if isinstance(ai_fm, dict):
-                for field in missing_fields:
-                    if field in ai_fm:
-                        fm[field] = ai_fm[field]
-                        print(f"[AI_FIX] {field} 由AI补充")
-        except yaml.YAMLError:
-            print("[ERROR] AI生成的内容解析失败")
-            # 尝试手动解析
-            lines = ai_response.split("\n")
-            for line in lines:
-                if ":" in line:
-                    key, value = line.split(":", 1)
-                    key = key.strip()
-                    value = value.strip()
-                    if key in missing_fields:
-                        # 处理不同类型的值
-                        if value.startswith("[") and value.endswith("]"):
-                            # 列表类型
-                            value = [
-                                item.strip().strip('"').strip("'")
-                                for item in value[1:-1].split(",")
-                            ]
-                        elif value.lower() in ["true", "false"]:
-                            # 布尔类型
-                            value = value.lower() == "true"
-                        elif key == "tags":
-                            # 确保tags是列表类型
-                            if isinstance(value, str):
-                                # 如果是字符串，尝试解析为列表
-                                if value.startswith("[") and value.endswith("]"):
-                                    value = [
-                                        item.strip().strip('"').strip("'")
-                                        for item in value[1:-1].split(",")
-                                    ]
-                                else:
-                                    # 否则创建一个包含该字符串的列表
-                                    value = [value]
-                        fm[key] = value
-                        print(f"[AI_FIX] {key} 由AI补充")
-    except Exception as e:
-        print(f"[ERROR] AI调用失败: {e}")
-
-    return fm
-
-
 # endregion
 
 # region 主入口
@@ -531,7 +420,38 @@ def checkDir(dir_path: str):
     """
     for file in get_folder_md_files(dir_path=dir_path):
         print("\n")
-        check_file(file)
+        file_check(file)
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="CILXRY 纪事小栈文章校验", epilog="CILXRY"
+    )
+
+    parser.add_argument("path", help="需要检测的目录")
+    parser.add_argument(
+        "-c", "--check", "--check-only", action="store_true", help="仅检查，不进行修复"
+    )
+    parser.add_argument("-r", "--repair", action="store_true", help="使用AI进行修复")
+    parser.add_argument(
+        "-cr", "--checkrepair", action="store_true", help="就是执行-c之后执行-r"
+    )
+
+    return parser.parse_args()
+
+
+def main():
+    args = parse_arguments()
+
+    if args.check or args.checkrepair:
+        checkDir(args.path)
+
+    if args.repair or args.checkrepair:
+        checkDir(args.path)
+
+
+if __name__ == "__main__":
+    main()
 
 
 # checkDir("cilxry-markdown-pages\\posts")
