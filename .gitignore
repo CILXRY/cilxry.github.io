@@ -22,6 +22,9 @@ rules/*
 .astro/
 dist/
 
+# Python Cache
+__pycache__/
+
 # NodeJS dependencies
 node_modules/
 
