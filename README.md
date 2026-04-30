@@ -70,16 +70,7 @@
 
 ## 那些我认为很好的所有 || 鸣谢 和 许可
 
-### 我自己 | Myself
-
-- CILXRY，老己。
-
-### 技术栈 | Tech Stack
-
-- [Astro](https://astro.build) - MIT License - 强大的静态站点框架
-- [Fuwari](https://github.com/saicaca/fuwari) - [MIT License](https://github.com/saicaca/fuwari?tab=MIT-1-ov-file#readme) - 一个十分漂亮的 Astro 模板
-- [Qwen 千问 ](https://www.qianwen.com/) - 帮助我制作这个网站
-- [IconFont](https://www.iconfont.cn/) - 一些图标
+鸣谢部分见 [Third-Party.md](/docs/third-party.md)
 
 ### 许可 | License
 
