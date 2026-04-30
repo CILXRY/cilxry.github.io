@@ -17,7 +17,7 @@
     "paths": {
       "@basePageLayout": ["src/layouts/BasePageLayout.astro"],
       "@cp/*": ["src/components/*"],
-      "@cfg/*": ["src/config/*", "config/*"],
+      "@cfg/*": ["src/config/*"],
       "@lc/*": ["src/layouts/LayoutComponents/*"],
       "@ut/*": ["src/utils/*"],
       "@/*": ["src/*"]
