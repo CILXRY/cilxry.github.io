@@ -1,0 +1,67 @@
+[
+  {
+    "name": "title",
+    "type": "string",
+    "required": true
+  },
+  {
+    "name": "tags",
+    "type": "list",
+    "required": true
+  },
+  {
+    "name": "category",
+    "type": "string",
+    "required": true
+  },
+  {
+    "name": "author",
+    "type": "string",
+    "required": true
+  },
+  {
+    "name": "draft",
+    "type": "bool",
+    "required": true
+  },
+  {
+    "name": "description",
+    "type": "string",
+    "required": true
+  },
+  {
+    "name": "descGenAuthor",
+    "type": "string",
+    "required": false
+  },
+  {
+    "name": "descGenTime",
+    "type": "datetime",
+    "required": false
+  },
+  {
+    "name": "wordCount",
+    "type": "number",
+    "required": false
+  },
+  {
+    "name": "readingTime",
+    "type": "number",
+    "required": false
+  },
+  {
+    "name": "creation",
+    "type": "datetime",
+    "required": true
+  },
+  {
+    "name": "published",
+    "type": "datetime",
+    "required": true
+  },
+  {
+    "name": "warning",
+    "type": "string",
+    "required": false
+  }
+]
