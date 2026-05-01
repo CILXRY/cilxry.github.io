@@ -1,457 +1,567 @@
 """
 CILXRY 纪事小栈文章校验
 
-本模块用于纪事小栈内的文章 Frontmatter 校验的修复。
+本模块用于纪事小栈内的文章 Frontmatter 校验和修复。
 依赖：pip install pyyaml openai
-作者：CILXRY
-注释由 AI 生成
+Schema 由 exportSchema.ts 从 src/content/config.ts 动态生成。
 """
 
 import os
+import sys
+import json
+import re
 import yaml
 import argparse
 from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
-from datetime import datetime
+from datetime import datetime, date
 
-DisplayExactInfo: bool = True
+# ========== 配置 ==========
 
-SCHEMA = {
-    "title": {
-        "type": str,
-        "required": True,
-        "prompt": "参考文章的 H1 和文章内容中作者语气生成一个合适的45字以内的标题",
-    },
-    "tags": {
-        "type": list,
-        "required": True,
-        "prompt": "请根据文章内容生成一个合适的不超过7个的标签",
-    },
-    "category": {
-        "type": str,
-        "required": True,
-        "prompt": "请根据文章内容生成一个合适的分类",
-    },
-    "author": {
-        "type": str,
-        "required": True,
-    },
-    "draft": {
-        "type": bool,
-        "required": True,
-    },
-    "creation": {"type": datetime, "required": True},
-    "description": {
-        "type": str,
-        "required": True,
-        "prompt": "根据这个文章生成一个简短的不超过50字的简介",
-    },
-    "descGenAuthor": {"type": str, "required": True},
-    "descGenTime": {"type": datetime, "required": True},
-    "references": {"type": list, "required": False},
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+AI_PROMPTS = {
+    "title": "参考文章的 H1 和文章内容中作者语气生成一个合适的45字以内的标题",
+    "tags": "请根据文章内容生成一个合适的不超过7个的标签",
+    "category": "请根据文章内容生成一个合适的分类",
+    "description": "根据这个文章生成一个简短的不超过50字的简介",
 }
 
-LOCATION = {
-    "posts": "./posts",
-    "memos": "./memos",
+AUTO_DEFAULTS = {
+    "author": "CILXRY",
+    "draft": False,
 }
 
-client = OpenAI(
-    api_key=os.environ.get("DEEPSEEK_API_KEY"),
-    base_url="https://api.deepseek.com",
-)
-
-# region 读取文件
+_client = None
+_ai_available = None
 
 
-def get_folder_md_files(dir_path: str) -> list[str]:
-    """获取目录的 Markdown 文件
+def is_ai_available():
+    global _ai_available
+    if _ai_available is None:
+        key = os.environ.get("DEEPSEEK_API_KEY")
+        _ai_available = bool(key)
+        if not _ai_available:
+            print(f"{TC.Y}[WARN] DEEPSEEK_API_KEY 未设置，AI 修复不可用{TC.RST}")
+    return _ai_available
 
-    根据提供的目录路径，获取该目录下所有 Markdown 文件的路径。
 
-    Args:
-        dir_path (str): 目录路径
-    Returns:
-        files (list[str]): 包含所有 Markdown 文件路径的列表
-    """
+def get_client():
+    global _client
+    if _client is None:
+        _client = OpenAI(
+            api_key=os.environ.get("DEEPSEEK_API_KEY", "sk-placeholder"),
+            base_url="https://api.deepseek.com",
+        )
+    return _client
+
+# ========== Schema 加载 ==========
+
+
+def load_schema():
+    path = os.path.join(BASE_DIR, "schemas", "posts.fields.json")
+    with open(path, "r") as f:
+        fields = json.load(f)
+
+    type_map = {
+        "string": str,
+        "list": list,
+        "bool": bool,
+        "datetime": (datetime, str),
+        "number": (int, float),
+    }
+
+    schema = {}
+    for fdef in fields:
+        schema[fdef["name"]] = {
+            "type": type_map[fdef["type"]],
+            "required": fdef["required"],
+        }
+    return schema
+
+
+SCHEMA = load_schema()
+SCHEMA_KEYS = set(SCHEMA.keys())
+
+# ========== 终端输出 ==========
+
+
+class TC:
+    """Terminal colors — 无颜色终端自动降级"""
+
+    _enabled = hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
+
+    R = "\033[91m" if _enabled else ""
+    G = "\033[92m" if _enabled else ""
+    Y = "\033[93m" if _enabled else ""
+    B = "\033[94m" if _enabled else ""
+    C = "\033[96m" if _enabled else ""
+    BOLD = "\033[1m" if _enabled else ""
+    DIM = "\033[2m" if _enabled else ""
+    RST = "\033[0m" if _enabled else ""
+
+
+def sep(title: str = ""):
+    width = 60
+    if title:
+        line = "─" * 4 + f" {title} " + "─" * (width - len(title) - 6)
+    else:
+        line = "─" * width
+    print(f"{TC.DIM}{line}{TC.RST}")
+
+
+def status_icon(ok: bool) -> str:
+    return f"{TC.G}✓{TC.RST}" if ok else f"{TC.R}✗{TC.RST}"
+
+
+# ========== 工具函数 ==========
+
+
+def parse_date(value):
+    if isinstance(value, datetime):
+        return value
+    if isinstance(value, date):
+        return datetime(value.year, value.month, value.day)
+    if isinstance(value, str):
+        value = value.strip()
+        for fmt in (
+            "%Y-%m-%dT%H:%M:%S",
+            "%Y-%m-%d",
+            "%Y-%m-%dT%H:%M:%S.%f",
+            "%Y-%m-%dT%H:%M:%S%z",
+        ):
+            try:
+                return datetime.strptime(value, fmt)
+            except ValueError:
+                continue
+    return None
+
+
+def count_words(text: str) -> int:
+    cjk = len(re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]", text))
+    en = len(re.findall(r"[a-zA-Z]+", text))
+    return cjk + en
+
+
+def compute_reading_time(word_count: int) -> int:
+    if word_count <= 0:
+        return 0
+    return max(1, round(word_count / 200))
+
+
+def extract_h1(content: str) -> str:
+    for line in content.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("# ") and not stripped.startswith("## "):
+            return stripped[2:].strip()
+    return ""
+
+
+# ========== 读取文件 ==========
+
+
+def get_folder_md_files(dir_path: str) -> list:
     files = []
-
-    for f in os.listdir(dir_path):
-        if f.endswith(".md"):
-            files.append(os.path.join(dir_path, f))
+    try:
+        for f in sorted(os.listdir(dir_path)):
+            if f.endswith(".md"):
+                files.append(os.path.join(dir_path, f))
+    except FileNotFoundError:
+        print(f"{TC.R}[ERROR] 目录不存在：{dir_path}{TC.RST}")
     return files
 
 
-def read_markdown_content(fi: str) -> list:
-    """尝试读取文件 Frontmatter 和其内容
-
-    根据提供的 Markdown 文件路径，获取该文件的 Frontmatter 和内容。
-
-    Args:
-        fi (str): Markdown 文件路径
-    Returns:
-        list: 包含 Markdown 文件内容和 Frontmatter 内容的列表
-    """
-    # 显示提示信息
-    print(f"[INFO] 检查文件：{fi}")
-
-    # 尝试读取文件内容，如果读取失败，返回的就只会是空列表
+def read_markdown_content(file_path: str):
+    """返回 (frontmatter_dict, article_text)"""
     try:
-        with open(fi, "r", encoding="utf-8") as f:
-            content = f.read()
+        with open(file_path, "r", encoding="utf-8") as f:
+            raw = f.read()
     except FileNotFoundError:
-        print(f"[ERROR] 文件不存在：{fi}")
-        return []
-    except PermissionError:
-        print(f"[ERROR] 无权限读取文件：{fi}")
-        return []
+        print(f"{TC.R}[ERROR] 文件不存在：{file_path}{TC.RST}")
+        return {}, ""
     except Exception as e:
-        print(f"[ERROR] 读取文件时发生错误：{fi} - {e}")
-        return []
+        print(f"{TC.R}[ERROR] 读取失败：{file_path} - {e}{TC.RST}")
+        return {}, ""
 
-    # 尝试解析 Frontmatter
-    fm_content = {}
-    fms, fme = 0, 0
-    fms = content.startswith("---")
-    try:
-        if fms:
-            fme = content.find("---", fms + 3)
-            if fme != 0:
-                fm_content = content[3:fme].strip()
-                fm_content = yaml.safe_load(fm_content)
-    except yaml.YAMLError as e:
-        print(f"[ERROR] YAML 解析错误：{fi} - {e}")
-        # YAML 解析失败时，创建一个空字典
-        fm_content = {}
+    fm = {}
+    body = raw
 
-    # 当读取成功时，将正文和 Frontmatter 拆分开。
+    if raw.startswith("---"):
+        end = raw.find("---", 3)
+        if end != -1:
+            try:
+                fm = yaml.safe_load(raw[3:end]) or {}
+            except yaml.YAMLError as e:
+                print(f"{TC.R}[ERROR] YAML 解析错误：{file_path} - {e}{TC.RST}")
+                fm = {}
+            body = raw[end + 3 :]
 
-    article_content = content[fme + 3 : :]
-
-    # 显示提示信息和返回结果
-    if DisplayExactInfo:
-        print(f"[INFO] 检查文件：{fi} Frontmatter 内容：\n {fm_content}")
-    return [fm_content, article_content]
+    return fm, body
 
 
-def read_markdown_metadata(fi: str) -> list:
-    """获得文章的元数据
-
-    Args:
-        fi (file path): 文件输入路径
-
-    Returns:
-        metadata: 元数据
-    """
-    # 创建时间
-    creation = os.path.getctime(fi)
-
-    return [creation]
+# ========== 校验 ==========
 
 
-# endregion
-
-# region 校验文件
-
-
-def file_validate_frontmatter(frontmatter: dict, schema: dict) -> list[str]:
-    """校验 Frontmatter
-
-    必填检查 → 类型检查 → 空值检查 → 扩展规则
-    不再拆分两个函数
-    Args:
-        frontmatter(dict): 字典
-    """
+def file_validate_frontmatter(fm: dict, schema: dict):
     errors = []
 
-    # 确保 frontmatter 是字典
-    if not isinstance(frontmatter, dict):
-        # 如果不是字典，返回所有必填字段的错误
-        for field_name, rule in schema.items():
-            if rule.get("required"):
-                errors.append({field_name: "lost"})
+    if not isinstance(fm, dict):
+        for name, rule in schema.items():
+            if rule["required"]:
+                errors.append({"field": name, "error": "missing"})
         return errors
 
-    for field_name, rule in schema.items():
-        field_value = frontmatter.get(field_name)
+    for name, rule in schema.items():
+        value = fm.get(name)
 
-        # 必填检查
-        if field_value is None:
-            if rule.get("required"):
-                errors.append({field_name: "lost"})
-            continue  # 没这个字段，后面不用查了
+        if value is None:
+            if rule["required"]:
+                errors.append({"field": name, "error": "missing"})
+            continue
 
-        # 类型检查
-        expected_type = rule.get("type")
-        if expected_type and type(field_value) is not expected_type:
-            errors.append({field_name: "type"})
-            continue  # 类型不对，后面也不用查了
+        expected = rule["type"]
 
-        # 按类型做空值检查
-        if isinstance(field_value, str) and not field_value.strip():
-            errors.append({field_name: "empty_string"})
-        elif isinstance(field_value, list) and len(field_value) == 0:
-            errors.append({field_name: "empty_list"})
+        if expected == datetime or expected == (datetime, str):
+            if not isinstance(value, (datetime, date, str)):
+                errors.append({"field": name, "error": "type"})
+            elif isinstance(value, str) and parse_date(value) is None:
+                errors.append({"field": name, "error": "type"})
+            continue
+
+        if expected == (int, float):
+            if not isinstance(value, (int, float)):
+                errors.append({"field": name, "error": "type"})
+            continue
+
+        if not isinstance(value, expected):
+            errors.append({"field": name, "error": "type"})
+            continue
+
+        if isinstance(value, str) and not value.strip():
+            errors.append({"field": name, "error": "empty"})
+        elif isinstance(value, list) and len(value) == 0:
+            errors.append({"field": name, "error": "empty"})
 
     return errors
 
 
-def file_check(file_path: str):
-    """检查 Markdown 文件的 Frontmatter
-
-    根据提供的 Markdown 文件路径，检查该文件的 Frontmatter 是否符合要求，并执行补充。
-
-    Args:
-        file_name (str): Markdown 文件路径
-    """
-    # 读取文件内容和 Frontmatter
-    content, fm = read_markdown_content(file_path)
-
-    errors_dict = {}
-    for error in file_validate_frontmatter(fm, SCHEMA):
-        for field, error_type in error.items():
-            errors_dict[field] = error_type
+def check_extra_fields(fm: dict, schema_keys: set) -> list:
+    """检出 schema 之外的额外字段"""
+    extras = []
+    for key in fm:
+        if key not in schema_keys:
+            extras.append(key)
+    return extras
 
 
-# endregion
-
-# region 修复文件
+# ========== 修复 ==========
 
 
-def write_frontmatter():
-    errors_dict = {}
+def write_frontmatter(file_path: str, fm: dict, content: str, errors: list):
+    """AI 补充缺失字段，计算统计信息，回写文件"""
 
-    if errors_dict:
-        print("[INFO] 执行 AI 辅助补充...")
-        fm = ask_ai(errors_dict, fm, content)
+    changed = False
 
-        # 再次验证
-        errors_dict = {}
-        for error in file_validate_frontmatter(fm, SCHEMA):
-            for field, error_type in error.items():
-                errors_dict[field] = error_type
+    # 先把 updated 的值复制给 published（保留 updated 不删）
+    if "updated" in fm and "published" not in fm:
+        fm["published"] = fm["updated"]
 
-    # 保存更新后的 Frontmatter 到文件
-    if fm:
-        # 构建新的文件内容
-        new_content = "---\n"
-        for key, value in fm.items():
-            if isinstance(value, datetime):
-                # 格式化日期时间
-                new_content += f"{key}: {value.isoformat()}\n"
-            elif isinstance(value, list):
-                # 格式化列表
-                new_content += f"{key}:\n"
-                for item in value:
-                    new_content += f"  - {item}\n"
-            else:
-                # 其他类型，确保值是字符串且正确处理包含冒号的值
-                value_str = str(value)
-                # 如果值包含冒号或其他特殊字符，使用引号包围
-                if any(char in value_str for char in [":", "#", "-", "@"]):
-                    new_content += f"{key}: '{value_str}'\n"
-                else:
-                    new_content += f"{key}: {value_str}\n"
-        new_content += "---\n"
+    # ---- 修复 missing 错误 ----
+    for err in errors:
+        if err["error"] != "missing":
+            continue
+        name = err["field"]
 
-        # 添加原文件内容（去掉旧的 Frontmatter）
-        if content.startswith("---"):
-            end_idx = content.find("---", 3)
-            if end_idx != -1:
-                new_content += content[end_idx + 3 :]
+        if name == "creation":
+            fm["creation"] = datetime.fromtimestamp(os.path.getctime(file_path))
+            print(f"  {TC.G}[FIX] creation ← 文件创建时间{TC.RST}")
+            changed = True
+
+        elif name == "published":
+            if "updated" in fm and "published" not in fm:
+                fm["published"] = fm["updated"]
+            elif "creation" in fm and "published" not in fm:
+                fm["published"] = fm["creation"]
+                print(f"  {TC.G}[FIX] published ← creation{TC.RST}")
+                changed = True
+
+        elif name in AUTO_DEFAULTS:
+            fm[name] = AUTO_DEFAULTS[name]
+            print(f"  {TC.G}[FIX] {name} ← 默认值{TC.RST}")
+            changed = True
+
+        elif name in AI_PROMPTS:
+            if not is_ai_available():
+                print(f"  {TC.Y}[SKIP] {name} 需 AI 但未配置 API Key{TC.RST}")
+                continue
+            try:
+                ai = ask_ai_generation(str(content), name, get_client())
+                if ai:
+                    # list 类型：按分隔符拆成数组
+                    if SCHEMA.get(name, {}).get("type") == list:
+                        parts = re.split(r"[,，、\s]+", ai)
+                        fm[name] = [p for p in parts if p]
+                        print(f"  {TC.C}[AI] {name} ← AI 生成 (拆为 list){TC.RST}")
+                    else:
+                        fm[name] = ai
+                        print(f"  {TC.C}[AI] {name} ← AI 生成{TC.RST}")
+                    changed = True
+            except Exception as exc:
+                print(f"  {TC.R}[ERROR] AI 补充 {name} 失败：{exc}{TC.RST}")
+
+        elif name in SCHEMA:
+            sname = SCHEMA[name]["type"]
+            if sname == str or sname == (datetime, str):
+                fm[name] = ""
+            elif sname == bool:
+                fm[name] = False
+            elif sname == list:
+                fm[name] = []
+            elif sname == (int, float):
+                fm[name] = 0
+            print(f"  {TC.Y}[WARN] {name} 无法自动填充，设为空值{TC.RST}")
+            changed = True
+
+    # ---- 修复 type 错误 ----
+    for err in errors:
+        if err["error"] != "type":
+            continue
+        name = err["field"]
+        val = fm.get(name)
+        rule = SCHEMA.get(name)
+        if not rule:
+            continue
+
+        expected = rule["type"]
+
+        if expected == list and isinstance(val, str):
+            fm[name] = [t.strip() for t in val.split(",") if t.strip()]
+            print(f"  {TC.G}[FIX] {name} str → list{TC.RST}")
+            changed = True
+
+        elif expected in (str, (datetime, str)) and isinstance(val, list):
+            fm[name] = ", ".join(str(v) for v in val)
+            print(f"  {TC.G}[FIX] {name} list → str{TC.RST}")
+            changed = True
+
+        elif (expected == datetime or expected == (datetime, str)) and isinstance(
+            val, (datetime, date, str)
+        ):
+            dt = parse_date(val)
+            if dt:
+                fm[name] = dt.isoformat()
+                print(f"  {TC.G}[FIX] {name} 日期格式规范化{TC.RST}")
+                changed = True
+
+    # ---- 统计：wordCount / readingTime ----
+    if "wordCount" not in fm or fm.get("wordCount") is None:
+        wc = count_words(content)
+        fm["wordCount"] = wc
+        print(f"  {TC.G}[STAT] wordCount ← {wc}{TC.RST}")
+        changed = True
+
+    if "readingTime" not in fm or fm.get("readingTime") is None:
+        wc = fm.get("wordCount", count_words(content))
+        rt = compute_reading_time(wc)
+        fm["readingTime"] = rt
+        print(f"  {TC.G}[STAT] readingTime ← {rt} min{TC.RST}")
+        changed = True
+
+    if not changed:
+        return 0
+
+    # ----- 构建新文件内容 -----
+    lines = ["---"]
+    for key, value in fm.items():
+        if isinstance(value, (datetime, date)):
+            lines.append(f"{key}: {value.isoformat()}")
+        elif isinstance(value, list):
+            lines.append(f"{key}:")
+            for item in value:
+                lines.append(f"  - {item}")
+        elif isinstance(value, bool):
+            lines.append(f"{key}: {'true' if value else 'false'}")
+        elif isinstance(value, (int, float)):
+            lines.append(f"{key}: {value}")
         else:
-            new_content += content
+            val_str = str(value)
+            if any(c in val_str for c in (":", "#", "@", "[", "]", "{", "}", "|")):
+                lines.append(f'{key}: "{val_str}"')
+            else:
+                lines.append(f"{key}: {val_str}")
+    lines.append("---")
 
-        # 写入文件
-        try:
-            with open(file_name, "w", encoding="utf-8") as f:
-                f.write(new_content)
-            print(f"[INFO] 文件已更新：{file_name}")
-        except Exception as e:
-            print(f"[ERROR] 写入文件失败：{e}")
-
-    # 输出最终结果
-    if not errors_dict:
-        print("[INFO] Frontmatter 检查通过")
+    if content.startswith("---"):
+        end = content.find("---", 3)
+        if end != -1:
+            lines.append(content[end + 3 :].lstrip("\n"))
     else:
-        print("[INFO] 仍有以下字段缺失：")
-        for field, error_type in errors_dict.items():
-            print(f"{field}: {error_type}")
-    return
+        lines.append(content)
+
+    new_content = "\n".join(lines) + "\n"
+
+    try:
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(new_content)
+        print(f"  {TC.G}[SAVED] 文件已更新{TC.RST}")
+        return 1
+    except Exception as e:
+        print(f"  {TC.R}[ERROR] 写入失败：{e}{TC.RST}")
+        return 0
 
 
-def extract_h1(content: str) -> str:
-    """从 Markdown 内容中提取 H1 标题
+def ask_ai_generation(article: str, field_name: str, ai_client: OpenAI) -> str:
+    prompt = AI_PROMPTS.get(field_name)
+    if not prompt:
+        return ""
 
-    根据提供的 Markdown 内容，提取第一个 H1 标题。
-
-    Args:
-        content (str): Markdown 内容
-    Returns:
-        h1 (str): 第一个 H1 标题，如果不存在则返回 None
-    """
-    for line in content.split("\n"):
-        if line.startswith("# "):
-            return line[2:].strip()
-    return ""
-
-
-def auto_l1_fix(errors, fm, file_content, file_path):
-    # 其实我在想既然lost，为什么不是用ai来补充呢。
-
-    # title 缺失 → 从 H1 补
-    if "title" in errors and errors["title"] == "lost":
-        h1 = extract_h1(file_content)
-        if h1:
-            fm["title"] = h1
-            print("[AUTO_FIX] title 从 H1 推断 ")
-
-    # creation 缺失 → 用文件时间
-    if "creation" in errors and errors["creation"] == "lost":
-        fm["creation"] = datetime.fromtimestamp(os.path.getctime(file_path))
-        print("[AUTO_FIX] creation 使用文件创建时间 ")
-
-    # tags 是字符串 → 转 list
-    if "tags" in fm and isinstance(fm["tags"], str):
-        fm["tags"] = [t.strip() for t in fm["tags"].split(",") if t.strip()]
-        print("[AUTO_FIX] tags 从字符串转为列表 ")
-
-    # category 缺失 → 从文件路径或内容推断
-    if "category" in errors and errors["category"] == "lost":
-        # 尝试从文件路径推断
-        file_name = os.path.basename(file_path)
-        if file_name.startswith("T"):
-            fm["category"] = "技术"
-            print("[AUTO_FIX] category 从文件命名推断为技术 ")
-        elif file_name.startswith("M"):
-            fm["category"] = "随笔"
-            print("[AUTO_FIX] category 从文件命名推断为随笔 ")
-
-    # author 缺失 → 设置默认值
-    if "author" in errors and errors["author"] == "lost":
-        fm["author"] = "CILXRY"
-        print("[AUTO_FIX] author 设置默认值")
-
-    # draft 缺失 → 设置默认值为 False
-    if "draft" in errors and errors["draft"] == "lost":
-        fm["draft"] = False
-        print("[AUTO_FIX] draft 设置默认值为 False ")
-
-    # description 缺失 → 从内容中提取摘要
-    if "description" in errors and errors["description"] == "lost":
-        # 提取内容中的第一段非空文本作为摘要
-        content_lines = file_content.split("\n")
-        summary = ""
-        for line in content_lines:
-            line = line.strip()
-            if line and not line.startswith("#") and not line.startswith("---"):
-                summary = line
-                break
-        if summary:
-            fm["description"] = summary
-            print("[AUTO_FIX] description 从内容中提取摘要 ")
-
-    # descGenAuthor 缺失 → 设置默认值
-    if "descGenAuthor" in errors and errors["descGenAuthor"] == "lost":
-        fm["descGenAuthor"] = "Auto"
-        print("[AUTO_FIX] descGenAuthor 设置默认值为 Auto ")
-
-    # descGenTime 缺失 → 设置为当前时间（字符串类型）
-    if "descGenTime" in errors and errors["descGenTime"] == "lost":
-        fm["descGenTime"] = datetime.now().isoformat()
-        print("[AUTO_FIX] descGenTime 设置为当前时间 ")
-
-    # references 缺失 → 从内容中的链接提取
-    if "references" in errors and errors["references"] == "lost":
-        import re
-
-        # 提取内容中的所有链接
-        links = re.findall(r"\[([^\]]+)\]\(([^\)]+)\)", file_content)
-        if links:
-            fm["references"] = [link[1] for link in links]
-            print("[AUTO_FIX] references 从内容中的链接提取 ")
-
-    # 空字符串 → 删除
-    for k in list(fm.keys()):
-        if isinstance(fm[k], str) and not fm[k].strip():
-            del fm[k]
-            print(f"[AUTO_FIX] 删除空字段 {k}")
-
-    return fm
-
-
-def ask_ai_generation(article, want, client: OpenAI):
     messages: list[ChatCompletionMessageParam] = [
         {
             "role": "system",
-            "content": "你是专业的Markdown文档分析工具，负责根据文档内容补充缺失的Frontmatter字段。请根据用户给出的文档的整体内容，生成准确的字段值。",
+            "content": "你是专业的Markdown文档分析工具，负责根据文档内容补充缺失的Frontmatter字段。请根据用户给出的文档的整体内容，生成准确的字段值。注意，你只需要根据用户需要生成内容即可，不需要任何额外提示性信息。",
         },
         {"role": "user", "content": f"文章内容：{article}"},
-        {"role": "user", "content": f"{SCHEMA.get(want, {}).get('prompt')}"},
+        {"role": "user", "content": prompt},
     ]
 
-    response = client.chat.completions.create(
+    response = ai_client.chat.completions.create(
         model="deepseek-v4-flash",
         messages=messages,
         stream=False,
         extra_body={"thinking": {"type": "disabled"}},
     )
 
-    responseContent = (
-        response.choices[0].message.content.strip()
-        if response.choices[0].message.content
-        else "AI returns None"
+    result = response.choices[0].message.content
+    if not result:
+        return ""
+
+    result = result.strip()
+
+    # 去掉外层引号
+    if (result.startswith('"') and result.endswith('"')) or \
+       (result.startswith("'") and result.endswith("'")):
+        result = result[1:-1]
+
+    # 去掉 AI 误加的字段名前缀，如 "title: xxx" 或 "title：xxx"
+    for prefix in (f"{field_name}: ", f"{field_name}：", f"{field_name}:", f"{field_name}："):
+        if result.startswith(prefix):
+            result = result[len(prefix):].strip()
+            break
+
+    # 再次去掉可能新形成的引号
+    if (result.startswith('"') and result.endswith('"')) or \
+       (result.startswith("'") and result.endswith("'")):
+        result = result[1:-1]
+
+    return result.strip()
+
+
+# ========== 主逻辑 ==========
+
+
+def file_check(file_path: str, check_only: bool = False, warn_extra: bool = False):
+    short = os.path.basename(file_path)
+    print(f"\n{TC.BOLD}{short}{TC.RST}")
+
+    fm, content = read_markdown_content(file_path)
+
+    if not fm:
+        print(f"  {TC.Y}⚠ Frontmatter 不存在或解析失败{TC.RST}")
+
+    # 校验
+    errors = file_validate_frontmatter(fm, SCHEMA)
+
+    # 额外字段检查
+    extra_fields = check_extra_fields(fm, SCHEMA_KEYS)
+    if extra_fields and warn_extra:
+        for ef in extra_fields:
+            print(f"  {TC.Y}[WARN] 额外字段 '{ef}'（不在 schema 中）{TC.RST}")
+
+    # 报告错误
+    if not errors:
+        print(f"  {status_icon(True)} Frontmatter 合规")
+        return {"status": "ok", "fixed": 0}
+    else:
+        print(f"  {status_icon(False)} {len(errors)} 个问题：")
+        for e in errors:
+            print(f"     · {e['field']}: {e['error']}")
+
+        if check_only:
+            return {"status": "issues", "fixed": 0}
+
+        # 修复
+        print(f"  {TC.B}[>>] 开始修复...{TC.RST}")
+        fixed = write_frontmatter(file_path, fm, content, errors)
+        return {"status": "issues", "fixed": fixed}
+
+
+def checkDir(dir_path: str, check_only: bool = False, warn_extra: bool = False):
+    files = get_folder_md_files(dir_path)
+    if not files:
+        print(f"{TC.Y}[WARN] 目录下没有 Markdown 文件{TC.RST}")
+        return
+
+    print(f"\n{TC.BOLD}校验目录：{dir_path}{TC.RST}")
+    print(f"模式：{'仅检查' if check_only else '检查并修复'} | 文件数：{len(files)}")
+    sep()
+
+    summary = {"ok": 0, "issues": 0, "fixed": 0}
+    for f in files:
+        result = file_check(f, check_only=check_only, warn_extra=warn_extra)
+        if result["status"] == "ok":
+            summary["ok"] += 1
+        else:
+            summary["issues"] += 1
+        summary["fixed"] += result["fixed"]
+
+    sep("结果")
+    total = len(files)
+    print(
+        f"  {TC.G}通过: {summary['ok']}{TC.RST}  "
+        f"{TC.R}问题: {summary['issues']}{TC.RST}  "
+        f"{TC.C}修复: {summary['fixed']}{TC.RST}  "
+        f"共 {total} 个文件"
     )
-    return responseContent
-
-
-# endregion
-
-# region 主入口
-
-
-def checkDir(dir_path: str):
-    """检查目录下的所有 Markdown 文件的 Frontmatter
-
-    根据提供的目录路径，检查该目录下所有 Markdown 文件的 Frontmatter 是否符合要求。
-
-    Args:
-        dir_path (str): 目录路径
-    """
-    for file in get_folder_md_files(dir_path=dir_path):
-        print("\n")
-        file_check(file)
+    sep()
+    print()
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description="CILXRY 纪事小栈文章校验", epilog="CILXRY"
+        description="CILXRY 纪事小栈文章校验",
+        epilog="Schema 由 exportSchema.ts 从 src/content/config.ts 动态生成。",
     )
-
     parser.add_argument("path", help="需要检测的目录")
     parser.add_argument(
         "-c", "--check", "--check-only", action="store_true", help="仅检查，不进行修复"
     )
-    parser.add_argument("-r", "--repair", action="store_true", help="使用AI进行修复")
+    parser.add_argument("-r", "--repair", action="store_true", help="直接修复")
     parser.add_argument(
-        "-cr", "--checkrepair", action="store_true", help="就是执行-c之后执行-r"
+        "-cr", "--checkrepair", action="store_true", help="先检查后修复"
     )
-
+    parser.add_argument(
+        "-w",
+        "--warn-extra",
+        action="store_true",
+        help="报告 schema 之外的额外字段（警告，不删除）",
+    )
     return parser.parse_args()
 
 
 def main():
     args = parse_arguments()
 
-    if args.check or args.checkrepair:
-        checkDir(args.path)
+    if args.check:
+        checkDir(args.path, check_only=True, warn_extra=args.warn_extra)
 
-    if args.repair or args.checkrepair:
-        checkDir(args.path)
+    if args.repair:
+        checkDir(args.path, check_only=False, warn_extra=args.warn_extra)
+
+    if args.checkrepair:
+        checkDir(args.path, check_only=True, warn_extra=args.warn_extra)
+        sep()
+        checkDir(args.path, check_only=False, warn_extra=args.warn_extra)
 
 
 if __name__ == "__main__":
     main()
-
-
-# checkDir("cilxry-markdown-pages\\posts")

@@ -3,63 +3,74 @@ import { z } from "astro/zod";
 import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
+import { postsSchema } from "../src/content/schema.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
-const postsSchema = z.object({
-  title: z.string(),
-  tags: z.array(z.string().min(1).trim()).optional().nullable(),
-  category: z.string().optional().nullable(),
-  author: z.string().optional().nullable(),
-  draft: z.boolean().optional(),
-  description: z.string().optional(),
-  descGenAuthor: z.string().optional().nullable(),
-  descGenTime: z.coerce.date().optional(),
-  wordCount: z.number().optional().nullable(),
-  readingTime: z.number().optional().nullable(),
-  creation: z.coerce.date(),
-  published: z.coerce.date().optional(),
-  warning: z.string().optional().nullable(),
-});
-
-const memorySchema = z.object({
-  pubDate: z.coerce.date().optional(),
-});
-
-const instructionsSchema = z.object({
-  title: z.string(),
-  description: z.string().optional(),
-  pubDate: z.coerce.date().optional(),
-  draft: z.boolean().optional(),
-  tags: z.array(z.string()).optional(),
-  category: z.string().optional(),
-  wordCount: z.number().optional(),
-  readingTime: z.number().optional(),
-});
-
 const outputDir = resolve(__dirname, "schemas");
 
 if (!existsSync(outputDir)) {
   mkdirSync(outputDir, { recursive: true });
 }
 
-const schemas = {
-  posts: postsSchema,
-  memory: memorySchema,
-  instructions: instructionsSchema,
-};
+function extractFields(schema: z.ZodObject<any>) {
+  const shape = schema.shape as Record<string, z.ZodTypeAny>;
+  const fields: Array<{ name: string; type: string; required: boolean }> = [];
 
-for (const [name, schema] of Object.entries(schemas)) {
-  // 使用类型断言避免 TypeScript 类型实例化过深的问题
-  const jsonSchema = zodToJsonSchema(schema as any, {
-    name: `${name}Frontmatter`,
-    target: "jsonSchema7",
-  }) as any;
+  for (const [name, field] of Object.entries(shape)) {
+    let inner = field;
+    let isOptional = false;
 
-  const outputPath = resolve(outputDir, `${name}.schema.json`);
-  writeFileSync(outputPath, JSON.stringify(jsonSchema, null, 2));
+    while (true) {
+      const def = (inner as any)._def;
+      if (def.typeName === "ZodDefault") {
+        inner = def.innerType;
+      } else if (def.typeName === "ZodOptional") {
+        isOptional = true;
+        inner = def.innerType;
+      } else if (def.typeName === "ZodNullable") {
+        inner = def.innerType;
+      } else {
+        break;
+      }
+    }
 
-  console.log(`✅ Generated: ${outputPath}`);
+    const typeName = (inner as any)._def.typeName;
+    const typeMap: Record<string, string> = {
+      ZodString: "string",
+      ZodArray: "list",
+      ZodBoolean: "bool",
+      ZodDate: "datetime",
+      ZodNumber: "number",
+    };
+
+    fields.push({
+      name,
+      type: typeMap[typeName] || "string",
+      required: !isOptional,
+    });
+  }
+
+  return fields;
 }
 
-console.log("\n📦 All schemas exported to generate/schemas/");
+// Generate JSON Schema (for Astro / other consumers)
+const jsonSchema = zodToJsonSchema(postsSchema as any, {
+  name: "postsFrontmatter",
+  target: "jsonSchema7",
+}) as any;
+
+writeFileSync(
+  resolve(outputDir, "posts.schema.json"),
+  JSON.stringify(jsonSchema, null, 2),
+);
+console.log("Generated: posts.schema.json");
+
+// Generate simple field list (for Python validate.py)
+const fields = extractFields(postsSchema);
+writeFileSync(
+  resolve(outputDir, "posts.fields.json"),
+  JSON.stringify(fields, null, 2),
+);
+console.log("Generated: posts.fields.json");
+
+console.log("\nAll schemas in validate/schemas/");
