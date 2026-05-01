@@ -20,9 +20,3 @@ updates:
       - "dependencies"
     assignees:
       - "CILXRY"
-    groups:
-      dev-deps:
-        patterns:
-          - "*"
-        apply-to:
-          - dependency-type: "development"
