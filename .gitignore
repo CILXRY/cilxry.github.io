@@ -1,15 +1,9 @@
-# Visual Studio Code Specific files
-# .vscode
-# .vscode/extensions.json
-# .vscode/settings.json
-
-# contents but config.ts
+# contents but config.ts and schema.ts
 src/content/*
 !src/content/config.ts
+!src/content/schema.ts
 
 # Current Rules
-rules/*
-.lingma/rules/*
 .trae/*
 
 # ======================================
@@ -20,6 +14,9 @@ rules/*
 # Astro build output
 .astro/
 dist/
+
+# Python Cache
+__pycache__/
 
 # NodeJS dependencies
 node_modules/
