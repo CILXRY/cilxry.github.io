@@ -94,7 +94,7 @@ jobs:
             rsync -avz --delete \
               --no-owner --no-group \
               $RELEASE_DIR \
-              $SERVER_PATH/dev/
+              $SERVER_PATH/
           EOF
           ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "rm -rf $RELEASE_DIR"
 
