@@ -88,12 +88,8 @@ jobs:
             -e "ssh -p $SERVER_PORT -i ~/.ssh/deploy_key" \
             dist/ \
             $SERVER_USER@$SERVER_HOST:$RELEASE_DIR/
-
-          # ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "ls -lah $SERVER_PATH | head -n 5"
-
           ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "rsync -avz --delete --no-owner --no-group --no-times --no-perms $RELEASE_DIR/ $SERVER_PATH"
-
-          # ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "rm -rf $RELEASE_DIR"
+          ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "rm -rf $RELEASE_DIR"
 
       - name: 清理 SSH key
         run: rm -rf ~/.ssh/deploy_key
