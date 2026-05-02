@@ -25,5 +25,5 @@
   "proseWrap": "preserve",
   "htmlWhitespaceSensitivity": "css",
   "vueIndentScriptAndStyle": false,
-  "endOfLine": "crlf"
+  "endOfLine": "lf"
 }
