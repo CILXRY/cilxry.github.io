@@ -54,7 +54,7 @@ body:
         - Safari
         - Other
 
-  - type: radio
+  - type: dropdown
     id: platform
     attributes:
       label: （可选）设备类型
