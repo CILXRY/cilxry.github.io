@@ -80,7 +80,7 @@ jobs:
           RUN_ID: ${{ github.run_id }}
         run: |
           set -e
-          RELEASE_DIR="$SERVER_PATH/releases/$RUN_ID"
+          RELEASE_DIR="/tmp/ci/$RUN_ID"
           ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "mkdir -p $RELEASE_DIR"
 
           rsync -avz --delete \
