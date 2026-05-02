@@ -27,9 +27,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-
 
       - name: 部署 pnpm 环境
         uses: pnpm/action-setup@v4
