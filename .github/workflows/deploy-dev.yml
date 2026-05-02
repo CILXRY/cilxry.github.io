@@ -89,14 +89,17 @@ jobs:
             dist/ \
             $SERVER_USER@$SERVER_HOST:$RELEASE_DIR/
 
-          ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST << 'EOF'
-            set -e
-            rsync -avz --delete \
-              --no-owner --no-group \
-              $RELEASE_DIR \
-              $SERVER_PATH/
-          EOF
-          ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "rm -rf $RELEASE_DIR"
+          echo $SERVER_PATH
+          echo $RELEASE_DIR
+
+          # ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST << 'EOF'
+          #   set -e
+          #   rsync -avz --delete \
+          #     --no-owner --no-group \
+          #     $RELEASE_DIR \
+          #     $SERVER_PATH/
+          # EOF
+          # ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "rm -rf $RELEASE_DIR"
 
       - name: 清理 SSH key
         run: rm -rf ~/.ssh/deploy_key
