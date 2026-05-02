@@ -3,9 +3,6 @@ name: 测试版本 纪事小栈部署
 on:
   push:
     branches: [elegant]
-  pull_request:
-    branches: [elegant]
-  workflow_dispatch:
 
 permissions:
   contents: read
