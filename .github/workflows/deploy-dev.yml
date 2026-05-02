@@ -43,7 +43,7 @@ jobs:
       - name: 上传产物
         uses: actions/upload-artifact@v4
         with:
-          name: build-output
+          name: cico-build-output
           path: dist/
           retention-days: 1
 
@@ -54,34 +54,34 @@ jobs:
       name: Dev-Env
 
     steps:
-      - name: Download build artifact
+      - name: 下载构建产物
         uses: actions/download-artifact@v4
         with:
-          name: build-output
+          name: cico-build-output
           path: dist/
 
-      - name: Create SSH key file
+      - name: 创建 SSH 密钥
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
-      - name: Add server to known hosts
+      - name: 把服务器加到已知列表
         run: |
-          ssh-keyscan -p 22 -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -p ${{ secrets.SERVER_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
           chmod 644 ~/.ssh/known_hosts
 
-      - name: Deploy to server
+      - name: 部署
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |
-          ssh -p 22 -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST "mkdir -p $SERVER_PATH"
           rsync -avz --delete \
-            -e "ssh -p 22 -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            -e "ssh -p $SERVER_PORT -i ~/.ssh/deploy_key" \
             dist/ \
             $SERVER_USER@$SERVER_HOST:$SERVER_PATH/
 
-      - name: Cleanup SSH key
+      - name: 清理 SSH key
         run: rm -rf ~/.ssh/deploy_key
