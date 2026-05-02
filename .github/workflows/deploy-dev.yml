@@ -5,6 +5,7 @@ on:
     branches: [elegant]
   pull_request:
     branches: [elegant]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,12 +17,12 @@ jobs:
       - name: 拉取纪事小栈
         uses: actions/checkout@v4
 
-      - name: 拉取博客内容
-        uses: actions/checkout@v4
-        with:
-          repository: CILXRY/cilxry-markdown-pages
-          path: src/content
-          token: ${{secrets.CILXRY_GITHUB_TOKEN}}
+      # - name: 拉取博客内容
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: CILXRY/cilxry-markdown-pages
+      #     path: src/content
+      #     token: ${{secrets.CILXRY_GITHUB_TOKEN}}
 
       - name: 部署 NodeJS 环境
         uses: actions/setup-node@v4
