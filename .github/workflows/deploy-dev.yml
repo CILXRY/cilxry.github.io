@@ -79,6 +79,7 @@ jobs:
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |
           rsync -avz --delete \
+            --no-owner --no-group \
             -e "ssh -p $SERVER_PORT -i ~/.ssh/deploy_key" \
             dist/ \
             $SERVER_USER@$SERVER_HOST:$SERVER_PATH/
