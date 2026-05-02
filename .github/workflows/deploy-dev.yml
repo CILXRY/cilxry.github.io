@@ -1,10 +1,10 @@
-name: Deploy To Dev-Env
+name: 测试版本 纪事小栈部署
 
 on:
   push:
-    branches: [elegant-dev]
+    branches: [elegant]
   pull_request:
-    branches: [elegant-dev]
+    branches: [elegant]
 
 permissions:
   contents: read
@@ -12,30 +12,37 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: 拉取纪事小栈
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 拉取博客内容
+        uses: actions/checkout@v4
+        with:
+          repository: CILXRY/cilxry-markdown-pages
+          path: src/content
+          token: ${{secrets.CILXRY_GITHUB_TOKEN}}
+
+      - name: 部署 NodeJS 环境
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "pnpm"
+          node-version: "24"
+          cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
-      - name: Install pnpm
+
+      - name: 部署 pnpm 环境
         uses: pnpm/action-setup@v4
         with:
-          version: "10"
+          version: 11
 
-      - name: Install dependencies
+      - name: 安装依赖
         run: pnpm install --frozen-lockfile
 
-      - name: Build Astro site
+      - name: 构建纪事小栈
         run: pnpm run build
 
-      - name: Upload build artifact
+      - name: 上传产物
         uses: actions/upload-artifact@v4
         with:
           name: build-output
