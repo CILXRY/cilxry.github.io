@@ -5,6 +5,7 @@ on:
     branches: [elegant]
   pull_request:
     branches: [elegant]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,12 +17,12 @@ jobs:
       - name: 拉取纪事小栈
         uses: actions/checkout@v4
 
-      - name: 拉取博客内容
-        uses: actions/checkout@v4
-        with:
-          repository: CILXRY/cilxry-markdown-pages
-          path: src/content
-          token: ${{secrets.CILXRY_GITHUB_TOKEN}}
+      # - name: 拉取博客内容
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: CILXRY/cilxry-markdown-pages
+      #     path: src/content
+      #     token: ${{secrets.CILXRY_GITHUB_TOKEN}}
 
       - name: 部署 NodeJS 环境
         uses: actions/setup-node@v4
@@ -31,7 +32,7 @@ jobs:
       - name: 部署 pnpm 环境
         uses: pnpm/action-setup@v4
         with:
-          version: 11
+          version: 10.28.2
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
@@ -42,7 +43,7 @@ jobs:
       - name: 上传产物
         uses: actions/upload-artifact@v4
         with:
-          name: build-output
+          name: cico-build-output
           path: dist/
           retention-days: 1
 
@@ -53,34 +54,42 @@ jobs:
       name: Dev-Env
 
     steps:
-      - name: Download build artifact
+      - name: 下载构建产物
         uses: actions/download-artifact@v4
         with:
-          name: build-output
+          name: cico-build-output
           path: dist/
 
-      - name: Create SSH key file
+      - name: 创建 SSH 密钥
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
-      - name: Add server to known hosts
+      - name: 把服务器加到已知列表
         run: |
-          ssh-keyscan -p 22 -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -p ${{ secrets.SERVER_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
           chmod 644 ~/.ssh/known_hosts
 
-      - name: Deploy to server
+      - name: 部署
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
+          RUN_ID: ${{ github.run_id }}
         run: |
-          ssh -p 22 -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST "mkdir -p $SERVER_PATH"
-          rsync -avz --delete \
-            -e "ssh -p 22 -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
-            dist/ \
-            $SERVER_USER@$SERVER_HOST:$SERVER_PATH/
+          set -e
+          RELEASE_DIR="/tmp/ci/$RUN_ID"
+          ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "mkdir -p $RELEASE_DIR"
 
-      - name: Cleanup SSH key
+          rsync -avz --delete \
+            --no-owner --no-group \
+            -e "ssh -p $SERVER_PORT -i ~/.ssh/deploy_key" \
+            dist/ \
+            $SERVER_USER@$SERVER_HOST:$RELEASE_DIR/
+          ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "rsync -avz --delete --no-owner --no-group --no-times --no-perms $RELEASE_DIR/ $SERVER_PATH"
+          ssh -p $SERVER_PORT -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST "rm -rf $RELEASE_DIR"
+
+      - name: 清理 SSH key
         run: rm -rf ~/.ssh/deploy_key
