@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { House } from "lucide-vue-next";
 import { ChevronRight } from "lucide-vue-next";
-import { navLogo } from "@/config/NavBar-Items.ts";
+import { navLogo } from "@/config/navbarConfig";
 
 const currentPath = ref("");
 const isHomePage = ref(true);

@@ -1,4 +1,4 @@
-import { navItems } from "@cfg/NavBar-Items.ts";
+import { navItems } from "@cfg/index.ts";
 
 // 从 navItems 提取所有唯一的 key
 const navKeys = [...new Set(navItems.map(item => item.key))] as const;
