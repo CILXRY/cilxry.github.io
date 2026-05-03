@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useControlPanel } from "./ControlPanel/useControlPanel";
+import { useControlPanel } from "./ControlPanel/useControlPanel.ts";
 import ControlPanelButton from "./ControlPanel/ControlPanelButton.vue";
 import ControlPanelPanel from "./ControlPanel/ControlPanelPanel.vue";
 import ThemeSection from "./ControlPanel/ThemeSection.vue";
