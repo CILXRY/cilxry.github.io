@@ -1,5 +1,6 @@
-# contents
-src/content/*
+# Personally
+src/content
+src/config/configs
 
 # Current Rules
 .trae/*
