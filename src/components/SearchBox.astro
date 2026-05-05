@@ -1,5 +1,4 @@
 ---
-// 搜索框组件 - 支持本地内容搜索
 import Search from "@lucide/astro/icons/search";
 
 interface SearchResult {
@@ -11,10 +10,10 @@ interface SearchResult {
 
 interface Props {
   placeholder?: string;
-  searchPath?: string; // 搜索的内容路径，如 "/content/blogs/"
+  searchData?: SearchResult[];
 }
 
-const { placeholder = "搜索...", searchPath = "/content/blogs/" } = Astro.props;
+const { placeholder = "搜索文章标题或描述...", searchData } = Astro.props;
 ---
 
 <div class="relative">
@@ -88,6 +87,12 @@ const { placeholder = "搜索...", searchPath = "/content/blogs/" } = Astro.prop
   <Search class="w-5 h-5" />
 </button>
 
+{searchData && (
+  <script type="application/json" id="search-data-json">
+    {JSON.stringify(searchData)}
+  </script>
+)}
+
 <script>
   const searchInput = document.getElementById("search-input");
   const searchResults = document.getElementById("search-results");
@@ -103,31 +108,18 @@ const { placeholder = "搜索...", searchPath = "/content/blogs/" } = Astro.prop
   let debounceTimer: string | number | NodeJS.Timeout | undefined;
   let searchData: any[] = [];
 
-  // 加载搜索数据（示例：从 JSON 文件加载）
-  async function loadSearchData() {
-    try {
-      // TODO: 实际使用时需要创建搜索索引文件
-      // const response = await fetch("/search-index.json");
-      // searchData = await response.json();
-
-      // 临时模拟数据
-      searchData = [
-        {
-          title: "示例文章 1",
-          href: "/blogs/example-1",
-          excerpt: "这是一篇示例文章的摘要...",
-          date: "2024-01-01",
-        },
-        {
-          title: "示例文章 2",
-          href: "/blogs/example-2",
-          excerpt: "这是另一篇示例文章...",
-          date: "2024-01-02",
-        },
-      ];
-    } catch (error) {
-      console.error("加载搜索数据失败:", error);
+  function loadSearchData() {
+    const embeddedData = document.getElementById("search-data-json");
+    if (embeddedData && embeddedData.textContent) {
+      try {
+        searchData = JSON.parse(embeddedData.textContent);
+        return;
+      } catch (e) {
+        console.error("解析搜索数据失败:", e);
+      }
     }
+
+    searchData = [];
   }
 
   // 搜索功能
