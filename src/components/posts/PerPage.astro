@@ -1,23 +1,103 @@
 ---
 import ShowenCard from "./ShowenCard.astro";
 
-import { sortedPosts } from "@ut/content/postsMap.ts";
+interface Props {
+  p: {
+    data: Array<{
+      id: string;
+      data: {
+        title: string;
+        description: string;
+        creation: Date;
+        category?: string | null;
+        tags?: string[] | null;
+        wordCount?: number | null;
+        readingTime?: number | null;
+      };
+    }>;
+    currentPage: number;
+    lastPage: number;
+    url: {
+      prev?: string;
+      next?: string;
+    };
+  };
+}
+
+const { p } = Astro.props;
 ---
 
-<div class="columns-1 md:columns-2 lg:columns-3 gap-6">
-  {
-    sortedPosts.map((post, _index) => (
-      <div mb-6 break-inside-avoid>
-        <ShowenCard
-          header={post.data.title}
-          creation={post.data.creation.toDateString()}
-          content={post.data.description}
-          category={post.data.category}
-          tags={post.data.tags?.toString()}
-          href={`/posts/${post.id}/`}
-        />
-      </div>
-    ))
-  }
-</div>
-{sortedPosts.length === 0 && <div text-align-center>还没有写文章哦</div>}
+{p.data.length > 0 ? (
+  <>
+    <div class="columns-1 md:columns-2 lg:columns-3 gap-6">
+      {p.data.map((post) => (
+        <div mb-6 break-inside-avoid>
+          <ShowenCard
+            header={post.data.title}
+            creation={post.data.creation}
+            content={post.data.description}
+            category={post.data.category ?? undefined}
+            tags={post.data.tags ?? []}
+            wordCount={post.data.wordCount ?? undefined}
+            readingTime={post.data.readingTime ?? undefined}
+            href={`/posts/${post.id}/`}
+          />
+        </div>
+      ))}
+    </div>
+
+    {p.lastPage > 1 && (
+      <nav class="flex justify-center items-center gap-3 mt-10">
+        {p.url.prev ? (
+          <a
+            href={p.url.prev}
+            class="px-4 py-2 rounded-lg text-sm font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750 hover:border-[--cp-400] dark:hover:border-[--cp-600] transition-all"
+          >
+            &larr; 上一页
+          </a>
+        ) : (
+          <span
+            class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed"
+          >
+            &larr; 上一页
+          </span>
+        )}
+
+        <div class="flex items-center gap-1">
+          {Array.from({ length: p.lastPage }, (_, i) => i + 1).map((pageNum) => (
+            <a
+              href={`/blogs-${pageNum}`}
+              class={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all ${
+                pageNum === p.currentPage
+                  ? "bg-[--cp-500] text-white shadow-sm shadow-[--cp-500]/30"
+                  : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750 hover:border-[--cp-400] dark:hover:border-[--cp-600]"
+              }`}
+            >
+              {pageNum}
+            </a>
+          ))}
+        </div>
+
+        {p.url.next ? (
+          <a
+            href={p.url.next}
+            class="px-4 py-2 rounded-lg text-sm font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750 hover:border-[--cp-400] dark:hover:border-[--cp-600] transition-all"
+          >
+            下一页 &rarr;
+          </a>
+        ) : (
+          <span
+            class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed"
+          >
+            下一页 &rarr;
+          </span>
+        )}
+      </nav>
+    )}
+  </>
+) : (
+  <div class="text-center py-20 text-gray-500 dark:text-gray-400">
+    <p class="text-lg mb-2">还没有文章哦</p>
+    <p class="text-sm">期待第一篇博客的诞生</p>
+  </div>
+)}
