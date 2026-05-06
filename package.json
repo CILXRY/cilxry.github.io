@@ -63,7 +63,7 @@
     "@unocss/astro": "^66.6.8",
     "@unocss/preset-attributify": "^66.6.8",
     "@unocss/preset-tagify": "^66.6.8",
-    "eslint": "^10.2.1",
+    "eslint": "^10.3.0",
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "0.14.1",
     "rehype-slug": "^6.0.0",
