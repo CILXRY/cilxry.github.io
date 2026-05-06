@@ -1,0 +1,17 @@
+// 一个美好计划着的后端
+
+export const backendConfig = {
+  // 其实 CLIX 在前端下就已经够用了
+  // 我相信如果你需要用到后端的话
+  // 那你一定对你的服务器做好安全措施了对吧
+  // ！注意，打开后端是一个风险性操作！
+  // ！尤其是对我这个写的十分不成熟的项目而言！
+  ENABLE_BACKEND: false,
+  // ！请你确定你要打开后端（二次确认）：
+  ENSURE_TO_ENABLE_BACKEND: false,
+
+  // 这是心跳地址，如果部署后端的话，如果你改了后端地址的话
+  // 默认是 <服务器地址>:<端口号>/check
+  // 返回："the clixback is still alive."
+  BackendHeartBeatCheckAddr: "",
+};

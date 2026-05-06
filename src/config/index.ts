@@ -3,8 +3,12 @@
 
 export { items } from "./aboutConfig.ts";
 
-export { PersonalConfig, SiteConfig } from "./mainConfig.ts";
+export { PersonalConfig } from "./configs/personalConfig.ts";
+
+export { siteConfig as SiteConfig } from "./configs/siteConfig.ts";
 
 export { navLogo, navItems } from "./navbarConfig.ts";
 
-export { hyperlinks } from "./Hyperlinks-Items.ts";
+export { hyperlinks } from "./configs/friendlinksConfig.ts";
+
+export { renderedConfig } from "./configs/devConfig.ts";
