@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "check": "python ./validate/validate.py ./src/content/posts -c && astro check",
     "new": "node ./scripts/createNewFile.ts",
     "exi": "node ./scripts/importExistFile.ts",
     "exi-batch": "node ./scripts/importBatchFiles.ts",
