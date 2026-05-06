@@ -1,7 +1,5 @@
-# contents but config.ts and schema.ts
+# contents
 src/content/*
-!src/content/config.ts
-!src/content/schema.ts
 
 # Current Rules
 .trae/*

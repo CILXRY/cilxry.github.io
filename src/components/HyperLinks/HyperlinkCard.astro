@@ -39,7 +39,7 @@ import "@/styles/color.scss";
         </div>
 
         <div mya>
-          <h3 font-bold text-base text-gray-800 truncate m-0>{name}</h3>
+          <h3 font-bold text-base text-colord truncate m-0>{name}</h3>
           <div
             flex
             flex-1
@@ -50,11 +50,11 @@ import "@/styles/color.scss";
 
           >
             <p class='font-[--font-list-coding]' m-0>{reachURL.host}</p>
-            <p class='font-[--font-list-coding]' m-0>|6ms</p>
+            <!-- 时延显示 <p class='font-[--font-list-coding]' m-0>|6ms</p> -->
           </div>
         </div>
       </div>
-      <p text-sm text-gray-600 line-clamp-2 m-0>
+      <p text-sm text-tertiary line-clamp-2 m-0>
         {content}
       </p>
     </div>

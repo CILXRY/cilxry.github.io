@@ -15,7 +15,7 @@ export const SiteConfig = {
   avatarLink: "https://avatar.cilxry.cc",
   viewportRecmmend: false,
   FilingInfo: {
-    filingStatus: true,
+    filingStatus: false,
     icpFiling: "京ICP备 12345678 号",
     psbUrl: "http://www.beian.gov.cn",
     psbFiling: "京公网安备 11010802030000 号",

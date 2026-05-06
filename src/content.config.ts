@@ -1,6 +1,6 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
-import { postsSchema } from "./schema.ts";
+import { postsSchema } from "./config/schema.ts";
 
 const posts = defineCollection({
   loader: glob({

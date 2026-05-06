@@ -3,7 +3,7 @@ import { z } from "astro/zod";
 import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
-import { postsSchema } from "../src/content/schema.ts";
+import { postsSchema } from "../src/config/schema.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outputDir = resolve(__dirname, "schemas");

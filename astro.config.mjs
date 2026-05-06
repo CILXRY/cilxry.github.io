@@ -4,6 +4,7 @@ import swup from "@swup/astro";
 import vue from "@astrojs/vue";
 import svelte from "@astrojs/svelte";
 import UnoCSS from "unocss/astro";
+import sitemap from '@astrojs/sitemap';
 import { defineConfig } from "astro/config";
 import { SiteConfig } from "./src/config/CLIX.ts";
 
@@ -31,6 +32,7 @@ export default defineConfig({
       debug: true,
     }),
     expressiveCode(),
+    sitemap(),
   ],
   markdown: {
     remarkPlugins: [remarkBreaks],

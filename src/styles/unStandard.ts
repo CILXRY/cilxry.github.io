@@ -12,20 +12,19 @@ export const unSRule: Rule[] = [
   // 文字颜色
   // ========================================
   [
-    /^ci-text-(primary|secondary|tertiary|muted|colord)$/,
+    /^text-(primary|secondary|tertiary|muted|colord)$/,
     ([, type]) => {
       const priority = {
         primary: "text-primary",
         secondary: "text-secondary",
         tertiary: "text-tertiary",
-        colord:"text-colord"
+        colord: "text-colord",
       }[type];
       return {
         color: `var(--${priority})`,
       };
     },
   ],
-
 
   // ========================================
   // 浅色主题 - 背景颜色
@@ -117,24 +116,6 @@ export const unSRule: Rule[] = [
   ["light-warning", { color: "oklch(0.75 0.15 75)" }],
   ["light-error", { color: "oklch(0.65 0.18 25)" }],
   ["light-info", { color: "oklch(0.7 0.1 240)" }],
-
-  // ========================================
-  // 深色主题 - 文字颜色
-  // ========================================
-  [
-    /^d-text-(primary|secondary|tertiary|muted)$/,
-    ([, type]) => {
-      const lightness = {
-        primary: "0.95",
-        secondary: "0.85",
-        tertiary: "0.7",
-        muted: "0.6",
-      }[type];
-      return {
-        color: `oklch(${lightness} 0.0${type === "primary" ? "2" : type === "secondary" ? "3" : "4"} var(--primary-h))`,
-      };
-    },
-  ],
 
   // ========================================
   // 深色主题 - 标题颜色

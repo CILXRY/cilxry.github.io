@@ -1,0 +1,76 @@
+name: Bug Report
+description: 报告 Astro 项目中的 bug
+title: "[Bug] "
+labels: ["bug"]
+assignees: ["CILXRY"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 提交 Bug 报告
+        请尽量提供详细信息，方便复现和定位问题。
+
+  - type: dropdown
+    id: location
+    attributes:
+      label: （可选）请问是在哪里遇到的问题呢？
+      options:
+        - CILXRY 纪事小栈/正式环境
+        - CILXRY 纪事小栈/测试环境
+        - 本地部署环境
+
+  - type: textarea
+    id: description
+    attributes:
+      label: （必填）问题描述
+      description: 清楚描述发生了什么？
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: （可选）复现步骤
+      description: 一步步说明如何复现。
+      placeholder: |
+        1. 进入页面 ...
+        2. 点击 ...
+        3. 报错 ...
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: （可选）期望行为
+      description: 正常应该是什么样？
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: （可选）浏览器
+      options:
+        - Chrome/Edge
+        - Firefox
+        - Safari
+        - Other
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: （可选）设备类型
+      options:
+        - 桌面端
+        - 移动端
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 报错日志（如有）
+      render: shell
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认
+      options:
+        - label: 我已搜索现有 Issues，没有重复问题

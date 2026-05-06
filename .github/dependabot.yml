@@ -10,11 +10,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    registries:
-      - npmjs
-    ignore:
-      - dependency-name: "astro"
-        versions: [">=6.0.0"]
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
