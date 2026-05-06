@@ -524,6 +524,7 @@ def checkDir(dir_path: str, check_only: bool = False, warn_extra: bool = False):
     )
     sep()
     print()
+    exit(summary['issues'])
 
 
 def parse_arguments():
