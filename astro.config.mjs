@@ -2,7 +2,6 @@
 
 import swup from "@swup/astro";
 import vue from "@astrojs/vue";
-import svelte from "@astrojs/svelte";
 import UnoCSS from "unocss/astro";
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from "astro/config";
@@ -23,7 +22,6 @@ export default defineConfig({
   integrations: [
     UnoCSS(),
     vue(),
-    svelte(),
     swup({
       theme: false,
       animationClass: "transition-",
