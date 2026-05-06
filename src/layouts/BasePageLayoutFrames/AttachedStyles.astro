@@ -1,0 +1,27 @@
+<!-- Swup 过渡动画样式 -->
+<style is:global>
+  /* 淡入淡出动画 - transition 必须始终存在 */
+  .transition-fade {
+    transition: opacity 0.4s ease-in-out;
+    opacity: 1;
+  }
+
+  /* 页面离开和进入时的动画状态 */
+  html.is-animating .transition-fade {
+    opacity: 0;
+  }
+
+  /* 可选：滑动动画 */
+  .transition-slide {
+    transition:
+      opacity 0.4s ease-in-out,
+      transform 0.4s ease-in-out;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  html.is-animating .transition-slide {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+</style>
