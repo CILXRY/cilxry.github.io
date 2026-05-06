@@ -4,10 +4,14 @@ import type { FieldMeta } from "@tp/schemaMeta.types.ts";
 export const postsSchema = z.object({
   title: z.string().default("标题不见了呢"),
   tags: z.array(z.string().min(1).trim()).nullable(),
-  category: z.string().nullable().optional(),
+  category: z
+    .union([z.string(), z.array(z.string())])
+    .transform((val) => (Array.isArray(val) ? val.join(", ") : val))
+    .nullable()
+    .default(null),
   author: z.string().nullable().optional().default("CILXRY"),
-  draft: z.boolean(),
-  description: z.string().nullable().default("描述被吃掉了啦"),
+  draft: z.boolean().default(true),
+  description: z.string().default("描述被吃掉了啦"),
   descGenAuthor: z.string().optional().nullable(),
   descGenTime: z.coerce.date().optional(),
   creation: z.coerce.date().default(new Date(0)),

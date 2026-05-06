@@ -1,17 +1,34 @@
 ---
 import type { GetStaticPaths } from "astro";
 import BasePageLayout from "@basePageLayout";
-import { categories, sortedPosts, tags } from "@ut/content/postsMap.ts";
+import { sortedPosts } from "@ut/content/postsMap.ts";
 import PerPage from "@cp/posts/PerPage.astro";
-import SearchBox from "@cp/SearchBox.svelte";
+import SearchBox from "@cp/SearchBox.astro";
 
 export const getStaticPaths = (async ({ paginate }) => {
   return paginate(sortedPosts, { pageSize: 10 });
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;
+
+const allSearchData = sortedPosts.map((post) => ({
+  title: post.data.title,
+  href: `/posts/${post.id}/`,
+  excerpt: post.data.description,
+  date: post.data.creation.toLocaleDateString("zh-CN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }),
+}));
 ---
 
 <BasePageLayout k="" styled={"default"}>
-  <PerPage p={page}/>
+  <div class="mb-8 max-w-2xl mx-auto">
+    <SearchBox
+      searchData={allSearchData}
+      placeholder="搜索文章标题或描述...（还未实现搜索逻辑）"
+    />
+  </div>
+  <PerPage p={page} />
 </BasePageLayout>
