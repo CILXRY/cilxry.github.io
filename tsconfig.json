@@ -18,6 +18,7 @@
       "@basePageLayout": ["src/layouts/BasePageLayout.astro"],
       "@cp/*": ["src/components/*"],
       "@cfg/*": ["src/config/*"],
+      "@tp/*": ["src/types/*"],
       "@config": ["src/config/index.ts"],
       "@lc/*": ["src/layouts/LayoutComponents/*"],
       "@ut/*": ["src/utils/*"],
