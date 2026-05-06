@@ -19,18 +19,3 @@ export const PersonalConfig = {
   name: "CILXRY",
 
 };
-
-export const SiteConfig = {
-  author: PersonalConfig.name, // 影响的是底部 Copyright 和 Header 的信息，看不惯可以换
-  uptime: "2026/03/29",
-  title: "CILXRY 的纪事小栈",
-  connectSymbol: " - ",
-  websiteTitleStyle: "bct",
-  defaultDescription: "CILXRY 的纪事小栈",
-  FilingInfo: {
-    filingStatus: true,
-    icpFiling: "京ICP备 12345678 号",
-    psbUrl: "http://www.beian.gov.cn",
-    psbFiling: "京公网安备 11010802030000 号",
-  },
-};

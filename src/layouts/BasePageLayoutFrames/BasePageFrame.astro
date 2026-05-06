@@ -25,7 +25,8 @@ import NavBar from "@cp/Navbar.astro";
 import Footer from "@cp/Footer/Footer.astro";
 import AttachedHeader from "./AttachedHeader.astro";
 import BackToTop from "@cp/BackToTop.astro";
-const renderdBackground = 0;
+import { renderedConfig } from "@config";
+const renderdBackground = renderedConfig.showLayoutRendering;
 ---
 
 <!doctype html>
@@ -61,4 +62,3 @@ const renderdBackground = 0;
     <BackToTop />
   </body>
 </html>
-

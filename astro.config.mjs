@@ -5,7 +5,7 @@ import vue from "@astrojs/vue";
 import UnoCSS from "unocss/astro";
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from "astro/config";
-import { SiteConfig } from "./src/config/CLIX.ts";
+import { SiteConfig } from "./src/config/index.ts";
 
 // Markdown Plugins
 // Intro: https://docs.astro.build/zh-cn/guides/markdown-content/#markdown-%E6%8F%92%E4%BB%B6
@@ -16,7 +16,7 @@ import expressiveCode from "astro-expressive-code";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 export default defineConfig({
-  site: SiteConfig.siteUrl,
+  site: SiteConfig.siteUrl.toString(),
   base: "/",
   trailingSlash: "ignore",
   integrations: [

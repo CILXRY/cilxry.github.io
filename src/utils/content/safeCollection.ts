@@ -1,7 +1,7 @@
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 
-type CollectionName = "posts" | "memory";
+type CollectionName = "posts" ;
 
 export async function safeGetCollection<T extends CollectionName>(
   collection: T,
@@ -25,7 +25,7 @@ export async function safeGetEntry<T extends CollectionName>(
 ): Promise<CollectionEntry<T> | null> {
   try {
     const entries = await getCollection(collection);
-    return entries.find((entry) => entry.id === id) || null;
+    return entries.find((entry: { id: string; }) => entry.id === id) || null;
   } catch (error) {
     console.error(`[Content Error] Failed to get entry "${id}" from "${collection}":`);
     console.error(error);
